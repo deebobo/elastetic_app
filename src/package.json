@@ -1,0 +1,27 @@
+{
+  "name": "deebobo",
+  "version": "1.0.0",
+  "description": "view and manage your devices",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deebobo/deebobo.git"
+  },
+  "keywords": [
+    "IOT",
+    "devices"
+  ],
+  "author": "Jan Bogaerts",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/deebobo/deebobo/issues"
+  },
+  "homepage": "https://github.com/deebobo/deebobo#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "mongoose": "^4.10.0"
+  }
+}

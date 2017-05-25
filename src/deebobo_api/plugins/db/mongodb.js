@@ -1,12 +1,14 @@
 /**
  * Created by Deebobo.dev on 20/05/2017.
- * copyright 2017 Debobo.dev
+ * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-const config = require.main.require('./config').config;
+const config = require.main.require('../config').config;
 const mongoose = require('mongoose');
 const winston = require('winston');
+const usersModel = require.main.require('../plugins/models/mongo_users')
+const groupsModel = require.main.require('../plugins/models/mongo_groups')
 
 /** provides a db connection with a mongo database
 * @class  MongoDb
@@ -51,8 +53,8 @@ class MongoDb{
     * @name .createDb()
     */
     createDb(){
-        this._createUsers();
         this._createGroups();
+        this._createUsers();
     }
 
     _createUsers(){
@@ -61,38 +63,22 @@ class MongoDb{
             email: String,
             password: String,
             site: String,
-            group: String
+            group: {type: String, ref: 'groups'}
         });
         usersSchema.index({ email: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
-        this.users = mongoose.model('users', usersSchema);
+        this.users = new usersModel(mongoose.model('users', usersSchema));
     }
 
     _createGroups(){
-        let grupsSchema = new mongoose.Schema({
-            name: {type: String, unique: true},
+        let groupsSchema = new mongoose.Schema({
+            name: {type: String },
+            site: String,
             level: {type: String, enum: ['admin', 'edit', 'view', 'public']}
         });
-        grupsSchema.index({name: 1});                               //quick search on the name.
-        this.groups = mongoose.model('groups', grupsSchema);
+        groupsSchema.index({ name: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
+        this.groups = new groupsModel(mongoose.model('groups', groupsSchema));
     }
 
-	/**
-    * adds a user to the db
-    *
-    * @name .addUser()
-	* @param {Object} `user` - details about the user.
-	* @return {Promise}] a promise to perform async operations with.
-    */
-    addUser(user){
-        user = new this.users(user);
-        return user.save(); 
-		//(err) =>{
-        //    if(err)
-        //        throw new Error('failed to create user: ' + admin.name);
-        //    else
-        //        winston.log('error', 'succesfully create user: ', admin.name);
-        //});
-    }
 }
 
 //required for all plugins. returns information about the plugin

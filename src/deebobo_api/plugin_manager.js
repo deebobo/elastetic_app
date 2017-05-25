@@ -1,11 +1,11 @@
 /**
  * Created by Deebobo.dev on 20/05/2017.
- * copyright 2017 Debobo.dev
+ * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-const config = require.main.require('./config').config;
-const PluginLoader = require.main.require('./plugin_loader').PluginLoader;       //auto load/unload plugins
+const config = require.main.require('../config').config;
+const PluginLoader = require.main.require('../plugin_loader').PluginLoader;       //auto load/unload plugins
 const winston = require('winston');
 const path = require("path");
 
@@ -30,10 +30,12 @@ class PluginManager {
         let self = this;                                            //need to make a copy of this var for the callbacks 'on', which have a different 'this' value
         this.monitor = new PluginLoader([path.join(__dirname, "plugins")]);
         this.monitor.on('pluginLoaded', function(pluginName, plugin){
-                let info = plugin.getPluginType();
-                info.ref = plugin;                                              //make certain we get a reference to the actual object, so we can use it later on if need be.
-                self.plugins.push(info);
-                winston.log('info', 'plugin loaded: ', pluginName);
+                if('getPluginType' in plugin){
+                    let info = plugin.getPluginType();
+                    info.ref = plugin;                                              //make certain we get a reference to the actual object, so we can use it later on if need be.
+                    self.plugins.push(info);
+                    winston.log('info', 'plugin loaded: ', pluginName);
+                }
             }
         );
 

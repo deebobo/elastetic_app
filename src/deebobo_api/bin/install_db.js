@@ -1,12 +1,12 @@
 /**
  * Created by Deebobo.dev on 20/05/2017.
- * copyright 2017 Debobo.dev
+ * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-const pluginMan = require('./plugin_manager');
+const pluginMan = require('../plugin_manager');
 const prompt = require('prompt');                        //ask the user some questions.
-const config = require.main.require('./config');
+const config = require.main.require('../config');
 const winston = require('winston');
 const crypto = require('crypto');
 
@@ -66,12 +66,18 @@ async function install(result)
         winston.log('error', 'failed to create users:', err);
     }
 	pwd = crypto.createHash('md5').update(result.password).digest('hex');
-	let admin = {name: result.name, email: result.email, password: pwd, site: 'main', group: 'admin'};
+	let admins = {name: "admins", site: 'main', level: "admin"};
+    let editors = {name: "editors", site: 'main', level: "edit"};
+    let viewers = {name: "viewers", site: 'main', level: "view"};
 	try{
-		await db.addUser(admin);
+        let adminRec = await db.groups.addGroup(admins);
+        let admin = {name: result.name, email: result.email, password: pwd, site: 'main', group: adminRec._id}; // we need the id of the admin record
+        await db.groups.addGroup(editors);
+        await db.groups.addGroup(viewers);
+		await db.users.addUser(admin);
 	}
 	catch(err){
-		winston.log('error', 'failed to connect db:', err);
+		winston.log('error', 'failed to populate db with initial values:', err);
 	}
     await config.save();
 	winston.log('info', 'done');
@@ -83,8 +89,8 @@ winston.log('info', 'initializing plugins');
 
 let plugins = new pluginMan();
 plugins.initPluginMonitor();
-
 plugins.load();
+
 prompt.start();
 prompt.get(userQuestions, (err, result) =>
     {

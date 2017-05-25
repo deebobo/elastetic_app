@@ -48,6 +48,36 @@ let userQuestions = {
     }
 };
 
+async function install(result)
+{
+	let db = plugins.db;
+	config.config.db = result.db;
+	try{
+		await db.connect();
+		winston.log('info', 'succesfully connected to db');
+	}
+	catch(err){
+		winston.log('error', 'failed to connect db:', err);
+	}
+	try{
+        db.createDb();
+    }
+    catch(err){
+        winston.log('error', 'failed to create users:', err);
+    }
+	pwd = crypto.createHash('md5').update(result.password).digest('hex');
+	let admin = {name: result.name, email: result.email, password: pwd, site: 'main', group: 'admin'};
+	try{
+		await db.addUser(admin);
+	}
+	catch(err){
+		winston.log('error', 'failed to connect db:', err);
+	}
+    await config.save();
+	winston.log('info', 'done');
+    process.exit();
+}
+
 
 winston.log('info', 'initializing plugins');
 
@@ -62,16 +92,7 @@ prompt.get(userQuestions, (err, result) =>
             winston.log('error', 'invalid command line data received: ', err);
             return;
         }
-        let db = plugins.db;
-        config.config.db = result.db;
-        if(db.connect()){
-            db.createDb();
-            pwd = crypto.createHash('md5').update(result.password).digest('hex');
-            let admin = {name: result.name, email: result.email, password: pwd, site: 'main', group: 'admin'};
-            db.addUser(admin);
-            config.save();
-        }
-        winston.log('info', 'done');
+        install(result);
     }
 );
 

@@ -4,10 +4,25 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+/**
+ * @fileoverview
+ * Global configuration values that are available throughout the application.
+ * This icnludes:
+ * - the type of database to use
+ * - the connection string for the database.
+ *
+ * Allows for saving and loading the configuration from a json file, called config.json, stored in the root directory
+ * of the application.
+ */
+
 const fs = require('fs');
 const winston = require('winston');
 
-//create the config object and provide default values.
+//
+/**
+ * create the config object and provide default values.
+ * @type {{db: string, db_connection_string: string}}
+ */
 let config = {
     db: 'mongodb',
     db_connection_string: 'mongodb://localhost/deebobo'
@@ -27,14 +42,21 @@ function load(){
 
 //saves the config data to file
 function save(){
-    let data = JSON.stringify(myOptions);
-    fs.writeFile('./config.json', data, function (err) {
-        if (err) {
-            winston.log("error", 'failed to save config data to disk: ', err.message, config);
-            return;
+    let data = JSON.stringify(config);
+    return new Promise((resolve, reject) =>
+        {
+            fs.writeFile('./config.json', data, function (err) {
+                if (err) {
+                    winston.log("error", 'failed to save config data to disk: ', err.message, config);
+                    reject(err);
+                }
+                else{
+                    winston.log("info", 'succesfully saved config to disk', config);
+                    resolve();
+                }
+            });
         }
-        winston.log("info", 'succesfully saved config to disk', config);
-    });
+    );
 }
 
 module.exports = {

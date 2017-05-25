@@ -1,1 +1,1 @@
-{"db":"mongodb","db_connection_string":"mongodb://localhost/deebobo"}
+{"db":"mongodb","db_connection_string":"mongodb://localhost/deebobo", "security":{"tokenLife": 3600}}

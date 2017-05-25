@@ -20,14 +20,30 @@ class Users{
     /**
      * adds a user to the db
      *
-     * @name .addUser()
+     * @name .add()
      * @param {Object} `user` - details about the user.
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
      * was added
      */
-    addUser(user){
+    add(user){
         let record = new this._users(user);
         return record.save();
+    }
+
+    /**
+     * finds a single record by id
+     *
+     * @name .find()
+     * @param id {string}  - id of the user record.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was added
+     */
+    find(id){
+        return this._users.findOne({_id: id}).exec();
+    }
+
+    findByName(name){
+        return this._users.findOne({ username: name }).exec();
     }
 }
 

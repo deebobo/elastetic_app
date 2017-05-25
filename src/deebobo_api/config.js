@@ -25,7 +25,10 @@ const winston = require('winston');
  */
 let config = {
     db: 'mongodb',
-    db_connection_string: 'mongodb://localhost/deebobo'
+    db_connection_string: 'mongodb://localhost/deebobo',
+    security:{
+        tokenLife: 3600
+    }
 };
 
 //loads the config data from file

@@ -11,6 +11,10 @@ async function initPassport(app, passport){
     let db = await app.get('plugins');
     db = db.db;
 
+    let options = {
+        passReqToCallback: true // default false
+    };
+
     app.use(passport.initialize());
     passport.use(new BasicStrategy(
         async function(username, password, done) {
@@ -27,8 +31,8 @@ async function initPassport(app, passport){
         }
     ));
 
-    passport.use(new ClientPasswordStrategy(
-        async function(clientId, clientSecret, done) {
+    passport.use(new ClientPasswordStrategy(options,
+        async function(req, clientId, clientSecret, done) {
             try {
                 let client = await db.clients.findById(clientId);
                 if (!client)
@@ -42,8 +46,8 @@ async function initPassport(app, passport){
         }
     ));
 
-    passport.use(new BearerStrategy(
-        async function(accessToken, done) {
+    passport.use(new BearerStrategy(options,
+        async function(req, accessToken, done) {
             try{
                 let token = await db.accessTokens.find(accessToken);
                 if (!token) { return done(null, false); }

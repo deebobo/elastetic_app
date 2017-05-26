@@ -4,7 +4,7 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-const config = require.main.require('../config').config;
+const config = require.main.require('../api/libs/config').config;
 const mongoose = require('mongoose');
 const winston = require('winston');
 const usersModel = require.main.require('../plugins/models/mongo_users');

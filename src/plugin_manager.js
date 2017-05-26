@@ -4,8 +4,8 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-const config = require.main.require('../config').config;
-const PluginLoader = require.main.require('../plugin_loader').PluginLoader;       //auto load/unload plugins
+const config = require.main.require('../api/libs/config').config;
+const PluginLoader = require.main.require('../api/libs/plugin_loader').PluginLoader;       //auto load/unload plugins
 const winston = require('winston');
 const path = require("path");
 

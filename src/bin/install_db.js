@@ -6,7 +6,7 @@
 
 const pluginMan = require('../plugin_manager');
 const prompt = require('prompt');                        //ask the user some questions.
-const config = require.main.require('../config');
+const config = require.main.require('../api/libs/config');
 const winston = require('winston');
 
 

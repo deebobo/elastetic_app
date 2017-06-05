@@ -1,0 +1,39 @@
+{
+	"variables": [],
+	"info": {
+		"name": "groups",
+		"_postman_id": "ec36e7da-13dc-91be-cdef-8fe12461b666",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get list of groups",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:4000/api/main/groups",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "JWT",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

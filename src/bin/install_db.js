@@ -8,6 +8,7 @@ const pluginMan = require('../plugin_manager');
 const prompt = require('prompt');                        //ask the user some questions.
 const config = require.main.require('../api/libs/config');
 const winston = require('winston');
+const sitesLib = require.main.require('../api/libs/sites');
 
 
 //see https://www.npmjs.com/package/prompt for info regarding prompt
@@ -64,21 +65,14 @@ async function install(result)
     catch(err){
         winston.log('error', 'failed to create users:', err);
     }
-	let admins = {name: "admins", site: 'main', level: "admin"};
-    let editors = {name: "editors", site: 'main', level: "edit"};
-    let viewers = {name: "viewers", site: 'main', level: "view"};
 	try{
-        let adminRec = await db.groups.addGroup(admins);
-        let admin = {name: result.name, email: result.email, password: result.password, site: 'main', group: adminRec._id}; // we need the id of the admin record
-        await db.groups.addGroup(editors);
-        await db.groups.addGroup(viewers);
-		await db.users.add(admin);
+        await sitesLib.create(db, 'main', result.name, result.email, result.password);
+        await config.save();
+        winston.log('info', 'done');
 	}
 	catch(err){
 		winston.log('error', 'failed to populate db with initial values:', err);
 	}
-    await config.save();
-	winston.log('info', 'done');
     process.exit();
 }
 

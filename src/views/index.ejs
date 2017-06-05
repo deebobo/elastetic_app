@@ -1,36 +1,59 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css'/>
-</head>
-<body>
-<h1><%= title %></h1>
-<p>Welcome to <%= title %></p>
+<html ng-app="deebobo">
+    <head>
+        <title><%= title %></title>
 
-<div class="col-md-4">
-    <h2>Login</h2>
-    <div ng-show="error" class="alert alert-danger">{{errorMessage}}</div>
-    <form class="form" ng-submit="login()">
-        <div class="form-group">
-            <label>user</label>
-            <input type="text" class="form-control" name="email" ng-model="loginForm.email" required>
-        </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" class="form-control" name="password" ng-model="loginForm.password" required>
-        </div>
-        <div class="form-group">
-            <label>Site</label>
-            <select class="form-control" name="site" ng-model="loginForm.site" required>
-                <option>main</option>
-            </select>
-        </div>
-        <div>
-            <button type="submit" class="btn btn-default" ng-disabled="disabled">Login</button>
-        </div>
-    </form>
-</div>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-</body>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        <link rel='stylesheet' href='/stylesheets/style.css' />
+        <link rel='stylesheet' href='/stylesheets/home.css' />
+        <link rel='stylesheet' href='/stylesheets/menu.css' />
+
+        <!-- Libraries -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script type='text/javascript' src="./js/ui-bootstrap-tpls-2.5.0.min.js"></script>
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/1.0.3/angular-ui-router.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-aria.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-messages.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-route-segment/1.5.1/angular-route-segment.js"></script>
+        <!-- Angular Material Library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"/>
+
+
+
+        <script type='text/javascript' src="./js/functions.js"></script>
+        <script type='text/javascript' src="./js/app.js"></script>
+
+        <script type='text/javascript' src="./js/filters.js"></script>
+
+        <script type='text/javascript' src="./js/services/auth_service.js"></script>
+        <script type='text/javascript' src="./js/services/sites_service.js"></script>
+        <script type='text/javascript' src="./js/services/menu_service.js"></script>        <!--menu service must be loaded before site_home-->
+
+        <script type='text/javascript' src="./js/directives/menu_toggle.directive.js"></script>
+        <script type='text/javascript' src="./js/directives/menulink.directive.js"></script>
+
+        <script type='text/javascript' src="./js/controllers/login.js"></script>
+        <script type='text/javascript' src="./js/controllers/register.js"></script>
+        <script type='text/javascript' src="./js/controllers/site_home.js"></script>
+        <script type='text/javascript' src="./js/controllers/sites.js"></script>
+
+
+        <link data-require="font-awesome@4.3.0" data-semver="4.3.0" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+    </head>
+    <body >
+    <ui-view ></ui-view>
+
+
+
+    </body>
 </html>

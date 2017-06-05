@@ -27,8 +27,10 @@ let config = {
     db: 'mongodb',
     db_connection_string: 'mongodb://localhost/deebobo',
     security:{
-        tokenLife: 3600
-    }
+        secret: 'IOT4AllWebsitebyDeebobo_plugabletools',
+        expires: 20                                             //nr of days that the key is valid.
+    },
+    port: 4000
 };
 
 //loads the config data from file

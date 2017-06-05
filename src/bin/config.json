@@ -1,1 +1,1 @@
-{"db":"mongodb","db_connection_string":"mongodb://localhost/deebobo","security":{"tokenLife":3600}}
+{"db":"mongodb","db_connection_string":"mongodb://localhost/deebobo","security":{"secret":"IOT4AllWebsitebyDeebobo_plugabletools","expires":20},"port":4000}

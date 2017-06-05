@@ -1,0 +1,71 @@
+{
+	"variables": [],
+	"info": {
+		"name": "sites",
+		"_postman_id": "523dd5dd-e319-a036-ab80-d34ce43b1100",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create site",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"message = ok\"] = jsonData.message === \"ok\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:4000/api/sites",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "site",
+							"value": "sitename2",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "name",
+							"value": "adminname2",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "password2",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "email",
+							"value": "adminEmail2",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

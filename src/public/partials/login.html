@@ -1,0 +1,25 @@
+<div class="col-md-4">
+    <h1>Login</h1>
+    <div ng-show="error" class="alert alert-danger">{{errorMessage}}</div>
+    <form class="form" ng-submit="login()">
+
+        <div class="form-group">
+            <label>Username or email</label>
+            <input type="text" class="form-control" name="username" ng-model="loginForm.username" required>
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control" name="password" ng-model="loginForm.password" required>
+        </div>
+
+        <div class="form-group">
+            <label>Site</label>
+            <select class="form-control"  ng-model="loginForm.selectedSite" ng-options="x._id for x in sites" required></select>
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-default" ng-disabled="disabled">Login</button>
+        </div>
+    </form>
+</div>

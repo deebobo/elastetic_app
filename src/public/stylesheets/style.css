@@ -1,8 +1,25 @@
 body {
-  padding: 50px;
+
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
 }
+
+
+/* for the main/root div element */
+.fill-height{
+    display: flex;
+    flex: 1;
+    min-height: 100%;
+}
+
+.fill-height > div{
+    min-height: 100%;
+    display: flex;
+}
+
+
+
+

@@ -1,0 +1,28 @@
+/* styles for the app's home page */
+
+.home{
+    padding: 50px;
+}
+
+md-list-item{
+    width: 130px;
+}
+
+
+.md-grid-item-content {
+    padding-top: 10px;
+    height: 120px;}
+
+.md-grid-item-content md-icon {
+    height: 48px;
+    width: auto;
+}
+
+.md-grid-text {
+    padding-bottom: 5px;
+    word-wrap: break-word;
+}
+
+.md-grid-text div {
+    height: 18px;
+}

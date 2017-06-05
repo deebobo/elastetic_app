@@ -6,27 +6,23 @@
 
 const winston = require('winston');
 
-const index = require('./routes/index');
-const users = require('./routes/users');
-const groups = require('./routes/groups');
+const appAuth =  require('../routes/app_authentication');
+const users =    require('../routes/users');
+const groups =   require('../routes/groups');
+const auth =     require('../routes/site_authentication');
+const sites =    require('../routes/sites');
+const routes =    require('../routes/index');
+const express =  require('express');
+
+let router = express.Router({mergeParams: true});
 
 function initPaths(app, passport) {
-    app.use('/', index);
-    app.use('/users', users);
-    app.use('/groups', groups);
-
-
-   /* app.get('/api/userInfo',
-        passport.authenticate('bearer', { session: false }),
-        function(req, res) {
-            // req.authInfo is set using the `info` argument supplied by
-            // `BearerStrategy`.  It is typically used to indicate a scope of the token,
-            // and used in access control checks.  For illustrative purposes, this
-            // example simply returns the scope in the response.
-            res.json({ user_id: req.user.userId, name: req.user.username, scope: req.authInfo.scope })
-        }
-    );*/
-
+    app.use('/', routes);
+    app.use('/api', appAuth);
+	app.use('/api/sites', sites);
+    app.use(router.use('/api/:site', auth));
+    app.use(router.use('/api/:site/users', passport.authenticate('jwt', { session: false }), users));
+    app.use(router.use('/api/:site/groups', passport.authenticate('jwt', { session: false }), groups));
 
     // catch 404 and forward to error handler
     app.use(function(req, res, next) {

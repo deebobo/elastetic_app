@@ -18,7 +18,7 @@ exports.PluginLoader = function(modulePath) {
     events.EventEmitter.call(this);
     Object.defineProperty(this, 'loadedModules', { value: {} });
     Object.defineProperty(this, 'modulePath', { value: modulePath });
-}
+};
 
 util.inherits(exports.PluginLoader, events.EventEmitter);
 

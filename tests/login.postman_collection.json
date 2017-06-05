@@ -1,0 +1,137 @@
+{
+	"variables": [],
+	"info": {
+		"name": "login",
+		"_postman_id": "eb6f2784-5bfb-67ba-af22-b26cabfd2593",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "invalid login 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Your test name\"] = jsonData.message === \"missing username or password\";",
+							"",
+							"tests[\"Status code is 400\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:4000/api/main/login",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": "login into main with no params"
+			},
+			"response": [
+				{
+					"id": "c2761e3e-f343-4b8b-ac3a-3bc6c5d3091e",
+					"name": "missing username or pwd",
+					"originalRequest": {
+						"url": "http://localhost:4000/main/login",
+						"method": "POST",
+						"header": [],
+						"body": {}
+					},
+					"status": "Unauthorized",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"key": "Connection",
+							"value": "keep-alive",
+							"name": "Connection",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"key": "Content-Length",
+							"value": "43",
+							"name": "Content-Length",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8",
+							"name": "Content-Type",
+							"description": "The mime type of this content"
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 26 May 2017 17:23:50 GMT",
+							"name": "Date",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"2b-9c/mo2NihG1Ur9NA8sJbyGbPux0\"",
+							"name": "ETag",
+							"description": "An identifier for a specific version of a resource, often a message digest"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express",
+							"name": "X-Powered-By",
+							"description": "Specifies the technology (ASP.NET, PHP, JBoss, e.g.) supporting the web application (version details are often in X-Runtime, X-Version, or X-AspNet-Version)"
+						}
+					],
+					"cookie": [],
+					"responseTime": 69,
+					"body": "{\"message\":\"missing username or password \"}"
+				}
+			]
+		},
+		{
+			"name": "login for admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"validate response message\"] = jsonData.message === \"ok\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:4000/api/main/login",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "admin",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": "login attempt to main with correct credentials"
+			},
+			"response": []
+		}
+	]
+}

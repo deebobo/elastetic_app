@@ -1,10 +1,18 @@
 # plugins
-
+- the system is build up out of plugins. Almost every feature is abstracted away as a plugin so that it can be replaced with another implementation. It also allows you to add new features to the application.
+- The following types of plugins are supported:
+	- [db](db_plugin.md)
+	- [email](email.md)
+	- [contols](controls.md)
+	- [functions](functions.md)
 - all plugins have to implement a function called 'getPluginType' which should return an object with the following fields: 
 	- create: a reference to the function (or class) that creates a new plugin
 	- name: the name of the plugin. this is used to identify the plugin in various places like the config file for the db or in views for controls and such.
 	- category: the category of the plugin. current categories are:
 		- db
+		- email
+		- control
+		- function
 	- title: a short description (1 line) of the plugin
 	- description: (optional) a long description for the plugin
 	- author: (optional) the name of the author

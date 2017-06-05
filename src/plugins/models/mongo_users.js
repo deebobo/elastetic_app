@@ -21,7 +21,12 @@ class Users{
      * adds a user to the db
      *
      * @name .add()
-     * @param {Object} `user` - details about the user.
+     * @param {Object} `user` details about the user. The object should contain the following fields:
+	 *	- name: the name of the user. 
+	 *	- email: the email address of the admin user
+	 *	- password: the password for the user.
+	 * 	- site: the site to which the user has access
+	 * 	- group: the group to which this user belongs
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
      * was added
      */
@@ -36,14 +41,23 @@ class Users{
      * @name .find()
      * @param id {string}  - id of the user record.
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
-     * was added
+     * was found
      */
     find(id){
         return this._users.findOne({_id: id}).exec();
     }
 
-    findByName(name){
-        return this._users.findOne({ username: name }).exec();
+	/**
+     * finds auser by name or email for a specific site.
+     *
+     * @name .find()
+     * @param value {string}  - name or email of the user.
+	 * @param site {string}  - name of the site.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was found
+     */
+    findByNameOrEmail(value, site){
+        return this._users.findOne( { $or: [{ name: value, site: site }, {email: value, site: site}]} ).exec();
     }
 }
 

@@ -1,0 +1,62 @@
+{
+	"variables": [],
+	"info": {
+		"name": "register",
+		"_postman_id": "efc3262a-c991-686c-09f9-6f9a378af168",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register 'user'",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:4000/api/main/register",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "user",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "test",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "email",
+							"value": "test@test.com",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": "register new user in main"
+			},
+			"response": []
+		}
+	]
+}

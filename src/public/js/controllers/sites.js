@@ -4,10 +4,10 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-deebobo.controller('sitesController', ['$scope', '$location', 'sitesService', '$http',
-    function ($scope, $location, sitesService, $http) {
+deebobo.controller('sitesController', ['$scope', '$location', 'siteService', '$http',
+    function ($scope, $location, siteService, $http) {
 
-        $http({method: 'GET', url: '/api/sites'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+        $http({method: 'GET', url: '/api/site'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
                     $scope.sites = response.data
                 },
@@ -23,7 +23,7 @@ deebobo.controller('sitesController', ['$scope', '$location', 'sitesService', '$
             $scope.disabled = true;
 
             // call login from service
-            sitesService.create($scope.createForm.sitename, $scope.createForm.username, $scope.createForm.email, $scope.createForm.password)
+            siteService.create($scope.createForm.sitename, $scope.createForm.username, $scope.createForm.email, $scope.createForm.password)
             // handle success
                 .then(function () {
                     $location.path('/' + $scope.createForm.sitename);

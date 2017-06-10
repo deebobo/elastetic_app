@@ -49,8 +49,13 @@ function initApp(){
 var app = express();
 app.set('plugins',loadPlugins());
 initApp();
-require('./api/libs/auth')(app, passport);
+require('./api/libs/initPassport')(app, passport);
 require('./api/libs/routes.js')(app, passport);
+
+//todo: secure access to site local  plugins
+function initStaticPaths(){
+    app.use(express.static(path.join(__dirname, 'public', 'plugins', '')));
+}
 
 
 

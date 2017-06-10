@@ -37,19 +37,19 @@ class Users{
 
     /**
      * finds a single record by id
-     *
+     * populates the groups list, so it can easily be searched for (editor levels and such, for authorisation)
      * @name .find()
      * @param id {string}  - id of the user record.
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
      * was found
      */
     find(id){
-        return this._users.findOne({_id: id}).exec();
+        return this._users.findOne({_id: id}).populate('groups').exec();
     }
 
 	/**
-     * finds auser by name or email for a specific site.
-     *
+     * finds a user by name or email for a specific site.
+     * populates the groups list, so it can easily be searched for (editor levels and such, for authorisation)
      * @name .find()
      * @param value {string}  - name or email of the user.
 	 * @param site {string}  - name of the site.
@@ -57,7 +57,7 @@ class Users{
      * was found
      */
     findByNameOrEmail(value, site){
-        return this._users.findOne( { $or: [{ name: value, site: site }, {email: value, site: site}]} ).exec();
+        return this._users.findOne( { $or: [{ name: value, site: site }, {email: value, site: site}]} ).populate('groups').exec();
     }
 }
 

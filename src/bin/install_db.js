@@ -48,6 +48,22 @@ let userQuestions = {
     }
 };
 
+{
+    let def = require(file);
+    def.site = "_common";
+    try{
+        await db.plugins.add(def);
+        winston.log("info", "succesfully installed plugin", file);
+    }
+    catch(err){
+        winston.log("errro", "failed to instal plugin", file);
+    }
+}
+
+{
+    winston.log("info", "installing plugins...");
+}
+
 async function install(result)
 {
 	let db = plugins.db;

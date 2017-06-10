@@ -59,22 +59,9 @@ module.exports.login = async function(req, res){
     if(req.body.name && req.body.password){
         let name = req.body.name;
         let password = req.body.password;
-        try{
-            let db = await req.app.get('plugins');
-            db = db.db;
-            let user = await db.users.findByNameOrEmail(name, req.body.site);
-            if( ! user )
-                res.status(401).json({message:"user not found"});
-
-            if(user.password === req.body.password) {
-                res.cookie("jwt", user.generateJwt());            //return the token as a cookie, this is more secure to store it client side
-                res.json({message: "ok"});
-            } else {
-                res.status(401).json({message:"passwords did not match"});
-            }
-        }
-        catch (err){
-            res.status(500).json({message:err.message});
-        }
-    }
+		
+		auth.login(res, await req.app.get('plugins'), req.body.site, name, password);
+	}
+	else
+		res.status(400).json({message:"missing username or password"});
 };

@@ -14,8 +14,11 @@ const usersModel = require.main.require('../plugins/models/mongo_users');
 const groupsModel = require.main.require('../plugins/models/mongo_groups');
 const sitesModel = require.main.require('../plugins/models/mongo_sites');
 const pagesModel = require.main.require('../plugins/models/mongo_pages');
+const siteCollectionModel = require.main.require('../plugins/models/mongo_site_collection');
+const emailTemplatesModel = require.main.require('../plugins/models/mongo_email_templates');
+const pluginsModel = require.main.require('../plugins/models/mongo_plugins');
 const crypto = require('crypto');
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 /** provides a db connection with a mongo database  
 */
@@ -30,6 +33,9 @@ class MongoDb{
         this.groups = null;
         this.sites = null;
 		this.pages = null;
+		this.pluginSiteData = null;
+		this.emailTemplates = null;
+		this.plugins = null;
         mongoose.Promise = global.Promise;
     }
 
@@ -49,8 +55,8 @@ class MongoDb{
     isConnected() {
         return this.db && this.db.readyState === 1;
     }
-
-
+	
+	
 	/**
     * create the database with all the required collections/tables: 
 	* - [groups]()
@@ -60,6 +66,9 @@ class MongoDb{
         this._createUsers();
         this._createSites();
 		this._createPages();
+		this._createPluginSiteData();
+		this._createEmailTemplates();
+		this._createPlugins();
     }
 
     /**
@@ -117,6 +126,7 @@ class MongoDb{
                     id: this._id,
                     email: this.email,
                     name: this.name,
+					site: this.site,
                     exp: parseInt(expiry.getTime() / 1000),
                 }, config.security.secret);
             }
@@ -131,7 +141,38 @@ class MongoDb{
         this.users = new usersModel(mongoose.model('users', usersSchema));
     }
 
-
+	/**
+    * creates a collection or table that allows a plugin to store data at the level of a site (each site gets 1 record per plugin).
+	* example: this can be used by an emailer plugin to store configurations that relate to the site that wants to use the plugin.
+	* @return {Promise}] a promise to perform async operations with. The result of the promise is the model that represents the db collection.
+    */
+	_createPluginSiteData(){
+		let pluginSiteDataSchema = new mongoose.Schema({
+            site: String,
+			plugin: String,
+			data: Object,											//the data for the site.
+            createdOn:{type: Date, default: Date.now()}
+        });
+		pluginSiteDataSchema.index({ name: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
+        this.pluginSiteData = new siteCollectionModel(mongoose.model('pluginSiteData', pluginSiteDataSchema));
+	}
+	
+	/**
+    * creates a collection or table that allows a plugin to store data at the level of a site (each site gets 1 record per plugin).
+	* example: this can be used by an emailer plugin to store configurations that relate to the site that wants to use the plugin.
+	*/
+	_createEmailTemplates(){
+		let emailTemplatesSchema = new mongoose.Schema({
+			name: String,															//name of the template
+            site: String,
+			subject: String,
+			body: String,
+            createdOn:{type: Date, default: Date.now()}
+        });
+		emailTemplatesSchema.index({ name: 1, site: 1}, {unique: true});        //fast access at name & site level
+        this.emailTemplates = new emailTemplatesModel(mongoose.model('emailTemplates', emailTemplatesSchema));
+	}
+	
     /**
      * creates the collection that stores the group (authorisation) information
 	 * required fields:
@@ -170,9 +211,12 @@ class MongoDb{
     _createSites(){
         let sitesSchema = new mongoose.Schema({
             _id: {type: String},
-            contactEmail: String,                                        //the email address of the person that created the site (admin)
+            contactEmail: String,                                       //the email address of the person that created the site (admin)
             allowRegistration: {type: Boolean, default: true},          //determines if users can register on this site or only through invitation.
+			requestEmailConfirmation: {type: Boolean, default: true},	//when true, newly registered users have to confirm their email address by clicking on a link found in a mail (if the email template exists).
+			sendHelloEmail: {type: Boolean, default: true},				//when true, a hello email is sent to newly registered users (if the email template exists)
             viewGroup: {type: mongoose.Schema.Types.ObjectId, ref: 'groups'},                   //provides quick reference to the default 'view' group for registering new users.
+            homepage:  String,                                                                  //the name of the page to use as homepage. Don't need an object id, cause that is usually not yet created if the site is not yet there. But site + page name is uniuqe, so can easiliy search on this.
             createdOn:{type: Date, default: Date.now()}
         });
         sitesSchema.virtual('name').get(function() {                                            //convenience function, so we also have the field 'name
@@ -195,17 +239,56 @@ class MongoDb{
         let pagesSchema = new mongoose.Schema({
             name: String,                                        		//the email address of the person that created the site (admin)
 			site: String,
+			plugin:  {type: mongoose.Schema.Types.ObjectId, ref: 'plugins'},
 			groups: [{type: mongoose.Schema.Types.ObjectId, ref: 'groups'}],
             createdOn:{type: Date, default: Date.now()}
         });
 		pagesSchema.index({ name: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
         this.pages = new pagesModel(mongoose.model('pages', pagesSchema));
     }
+	
+	/**
+     * creates the collection that stores all the pages for each site.
+	 * required fields:
+	 *  - name: the name of the page
+	 * 	- site: the site to which this group applies
+     * 	- description: a description of the plugin.
+	 *  - client:   (if the plugin is a client plugin)
+	 *      - partial: the name and location of the partial that should be used for this plugin (if it's a client side plugin)
+	 *      - code: the code files that should be loaded for this plugin.
+	 *  - config: 
+	 *    - partial: he name and location of the partial that should be used to configure this plugin
+	 *    - code: the code files that should be loaded for this plugin.
+	 *  - installedOn: date of record creation
+     *  - type: "mail', 'page', 'view'
+     *  - version: the version of the plugin that is installed.
+     *  - author: the creator of the plugin
+     * @private
+     */
+    _createPlugins(){
+		let angularSchema = new mongoose.Schema({
+			partials: [String],
+			scripts: [String],
+		});
+        let pluginSchema = new mongoose.Schema({
+            name: String,                                        		//the email address of the person that created the site (admin)
+            description: String,
+			site: String,
+			type: String,
+            version: String,
+            author: String,
+			client: angularSchema,
+			config: angularSchema,
+            installedOn:{type: Date, default: Date.now()}
+        });
+		pluginSchema.index({ name: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
+        this.plugins = new pluginsModel(mongoose.model('plugins', pluginSchema));
+    }
 
 }
 
 //required for all plugins. returns information about the plugin
-let getPluginType = function (){
+let getPluginConfig = function (){
     return {
         name: "mongodb",
         category: "db",
@@ -217,6 +300,6 @@ let getPluginType = function (){
         license: "GPL-3.0",
         create: MongoDb
     };
-}
+};
 
-module.exports = {getPluginType: getPluginType};
+module.exports = {getPluginConfig: getPluginConfig};

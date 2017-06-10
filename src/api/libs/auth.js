@@ -1,48 +1,91 @@
 /**
- * Created by Deebobo.dev on 25/05/2017.
+ * Created by Deebobo.dev on 26/05/2017.
  * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-const config = require.main.require('../api/libs/config').config;
+const winston = require('winston');
 
-const passportJWT = require("passport-jwt");
+/**
+ * check if the user is allowed to access resources from the specified site. If so, return an access token (jwt)
+ * The access token is returned as a cookie on the res parameter.
+ * @param res {object} the express-object that receives the result value of the api call
+ * @param plugins {object} the server-side plugins object
+ * @param site {string} the name of he site.
+ * @param name {string} the name of the user.
+ * @param pwd {string} the password of the user.
+ * @returns {Promise.<void>}
+ */
+module.exports.login = async function(res, plugins, site, name, pwd){
+	
+	try{
+		db = plugins.db;
 
-const ExtractJwt = passportJWT.ExtractJwt;
-const JwtStrategy = passportJWT.Strategy;
+		let siteRec = await db.sites.find(site);
+		if(! siteRec)
+			res.status(404).json({message:"unknown site, can't login"});
 
+		let user = await db.users.findByNameOrEmail(name, site);
+		if( ! user )
+			res.status(401).json({message:"invalid name or password."});
 
-async function initPassport(app, passport){
-    let db = await app.get('plugins');
-    db = db.db;
+		if(user.checkPassword(pwd)) {
+			res.cookie("jwt", user.generateJwt());            //return the token as a cookie, this is more secure to store it client side
+			res.json({message: "ok"});
+		} else {
+			res.status(401).json({message:"invalid name or passowrd"});
+		}
+	}
+    catch(err){
+        res.status(500).json({message:err.message});
+    }
+};
 
-    let cookieExtractor = function(req) {                       //we store the key as a cookie, this is more secure for storing locally on client.
-        let token = null;
-        if (req && req.cookies) token = req.cookies['jwt'];
-        return token;
-    };
+/**
+ * Checks if the resource can be accessed by one of the specfied groups and store the result in the res object.
+ * If the group has admin rights, then
+ * If the resource does not grant access, an error result is attached to the res object.
+ * @param resource {list} a list  of allowed groups ( this list contains objects, not j ust ids) for the resource.s
+ * @param groups {list} a list of groups that is requesting access to the resource.
+ * * @param res {object} optional, express result objects
+ * @returns {bool} True if the resource grants access.
+ */
+module.exports.allowed = function(resource, groups, res){
+    try{
+        for(let item in groups){
+            if( groups[item].level == 'admin')
+                return true;
+        	if (resource.indexOf(groups[item]._id) !== -1)
+        		return true;
+		}
+		if(res)
+        	res.status(401).json({message:"resource does not allow access"});
+		return false;
+    }
+    catch(err){
+    	if(res)
+        	res.status(500).json({message:err.message});
+        return false;												//something went wrong, can't allow access.
+    }
+};
 
-    let options = {
-        passReqToCallback: true,                        // default false
-        jwtFromRequest: cookieExtractor,
-        secretOrKey: config.security.secret
-    };
-
-
-    passport.use(new JwtStrategy(options,
-        async function(req, payload, done) {
-            try{
-                let user = await db.users.find(payload.id);
-                if (!user) { return done(null, false); }
-                done(null, user);
-            }
-            catch (err) {
-                return done(err, false);
-            }
-        }
-    ));
-
-    app.use(passport.initialize());
-}
-
-module.exports = initPassport;
+/**
+ * Checks if a resource can perform a write operation (admin or editor).
+ * If the resource does not grant access, an error result is attached to the res object.
+ * @param resource {list} a list  of allowed groups for the resource.s
+ * @param groups {list} a list of groups that is requesting access to the resource.
+ * * @param res {object} optional, express result objects
+ * @returns {bool} True if the resource grants access.
+ */
+module.exports.canWrite = function(groups){
+    try{
+        //todo: implement this.
+        winston.log('error', "to be implemnted");
+        return true;
+    }
+    catch(err){
+        if(res)
+            res.status(500).json({message:err.message});
+        return false;												//something went wrong, can't allow access.
+    }
+};

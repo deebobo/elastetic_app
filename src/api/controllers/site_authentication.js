@@ -3,6 +3,8 @@
  * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
+ 
+const auth = require.main.require('../api/libs/auth');
 
 /**
  * register a new user to a specific site. If the user already exists, the site is added to the list of possible sites.
@@ -57,33 +59,13 @@ module.exports.register = async function(req, res) {
  * @returns {Promise.<void>}
  */
 module.exports.login = async function(req, res){
-    try{
-        if(req.body.name && req.body.password){
-            let name = req.body.name;
-            let password = req.body.password;
-            let db = await req.app.get('plugins');
-            db = db.db;
-
-            let site = await db.sites.find(req.params.site);
-            if(! site)
-                res.status(404).json({message:"unknown site, can't login"});
-
-            let user = await db.users.findByNameOrEmail(name, req.params.site);
-            if( ! user )
-                res.status(404).json({message:"user not found"});
-
-            if(user.checkPassword(req.body.password)) {
-                res.cookie("jwt", user.generateJwt());            //return the token as a cookie, this is more secure to store it client side
-                res.json({message: "ok"});
-            } else {
-                res.status(401).json({message:"passwords did not match"});
-            }
-        }
-        else
-            res.status(400).json({message:"missing username or password"});
-    }
-    catch(err){
-        res.status(500).json({message:err.message});
-    }
+    if(req.body.name && req.body.password){
+		let name = req.body.name;
+		let password = req.body.password;
+		
+		auth.login(res, await req.app.get('plugins'), req.params.site, name, password);
+	}
+	else
+		res.status(400).json({message:"missing username or password"});
 };
 

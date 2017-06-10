@@ -11,24 +11,29 @@ const users =    require('../routes/users');
 const groups =   require('../routes/groups');
 const auth =     require('../routes/site_authentication');
 const sites =    require('../routes/sites');
-const routes =    require('../routes/index');
+const plugins =    require('../routes/plugins');
+const pages =    require('../routes/pages');
+const index =    require('../routes/index');
+const verifiedsite =  require('../routes/verifiedsite');
 const express =  require('express');
 
 let router = express.Router({mergeParams: true});
 
 function initPaths(app, passport) {
-    app.use('/', routes);
+    app.use('/', index);
     app.use('/api', appAuth);
-	app.use('/api/sites', sites);
-    app.use(router.use('/api/:site', auth));
-    app.use(router.use('/api/:site/users', passport.authenticate('jwt', { session: false }), users));
-    app.use(router.use('/api/:site/groups', passport.authenticate('jwt', { session: false }), groups));
+	app.use('/api/site', sites);
+    app.use(router.use('/api/site/:site', auth));
 
-    // catch 404 and forward to error handler
-    app.use(function(req, res, next) {
-        let err = new Error('Not Found');
-        err.status = 404;
-        next(err);
+    app.use(router.use('/api/site/:site', passport.authenticate('jwt', { session: false }), verifiedsite));
+    app.use(router.use('/api/site/:site/user', passport.authenticate('jwt', { session: false }), users));
+    app.use(router.use('/api/site/:site/group', passport.authenticate('jwt', { session: false }), groups));
+	app.use(router.use('/api/site/:site/plugin', passport.authenticate('jwt', { session: false }), plugins));
+    app.use(router.use('/api/site/:site/page', passport.authenticate('jwt', { session: false }), pages));
+
+    // catch 404 and forward to main app
+    app.use(function(req, res) {
+        res.render('index', { title: 'Deebobo' });
     });
 
     // error handler

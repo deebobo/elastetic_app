@@ -33,7 +33,7 @@ deebobo.factory('AuthService',
         //note: email can be username or email address.
         function login(site, email, password) {
             var deferred = $q.defer();                                                  // create a new instance of deferred (do async call to server)
-            $http.post('/api/' + site + '/login', {name: email, password: password})     // send a post request to the server
+            $http.post('/api/site/' + site + '/login', {name: email, password: password})     // send a post request to the server
                 .then(function (data) {                                      // handle success
                     if(data && data.status == 200){
                         user = true;

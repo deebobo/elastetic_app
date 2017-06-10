@@ -9,7 +9,7 @@ const winston = require('winston');
 let router = express.Router({mergeParams: true});
 const ctrlSites = require.main.require('../api/controllers/sites');
 
-router.get('/', ctrlSites.list);
-router.post('/', ctrlSites.create);
+router.get('/',ctrlSites.get);
+
 
 module.exports = router;

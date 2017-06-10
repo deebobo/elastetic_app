@@ -5,11 +5,13 @@
  */
 
 const config = require.main.require('../api/libs/config').config;
-const PluginLoader = require.main.require('../api/libs/plugin_loader').PluginLoader;       //auto load/unload plugins
+const PluginLoader = require.main.require('../api/libs/plugin_loader').PluginLoader;       //auto load/unload server side plugins
 const winston = require('winston');
 const path = require("path");
 
-
+/**
+ * manages globally available server side plugins.
+ */
 class PluginManager {
 
     //create a plugin manager
@@ -30,8 +32,8 @@ class PluginManager {
         let self = this;                                            //need to make a copy of this var for the callbacks 'on', which have a different 'this' value
         this.monitor = new PluginLoader([path.join(__dirname, "plugins")]);
         this.monitor.on('pluginLoaded', function(pluginName, plugin){
-                if('getPluginType' in plugin){
-                    let info = plugin.getPluginType();
+                if('getPluginConfig' in plugin){
+                    let info = plugin.getPluginConfig();
                     info.ref = plugin;                                              //make certain we get a reference to the actual object, so we can use it later on if need be.
                     self.plugins.push(info);
                     winston.log('info', 'plugin loaded: ', pluginName);

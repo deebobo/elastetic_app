@@ -6,8 +6,8 @@
 
 
 
-deebobo.controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state',
-    function ($scope, $location, menu, $stateParams, $state) {
+deebobo.controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav',
+    function ($scope, $location, menu, $stateParams, $state,  $mdSidenav) {
 
         var aboutMeArr = ['Family', 'Location', 'Lifestyle'];
         var budgetArr = ['Housing', 'LivingExpenses', 'Healthcare', 'Travel'];
@@ -39,13 +39,16 @@ deebobo.controller('siteHomeController', ['$scope', '$location', 'menu', '$state
         }
 
 
-
+        function toggleSidenav(navid){
+            $mdSidenav(navid).toggle();
+        }
 
         //functions for menu-link and menu-toggle
         $scope.isOpen = isOpen;
         $scope.toggleOpen = toggleOpen;
         $scope.gotoPage = gotoPage;
         $scope.gotoView = gotoView;
+        $scope.toggleSidenav = toggleSidenav;
         $scope.autoFocusContent = false;
         $scope.menu = menu;
 

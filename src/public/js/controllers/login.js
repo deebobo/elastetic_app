@@ -1,7 +1,7 @@
 deebobo.controller('loginController', ['$scope', '$location', '$stateParams', 'AuthService', '$http',
   function ($scope, $location, $stateParams,  AuthService, $http) {
 
-	$http({method: 'GET',  url: '/api/sites'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+	$http({method: 'GET',  url: '/api/site'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
 		.then(function (response){
 			  $scope.sites = response.data
 		}

@@ -44,6 +44,19 @@ class Pages{
         let query = this._pages.find({site: site}, 'name createdOn groups');
         return query.exec();
     }
+	
+	/**
+     * finds a page by name for a specific site.
+     *
+     * @name .find()
+     * @param value {string}  - name of the page.
+	 * @param site {string}  - name of the site.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was found
+     */
+    find(name, site){
+        return this._pages.findOne( { name: name, site: site } ).exec();
+    }
 }
 
 module.exports = Pages;

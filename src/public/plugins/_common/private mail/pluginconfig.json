@@ -1,0 +1,16 @@
+{
+  "comment": "description for the client side of the private-mail plugin",
+  "name": "private mail",
+  "description": "only use for personal testing, not secure.",
+  "version": "0.0.1",
+  "author": "Deebobo",
+  "type": "mail",
+  "config": {
+      "scripts": [
+        "js/private_mailer_config_controllers.js"
+      ],
+      "partials": [
+        "partials/private_mailer_config_partial.html"
+      ]
+    }
+}

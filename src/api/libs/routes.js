@@ -14,6 +14,7 @@ const sites =    require('../routes/sites');
 const plugins =    require('../routes/plugins');
 const pages =    require('../routes/pages');
 const index =    require('../routes/index');
+const views =    require('../routes/views');
 const verifiedsite =  require('../routes/verifiedsite');
 const express =  require('express');
 
@@ -30,6 +31,7 @@ function initPaths(app, passport) {
     app.use(router.use('/api/site/:site/group', passport.authenticate('jwt', { session: false }), groups));
 	app.use(router.use('/api/site/:site/plugin', passport.authenticate('jwt', { session: false }), plugins));
     app.use(router.use('/api/site/:site/page', passport.authenticate('jwt', { session: false }), pages));
+    app.use(router.use('/api/site/:site/view', passport.authenticate('jwt', { session: false }), views));
 
     // catch 404 and forward to main app
     app.use(function(req, res) {

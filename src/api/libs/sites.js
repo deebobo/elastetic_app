@@ -18,7 +18,7 @@ let _homepagePluginId = null;                           //a global for this scri
 async function createHomepage(db, sitename, grps){
     if (_homepagePluginId === null)
         _homepagePluginId = await db.plugins.find("left-menu-bar homepage", "_common");
-    let page = { name: "home", site: sitename, plugin:_homepagePluginId._id, groups: grps };
+    let page = { name: "home", site: sitename, plugin:_homepagePluginId._id, groups: grps, partial: 0, controller: "siteHomeController" };
     await db.pages.add(page);
 }
 

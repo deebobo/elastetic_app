@@ -232,6 +232,8 @@ class MongoDb{
 	 * 	- site: the site to which this group applies
 	 *  - content: the content of the page
 	 *  - groups: the groups that have access to this page.
+     *  - partial: the index nr of the partial from the plugin that is the main entry point.
+     *  - controller: name of a controller to be used by this page. Can be defined in the plugin or a globaly available controller.
 	 *  - createdOn: date of record creation 
      * @private
      */
@@ -240,6 +242,8 @@ class MongoDb{
             name: String,                                        		//the email address of the person that created the site (admin)
 			site: String,
 			plugin:  {type: mongoose.Schema.Types.ObjectId, ref: 'plugins'},
+            controller: String,                                         //name of a controller to be used by this page. Can be defined in the plugin or a globaly available controller.
+            partial: Number,                                            //the index nr of the partial from the plugin that is the main entry point.
 			groups: [{type: mongoose.Schema.Types.ObjectId, ref: 'groups'}],
             createdOn:{type: Date, default: Date.now()}
         });

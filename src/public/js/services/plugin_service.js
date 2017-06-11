@@ -8,39 +8,60 @@
 
 
 deebobo.factory('pluginService',
-    ['$q', '$stateParams',  function ($q,  $stateParams) {
+    ['$q',  function ($q) {
 
         var plugins = {};                                               //stores all the already loaded js scripts.
 
         return ({                                                       // return available functions for use in controllers
-            load: load
+            load: load,
+            loadSingle: loadSingle
         });
-
 
         /**
          * make certain that the source file is loaded.
          * @param path {string} the path and name of the js file to load. The path is a relative path to the public section of the application.
          * @returns {Bluebird<R>}
          */
-        function load(path){
+        function loadSingle(path){
             if(path in plugins)
                 return plugins[path].promise;
             else {
                 var deferred = $q.defer();
-                var head = document.getElementsByTagName('head')[0];
-                var script = document.createElement('script');
-                script.type = 'text/javascript';
-                script.src = url;
 
-                // Then bind the event to the callback function.
-                // There are several events for cross browser compatibility.
-                script.onreadystatechange = function(){deferred.resolve();};
-                script.onload = function() {deferred.resolve();};
-                head.appendChild(script);                       // Fire the loading
+                var container = document.getElementsByTagName('head')[0];
+                var injector = new Injector({container: container});
 
+                injector.oncomplete = function() {
+                    deferred.resolve();
+                };
+
+                var toInject = '<script type="text/javascript" src="./plugins/' + path + '"></script>';
+                injector.insert(toInject);
                 plugins[path] = deferred;
                 return deferred.promise;
             }
+        }
+
+        /**
+         * make certain that the source file is loaded.
+         * @param input {string or List<string>} the path and name of the js file(s) to load. The path is a relative path to the public section of the application.
+         * @returns {Bluebird<R>}
+         */
+        function load(input){
+            if(typeof input === "string" || input instanceof String)
+                return loadSingle(input);
+            else{
+                var deferred = $q.defer();
+                var promises = [];
+                for(var i = 0; i < input.length; i++){
+                    promises.push(loadSingle(input[i]));
+                }
+                $q.all(promises).then(function() {
+                    deferred.resolve();
+                });
+                return deferred.promise;
+            }
+
         }
     }]
 );

@@ -12,6 +12,8 @@
         <link rel='stylesheet' href='/stylesheets/home.css' />
         <link rel='stylesheet' href='/stylesheets/menu.css' />
 
+        <link data-require="font-awesome@4.7.0" data-semver="4.7.0" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+
         <!-- Libraries -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
@@ -26,10 +28,10 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-messages.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-route-segment/1.5.1/angular-route-segment.js"></script>
         <!-- Angular Material Library -->
-        <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 
 
-
+        <script type="text/javascript" src="./js/lib/injector.js"></script>
         <script type='text/javascript' src="./js/functions.js"></script>
         <script type='text/javascript' src="./js/app.js"></script>
 
@@ -40,6 +42,7 @@
         <script type='text/javascript' src="./js/services/site_service.js"></script>
         <script type='text/javascript' src="./js/services/menu_service.js"></script>        <!--menu service must be loaded before site_home-->
         <script type='text/javascript' src="./js/services/page_service.js"></script>
+        <script type='text/javascript' src="./js/services/view_service.js"></script>
 
         <script type='text/javascript' src="./js/directives/menu_toggle.directive.js"></script>
         <script type='text/javascript' src="./js/directives/menulink.directive.js"></script>
@@ -48,9 +51,11 @@
         <script type='text/javascript' src="./js/controllers/register.js"></script>
         <!--<script type='text/javascript' src="./js/controllers/site_home.js"></script>-->
         <script type='text/javascript' src="./js/controllers/sites.js"></script>
-
-
-        <link data-require="font-awesome@4.3.0" data-semver="4.3.0" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+        <script type='text/javascript' src="./js/controllers/adminAuthorization.js"></script>
+        <script type='text/javascript' src="./js/controllers/adminEmail.js"></script>
+        <script type='text/javascript' src="./js/controllers/adminGen.js"></script>
+        <script type='text/javascript' src="./js/controllers/adminPlugins.js"></script>
+        <script type="text/javascript" src="http://localhost:4000/plugins/_common/left_menu_bar_page/js/site_home.js"></script>
     </head>
     <body >
     <ui-view ></ui-view>

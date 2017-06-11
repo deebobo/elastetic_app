@@ -55,7 +55,7 @@ class Pages{
      * was found
      */
     find(name, site){
-        return this._pages.findOne( { name: name, site: site } ).exec();
+        return this._pages.findOne( { name: name, site: site } ).populate('plugin').populate('groups').exec();
     }
 }
 

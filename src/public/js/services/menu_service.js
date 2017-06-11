@@ -7,8 +7,8 @@
 'use strict';
 
 deebobo.factory('menu', [
-    '$location',
-    function ($location) {
+    '$location', '$state','$stateParams',
+    function ($location, $state, $stateParams) {
 
         var sections = [{
             name: 'Getting Started',
@@ -20,20 +20,25 @@ deebobo.factory('menu', [
             name: 'Administration',
             type: 'toggle',
             pages: [{
-                name: 'Users',
+                name: 'General',
                 type: 'link',
-                view: 'users',
-                icon: 'fa fa-group'
+                url: 'administration.general',
+                icon: 'fa fa-wrench'
             }, {
-                name: 'Groups',
-                page: 'groups',
+                name: 'Email',
                 type: 'link',
-                icon: 'fa fa-plus'
+                url: 'administration.email',
+                icon: 'fa fa-envelope'
+            }, {
+                name: 'Authorization',
+                type: 'link',
+                url: 'authorization',
+                icon: 'fa fa-user-circle'
             }, {
                 name: 'Plugins',
-                view: 'plugins',
+                url: 'administration.plugins',
                 type: 'link',
-                icon: 'fa fa-map-marker'
+                icon: 'fa fa-plug'
             }]
         });
 
@@ -109,8 +114,6 @@ deebobo.factory('menu', [
 
         return self = {
 
-            homeController: null,                           // a reference to the object that
-
             sections: sections,
 
             /**
@@ -137,20 +140,19 @@ deebobo.factory('menu', [
                 if(view ) {
                     if(view.hasOwnProperty('view'))  //it's a regular nested view
                     {
-                        if(homeController){
-                            homeController.gotoView(view.page);
-                        }
-                        else
-                            console.log('no home controller set')
+                        $state.go( $stateParams.site + '.' + $stateParams.page + '.' + view.view);
 
                     }
                     else if(view.hasOwnProperty('page'))        //go to a different page within this site.
                     {
-                        if(homeController){
-                            homeController.gotoPage(view.page);
-                        }
-                        else
-                            console.log('no home controller set')
+                        $state.go( $stateParams.site + '.' + view.page);
+                    }
+                    else if(view.hasOwnProperty('url'))
+                    {
+                        $state.go(view.url);
+                    }
+                    else{
+                        console.log("invalid menu type");
                     }
                 }
             }

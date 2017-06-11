@@ -14,8 +14,9 @@ angular.module('common.directives', ['common.services']);
 var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap']);  //'ngMdIcons',
 
 
-deebobo.config(['$stateProvider', '$locationProvider',
-    function ($stateProvider, $locationProvider) {
+deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider',
+    function ($stateProvider, $locationProvider, $controllerProvider) {
+        deebobo.controller = $controllerProvider.register;
         $locationProvider.hashPrefix('');
         $locationProvider.html5Mode(true);                  //don't use the # in the path
         $stateProvider.state('home', {
@@ -49,16 +50,30 @@ deebobo.config(['$stateProvider', '$locationProvider',
                     }],
                 homepage: ['pageService', 'siteDetails',
                     function (pageService, siteDetails) {
-                        return pageService.get(siteDetails._id, siteDetails.homepage);
+                        var temp = pageService.get(siteDetails._id, siteDetails.homepage);
+                        return temp;
                     }]
             },
-            url: '/{site}',
-            templateUrl: function ($stateParams) {
-                return homepage.partial; // 'partials/site_home.html';
-            },
-            controllerProvider: function ($stateParams, $scope) {
-                return $scope.homepage.controller;
-            },
+            url: '/{site}',/*
+            templateProvider: ['homepage', '$q', '$http', function (homepage, $q, $http) {
+                var deferred = $q.defer();
+                $http.get("plugins/" + homepage.plugin.client.partials[homepage.partial]).then(function(data) {
+                    deferred.resolve(data.data);
+                });
+                return deferred.promise;
+            }],
+
+
+
+            controllerProvider: ['homepage','$q', 'pluginService',  function (homepage, $q, pluginService) {
+                var deferred = $q.defer();
+                pluginService.loadSingle(homepage.plugin.client.scripts[0])
+                   .then(function(){ deferred.resolve(homepage.controller); });
+                return deferred.promise;
+            }],*/
+            templateUrl: "plugins/_common/left_menu_bar_page/partials/site_home.html",
+            Controller: "siteHomeController",
+            //templateUrl: 'partials/login.html',
             access: {restricted: true}
         });
         $stateProvider.state('site.register', {
@@ -77,25 +92,49 @@ deebobo.config(['$stateProvider', '$locationProvider',
 
         $stateProvider.state('site.page', {
             resolve: {                                   //need to load
-                page: ['pageService',
-                    function (pageService) {
-                        return pageService.get($stateParams.page);
+                page: ['pageService', '$stateParams',
+                    function (pageService, $stateParams) {
+                        return pageService.get($stateParams.site, $stateParams.page);
                     }]
             },
             url: '/{page}',
-            templateUrl: function ($stateParams) {
-                return page.partial; // 'partials/site_home.html';
-            },
-            controllerProvider: function ($stateParams) {
-                return page.controller;
-            },
+            templateProvider: ['page', '$q', '$http', function (page, $q, $http) {
+                var deferred = $q.defer();
+                $http.get("plugins/" + page.plugin.client.partials[page.partial]).then(function(data) {
+                    deferred.resolve(data.data);
+                });
+                return deferred.promise;
+            }],
+            controllerProvider: ['page','$q', 'pluginService',  function (page, $q, pluginService) {
+                var deferred = $q.defer();
+                pluginService.loadSingle(page.plugin.client.scripts[0])
+                    .then(function(){ deferred.resolve(page.controller); });
+                return deferred.promise;
+            }],
             access: {restricted: false}
         });
 
         $stateProvider.state('site.page.view', {
+            resolve: {                                   //need to load
+                view: ['viewService', '$stateParams',
+                    function (viewService, $stateParams) {
+                        return viewService.get($stateParams.site, $stateParams.view);
+                    }]
+            },
             url: '/{view}',
-            templateUrl: 'partials/view.html',
-            controller: 'ViewController',
+            templateProvider: ['view', '$q', '$http', function (view, $q, $http) {
+                var deferred = $q.defer();
+                $http.get("plugins/" + view.client.partial).then(function(data) {
+                    deferred.resolve(data.data);
+                });
+                return deferred.promise;
+            }],
+            controllerProvider: ['view','$q', 'pluginService',  function (view, $q, pluginService) {
+                var deferred = $q.defer();
+                pluginService.loadSingle(view.plugin.client.scripts[0])
+                    .then(function(){ deferred.resolve(view.controller); });
+                return deferred.promise;
+            }],
             access: {restricted: false}
         });
 
@@ -104,6 +143,41 @@ deebobo.config(['$stateProvider', '$locationProvider',
             controller: 'logoutController',
             access: {restricted: true}
         });
+
+        $stateProvider.state('administration', {
+            url: '/administration',
+            redirectTo: 'administration.general',
+            access: {restricted: true}
+        });
+
+        $stateProvider.state('administration.general', {
+            url: '/general',
+            controller: 'adminGeneralController',
+            templateUrl: 'partials/adminGen.html',
+            access: {restricted: true}
+        });
+
+        $stateProvider.state('administration.email', {
+            url: '/email',
+            controller: 'AdminEmailController',
+            templateUrl: 'partials/adminEmail.html',
+            access: {restricted: true}
+        });
+
+        $stateProvider.state('administration.authorization', {
+            url: '/authorization',
+            controller: 'AdminAuthorizationController',
+            templateUrl: 'partials/adminAuthorization.html',
+            access: {restricted: true}
+        });
+
+        $stateProvider.state('administration.plugins', {
+            url: '/plugins',
+            controller: 'AdminPluginsController',
+            templateUrl: 'partials/adminPlugins.html',
+            access: {restricted: true}
+        });
+
         $stateProvider.state('otherwise', {
             url: "*path",
             templateUrl: 'partials/error-not-found.html'
@@ -116,6 +190,10 @@ deebobo.run(function ($rootScope, $location, $state, AuthService) {
             if ((!next.access || next.access.restricted) && !AuthService.isLoggedIn()) {
                 $location.path('/login');
                 $state.reload();
+            }
+            if(next.redirectoTo){
+                event.preventDefault();
+                $state.go(next.redirectTo, current, {location: 'replace'})
             }
         });
 });

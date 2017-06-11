@@ -6,7 +6,7 @@
 
 
 
-deebobo.controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav',
+angular.module("deebobo").controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav',
     function ($scope, $location, menu, $stateParams, $state,  $mdSidenav) {
 
         var aboutMeArr = ['Family', 'Location', 'Lifestyle'];
@@ -55,3 +55,5 @@ deebobo.controller('siteHomeController', ['$scope', '$location', 'menu', '$state
         $scope.sitename = $stateParams.site;
 
     }]);
+
+console.log("working");

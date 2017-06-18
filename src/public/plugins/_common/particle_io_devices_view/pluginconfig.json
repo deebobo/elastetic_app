@@ -1,15 +1,16 @@
 {
-  "comment": "description for the particle.io plugin",
+  "comment": "description for the particle.io devices view plugin",
   "name": "particle_io",
-  "description": "connection to the particle.io cloud.",
+  "description": "view all the devices on the particle.io cloud.",
   "version": "0.0.1",
   "author": "Deebobo",
-  "type": "connection",
-  "config": {
+  "type": "view",
+  "client": {
       "scripts": [
+        "js/particle_io_devices_view.js"
       ],
       "partials": [
-        "partials/particle_io_config.html"
+        "partials/particle_io_devices_view.html"
       ]
     }
 }

@@ -1,0 +1,13 @@
+<md-list ng-cloak>
+
+    <md-subheader class="md-no-sticky">Particle.io devices</md-subheader>
+
+    <md-list-item ng-repeat="device in devices" ng-click="goToDevice(device, $event)" class="noright">
+        <img alt="products[device.product_id].name" ng-src="products[device.product_id].url" class="md-avatar" />
+        <p>{{ device.name }}</p>
+        <md-checkbox class="md-secondary" ng-model="person.selected"></md-checkbox>
+        <input type="radio" ng-model="device.connected" readonly class="md-secondary md-hue-3"/>
+        <md-button class="md-secondary md-hue-3">more</md-button>
+    </md-list-item>
+
+</md-list>

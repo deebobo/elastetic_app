@@ -1,0 +1,62 @@
+<h1>General configuration</h1>
+<md-tabs md-dynamic-height md-border-bottom>
+	<md-tab label="site">
+        <md-content class="md-padding">
+			<form ng-submit="submitSiteDetails(site)">
+				<label for="siteTitle" >site title: </label><br />
+				<input type="text" id="siteTitle" ng-model="site.title">
+				<md-tooltip >The title for the site</md-tooltip>
+				</input>
+				<br />
+				
+				<label for="adminEmail" >admin email: </label><br />
+				<input type="text" id="adminEmail" ng-model="site.contactEmail">
+				<md-tooltip >The email address of the administrator for this site.</md-tooltip>
+				</input>
+				<br />
+				
+				<label for="allowRegistration" >allow registration: 
+					<input type="checkbox" ng-model="site.allowRegistration" id="allowRegistration" />
+					<md-tooltip >Determines if users can register on this site or only through invitation.</md-tooltip>
+				</label>
+				<br />
+				
+				<label for="requestEmailConfirmation" >request email confirmation: 
+					<input type="checkbox" ng-model="site.requestEmailConfirmation" id="requestEmailConfirmation" />
+					<md-tooltip >Determines if users can register on this site or only through invitation.</md-tooltip>
+				</label>
+				<br />
+				
+				<label for="sendHelloEmail" >send hello email: 
+					<input type="checkbox" ng-model="site.sendHelloEmail" id="sendHelloEmail"/>
+					<md-tooltip >when true, a hello email is sent to newly registered users (if the email template exists).</md-tooltip>
+				</label>
+				<br />
+				
+				<label for="viewGroup" >view group</label> <br />
+                <select id="viewGroup" ng-model="site.viewGroup" ng-options="x.name for x in viewGroups" >
+                </select><br /> <br />
+				
+				<label for="homepage" >homepage</label> <br />
+                <select id="homepage" ng-model="site.homepage" ng-options="x.name for x in pages" >
+                </select><br /> <br />
+				
+				<input type="submit" value="Submit" />
+			</form>
+        </md-content>
+    </md-tab>
+	
+	<md-tab label="appearance">
+        <md-content class="md-padding">
+          <form ng-submit="submitAppearance()">
+			<label for="skin" >skin:</label> <br />
+                <select id="skin" ng-model="appearance.skin" ng-options="x.name for x in skins" >
+                </select><br /> <br />
+			<input type="submit" value="Submit" />
+			<md-button ng-click="preview()">preview</md-button>
+			<md-button ng-click="upload()">upload new skin</md-button>
+		  </form>
+        </md-content>
+    </md-tab>
+	
+</md-tabs>

@@ -22,21 +22,27 @@ deebobo.factory('menu', [
             pages: [{
                 name: 'General',
                 type: 'link',
-                url: 'administration.general',
+                url: 'site.general',
+                //url: 'site.page',
                 icon: 'fa fa-wrench'
             }, {
                 name: 'Email',
                 type: 'link',
-                url: 'administration.email',
+                url: 'site.email',
                 icon: 'fa fa-envelope'
             }, {
                 name: 'Authorization',
                 type: 'link',
-                url: 'authorization',
+                url: 'site.authorization',
                 icon: 'fa fa-user-circle'
             }, {
+                name: 'connections',
+                url: 'site.connections',
+                type: 'link',
+                icon: 'fa fa-cloud'
+            }, {
                 name: 'Plugins',
-                url: 'administration.plugins',
+                url: 'site.plugins',
                 type: 'link',
                 icon: 'fa fa-plug'
             }]
@@ -117,6 +123,11 @@ deebobo.factory('menu', [
             sections: sections,
 
             /**
+             * placeholder for a callback function called when the user has selected a menu item
+             */
+            onselect: null,
+
+            /**
              * for opening/closing groups
              */
             toggleSelectSection: function (section) {
@@ -140,21 +151,25 @@ deebobo.factory('menu', [
                 if(view ) {
                     if(view.hasOwnProperty('view'))  //it's a regular nested view
                     {
-                        $state.go( $stateParams.site + '.' + $stateParams.page + '.' + view.view);
+                        $state.go( 'site.page.view', { view: view.view});
 
                     }
                     else if(view.hasOwnProperty('page'))        //go to a different page within this site.
                     {
-                        $state.go( $stateParams.site + '.' + view.page);
+                        $state.go( 'site.page', {page: view.page});
                     }
                     else if(view.hasOwnProperty('url'))
                     {
-                        $state.go(view.url);
+                        $state.go(view.url, {site: $stateParams.site});
                     }
                     else{
                         console.log("invalid menu type");
+                        return;
                     }
+                    if(self.onselect)
+                        self.onselect();
                 }
+
             }
         };
     }]

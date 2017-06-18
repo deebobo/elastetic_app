@@ -14,7 +14,22 @@ module.exports.get = async function (req, res, next) {
     try {
         let db = await req.app.get('plugins');
         db = db.db;
-        plugins = await db.plugins.list(req.params.site);
+        let recs = await db.plugins.list(req.params.site);
+        res.json(recs);
+    }
+    catch (err) {
+        res.status(400).json({message: err});
+    }
+};
+
+/* GET all plugins for current site. 
+ for file upload: https://howtonode.org/really-simple-file-uploads
+ */
+module.exports.getForType = async function (req, res, next) {
+    try {
+        let db = await req.app.get('plugins');
+        db = db.db;
+        plugins = await db.plugins.listForType(req.params.site, req.params.type, true);
         res.json(plugins);
     }
     catch (err) {
@@ -62,12 +77,11 @@ module.exports.put = async function (req, res, next) {
 /* uninstall a plugin. */
 module.exports.delete = async function (req, res) {
     try {
-        pluginLib.uninstall(req.params.site, req.body.name);			//req.files.plugin -> plugin is the fieldname of the form
-        if (pluginRec) {
-            let db = await req.app.get('plugins');
+        if (pluginLib.uninstall(req.params.site, req.body.name)) {			;			//req.files.plugin -> plugin is the fieldname of the form
+			let db = await req.app.get('plugins');
             db = db.db;
             await db.plugins.delete(req.body.name, req.params.site);
-            res.status(200).json(pluginRec);
+            res.status(200).json({"mesage": 'ok'});
         }
     }
     catch (err) {

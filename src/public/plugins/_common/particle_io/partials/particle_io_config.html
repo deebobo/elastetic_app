@@ -1,0 +1,5 @@
+<md-input-container flex layout-fill style="margin-top: 20px;">
+    <label for="particleToken" >particle.io token </label>
+    <input type="text" id="particleToken" ng-model="connection.content.token" ng-change="connection.needsSave = true" flex></input>
+    <md-tooltip >The access token for particle.io cloud</md-tooltip>
+</md-input-container>

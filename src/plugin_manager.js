@@ -26,6 +26,23 @@ class PluginManager {
     load(){
         this._loadDb();
     }
+	
+	/** returns the mail handler plugin for the specified site, if there is any.
+	*/
+	async getMailHandlerFor(site){
+		if(this.db != null){
+			try{
+				let res = await this.db.plugins.listForType("mail");
+				if(res && res.length >= 1)
+					return res[0];
+			}
+			catch(err){
+				winston.log('error', 'request for email plugin failed:', err);
+			}
+		}
+		winston.log('error', 'request for email plugin not satisfied');
+		return null;
+	}
 
     //initialize the monitor that keeps track of when a plugin is added or removed.
     initPluginMonitor(){

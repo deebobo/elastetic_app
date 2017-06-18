@@ -1,0 +1,80 @@
+<md-button class="md-primary"
+           ng-click="addConnection()">Add connection</md-button>
+
+<md-list ng-cloak  layout="column">
+    <md-list-item class="secondary-button-padding" ng-repeat="connection in connections" layout-align="center stretch" layout-fill layout="column">
+
+
+        <form ng-submit="save(connection)" layout-align="center stretch" layout-fill layout="column" layout-padding="10%">
+
+
+            <div layout="row" layout-align="start center">
+                <div ng-if="connection.isOpen == true" flex="95">
+                    <input type="text" ng-model="connection.name" class="form-control" ng-change="connection.needsSave = true" ng-click="$event.stopPropagation()" />
+                </div>
+
+                <md-button class="md-button-toggle"
+                           ng-click="connection.isOpen = !connection.isOpen"
+                           aria-controls="connections-btn-{{connection.name}}"
+                           aria-expanded="connection.isOpen = !connection.isOpen"
+                           flex
+                           style="min-width:30px"
+                           >
+                    <div flex layout="row"
+                         layout-align="end center">
+                        <div ng-if="!connection.isOpen" flex="95" >
+                            {{connection.name}}
+                        </div>
+
+                        <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
+                              ng-class="{'toggled' : connection.isOpen}" ></span>
+                    </div>
+
+                </md-button>
+            </div>
+
+
+
+
+
+            <div ng-show="connection.isOpen == true" layout="column">
+
+                <select class="form-control"  ng-model="connection.plugin" ng-options="x.name + '(' + x.description + ')' for x in connectionPlugins" required ng-change="pluginChanged(connection)"></select>
+
+                <ng-include src="connection.template" flex></ng-include>
+
+
+                <div layout="row" layout-align="end center">
+                    <md-button class="md-primary"
+                               ng-click="delete(connection, $event)">delete</md-button>
+
+                    <input type="submit" value="save"
+                           ng-if="connection.needsSave === true"/>
+                </div>
+
+            </div>
+        </form>
+
+
+
+        <!--
+
+
+
+
+
+            <md-button class="md-button-toggle"
+                       ng-click="toggleConnectionDetails()"
+                       aria-controls="connections-btn-{{connection.name}}"
+                       flex layout="row"
+                       aria-expanded="{{connection.isOpen = !connection.isOpen}}">
+
+
+            </md-button>
+
+        -->
+
+    </md-list-item>
+
+</md-list>
+

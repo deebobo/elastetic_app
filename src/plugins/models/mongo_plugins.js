@@ -43,16 +43,6 @@ class Plugins{
         return this._plugins.remove( { name: value, site: site } ).exec();
     }
 
-	/**
-     * finds a single site by it's name
-     *
-     * @param name {string}  - name of the site.
-     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
-     * was found
-     */
-    find(name){
-        return this._plugins.findOne({_id: name}).exec();
-    }
 
 	/** Get a list of all the available plugins for a site.
 	* @return {Promise}] a promise to perform async operations with. The result of the promise is the list of plugins
@@ -61,6 +51,19 @@ class Plugins{
         let query = this._plugins.find({site: site});
         return query.exec();
     }
+	
+	/** Get a list of all the available plugins for a site of a particular type.
+	* @return {Promise}] a promise to perform async operations with. The result of the promise is the list of plugins
+	*/
+    listForType(site, type, includeCommon = false){
+        let query = null;
+        if(includeCommon)
+            query = this._plugins.find({site: {$in: [site, '_common']} , type: type});
+        else
+            query = this._plugins.find({site: site, type: type});
+        return query.exec();
+    }
+
 	
 	/**
      * finds a plugin by name for a specific site.

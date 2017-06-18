@@ -59,6 +59,24 @@ class Users{
     findByNameOrEmail(value, site){
         return this._users.findOne( { $or: [{ name: value, site: site }, {email: value, site: site}]} ).populate('groups').exec();
     }
+	
+	/** adds a user to the specified group
+	 * @param user {string}  - id of the user.
+	 * @param group {string}  - id of the group.
+	*/
+	addGroup(user, group){
+		return this._users.findByIdAndUpdate(user,
+											{$push: {"groups": group}},
+											{safe: true, upsert: true, new : true});
+	}
+	
+	/** removes the user from the specified group
+	 * @param user {string}  - id of the user.
+	 * @param group {string}  - id of the group.
+	*/
+	removeGroup(user, group){
+		return this._users.findByIdAndUpdate(user, {$pullAll: {"groups": group}});
+	}
 }
 
 module.exports = Users;

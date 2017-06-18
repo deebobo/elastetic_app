@@ -14,9 +14,9 @@ angular.module('common.directives', ['common.services']);
 var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap']);  //'ngMdIcons',
 
 
-deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider',
-    function ($stateProvider, $locationProvider, $controllerProvider) {
-        deebobo.controller = $controllerProvider.register;
+deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide',
+    function ($stateProvider, $locationProvider, $controllerProvider, $provide) {
+        deebobo.controller = $controllerProvider.register;				//needed for dynamically loading controllers
         $locationProvider.hashPrefix('');
         $locationProvider.html5Mode(true);                  //don't use the # in the path
         $stateProvider.state('home', {
@@ -54,7 +54,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider',
                         return temp;
                     }]
             },
-            url: '/{site}',/*
+            url: '/{site}',
             templateProvider: ['homepage', '$q', '$http', function (homepage, $q, $http) {
                 var deferred = $q.defer();
                 $http.get("plugins/" + homepage.plugin.client.partials[homepage.partial]).then(function(data) {
@@ -70,10 +70,11 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider',
                 pluginService.loadSingle(homepage.plugin.client.scripts[0])
                    .then(function(){ deferred.resolve(homepage.controller); });
                 return deferred.promise;
-            }],*/
-            templateUrl: "plugins/_common/left_menu_bar_page/partials/site_home.html",
-            Controller: "siteHomeController",
+            }],
+            //templateUrl: "plugins/_common/left_menu_bar_page/partials/site_home.html",
+            //Controller: "siteHomeController",
             //templateUrl: 'partials/login.html',
+            //controller: 'siteHomeController',
             access: {restricted: true}
         });
         $stateProvider.state('site.register', {
@@ -82,11 +83,72 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider',
             controller: 'siteRegisterController',
             access: {restricted: false}
         });
+
         $stateProvider.state('site.login', {
             url: '/login',
             templateUrl: 'partials/site_login.html',
             controller: 'siteLoginController',
             access: {restricted: false}
+        });
+
+
+
+
+        $stateProvider.state('site.general', {
+            url: '/administration/general',
+            views:{
+                content: {
+                    controller: 'adminGeneralController',
+                    templateUrl: 'partials/admin_gen.html',
+                }
+            },
+            access: {restricted: true}
+        });
+
+        $stateProvider.state('site.connections', {
+            url: '/administration/connections',
+            views:{
+                content: {
+                    controller: 'adminConnectionsController',
+                    templateUrl: 'partials/admin_connections.html',
+                }
+            },
+            access: {restricted: true}
+        });
+
+
+
+        $stateProvider.state('site.email', {
+            url: '/administration/email',
+            views:{
+                content:{
+                    controller: 'AdminEmailController',
+                    templateUrl: 'partials/admin_email.html',
+                }
+            },
+            access: {restricted: true}
+        });
+
+        $stateProvider.state('site.authorization', {
+            url: '/administration/authorization',
+            views:{
+                content:{
+                    controller: 'AdminAuthorizationController',
+                    templateUrl: 'partials/admin_authorization.html'
+                }
+            },
+            access: {restricted: true}
+        });
+
+        $stateProvider.state('site.plugins', {
+            url: '/administration/plugins',
+            views:{
+                content:{
+                    controller: 'AdminPluginsController',
+                    templateUrl: 'partials/admin_plugins.html'
+                }
+            },
+            access: {restricted: true}
         });
 
 
@@ -122,19 +184,23 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider',
                     }]
             },
             url: '/{view}',
-            templateProvider: ['view', '$q', '$http', function (view, $q, $http) {
-                var deferred = $q.defer();
-                $http.get("plugins/" + view.client.partial).then(function(data) {
-                    deferred.resolve(data.data);
-                });
-                return deferred.promise;
-            }],
-            controllerProvider: ['view','$q', 'pluginService',  function (view, $q, pluginService) {
-                var deferred = $q.defer();
-                pluginService.loadSingle(view.plugin.client.scripts[0])
-                    .then(function(){ deferred.resolve(view.controller); });
-                return deferred.promise;
-            }],
+            views:{
+                content:{
+                    templateProvider: ['view', '$q', '$http', function (view, $q, $http) {
+                        var deferred = $q.defer();
+                        $http.get("plugins/" + view.client.partial).then(function(data) {
+                            deferred.resolve(data.data);
+                        });
+                        return deferred.promise;
+                    }],
+                    controllerProvider: ['view','$q', 'pluginService',  function (view, $q, pluginService) {
+                        var deferred = $q.defer();
+                        pluginService.loadSingle(view.plugin.client.scripts[0])
+                            .then(function(){ deferred.resolve(view.controller); });
+                        return deferred.promise;
+                    }]
+                }
+            },
             access: {restricted: false}
         });
 
@@ -144,44 +210,21 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider',
             access: {restricted: true}
         });
 
-        $stateProvider.state('administration', {
-            url: '/administration',
-            redirectTo: 'administration.general',
-            access: {restricted: true}
-        });
-
-        $stateProvider.state('administration.general', {
-            url: '/general',
-            controller: 'adminGeneralController',
-            templateUrl: 'partials/adminGen.html',
-            access: {restricted: true}
-        });
-
-        $stateProvider.state('administration.email', {
-            url: '/email',
-            controller: 'AdminEmailController',
-            templateUrl: 'partials/adminEmail.html',
-            access: {restricted: true}
-        });
-
-        $stateProvider.state('administration.authorization', {
-            url: '/authorization',
-            controller: 'AdminAuthorizationController',
-            templateUrl: 'partials/adminAuthorization.html',
-            access: {restricted: true}
-        });
-
-        $stateProvider.state('administration.plugins', {
-            url: '/plugins',
-            controller: 'AdminPluginsController',
-            templateUrl: 'partials/adminPlugins.html',
-            access: {restricted: true}
-        });
-
         $stateProvider.state('otherwise', {
             url: "*path",
             templateUrl: 'partials/error-not-found.html'
         });
+		
+		
+		$provide.decorator("$exceptionHandler", function($delegate, $injector){				//error handling from rootscope, see: http://odetocode.com/blogs/scott/archive/2014/04/21/better-error-handling-in-angularjs.aspx
+			return function(exception, cause){
+				var $rootScope = $injector.get("$rootScope");
+				if($rootScope && typeof $rootScope.addError === "function")
+				    $rootScope.addError({message:"Exception", reason:exception});
+				$delegate(exception, cause);
+			};
+    });
+		
     }]);
 
 deebobo.run(function ($rootScope, $location, $state, AuthService) {
@@ -196,6 +239,15 @@ deebobo.run(function ($rootScope, $location, $state, AuthService) {
                 $state.go(next.redirectTo, current, {location: 'replace'})
             }
         });
+    $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+        console.log(error);
+        })
+
+    $rootScope.addError = function(message){
+        //todo: add error message to list
+        console.log("todo: add error message to list");
+    }
 });
 
 deebobo.run(function ($rootScope) {

@@ -17,6 +17,7 @@ const pagesModel = require.main.require('../plugins/models/mongo_pages');
 const siteCollectionModel = require.main.require('../plugins/models/mongo_site_collection');
 const emailTemplatesModel = require.main.require('../plugins/models/mongo_email_templates');
 const pluginsModel = require.main.require('../plugins/models/mongo_plugins');
+const connectionsModel = require.main.require('../plugins/models/mongo_connections');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
@@ -69,6 +70,7 @@ class MongoDb{
 		this._createPluginSiteData();
 		this._createEmailTemplates();
 		this._createPlugins();
+		this.connections = new connectionsModel();
     }
 
     /**
@@ -96,6 +98,8 @@ class MongoDb{
             salt: {type: String, required: true},
             site: {type: String, required: true},
             createdOn: {type: Date, default: Date.now()},
+			accountState: {type: String, enum: ['created', 'verified', 'pwdReset'], default: 'created'},	//current state of the account, so we know if verification is needed or pwd has been reset
+			verificationToken: String,																		//if verification or pwd reset is needed, this field is filled in.
             groups: [{type: mongoose.Schema.Types.ObjectId, ref: 'groups'}]
         });
         usersSchema.methods.encryptPassword = function(password) {
@@ -211,6 +215,7 @@ class MongoDb{
     _createSites(){
         let sitesSchema = new mongoose.Schema({
             _id: {type: String},
+			title: String,												//titelf for the site
             contactEmail: String,                                       //the email address of the person that created the site (admin)
             allowRegistration: {type: Boolean, default: true},          //determines if users can register on this site or only through invitation.
 			requestEmailConfirmation: {type: Boolean, default: true},	//when true, newly registered users have to confirm their email address by clicking on a link found in a mail (if the email template exists).

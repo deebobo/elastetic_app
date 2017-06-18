@@ -14,7 +14,9 @@ const sites =    require('../routes/sites');
 const plugins =    require('../routes/plugins');
 const pages =    require('../routes/pages');
 const index =    require('../routes/index');
-const views =    require('../routes/views');
+const connections =    require('../routes/connections');
+//const views =    require('../routes/views');
+const emailTemplates =    require('../routes/email_templates');
 const verifiedsite =  require('../routes/verifiedsite');
 const express =  require('express');
 
@@ -31,7 +33,9 @@ function initPaths(app, passport) {
     app.use(router.use('/api/site/:site/group', passport.authenticate('jwt', { session: false }), groups));
 	app.use(router.use('/api/site/:site/plugin', passport.authenticate('jwt', { session: false }), plugins));
     app.use(router.use('/api/site/:site/page', passport.authenticate('jwt', { session: false }), pages));
-    app.use(router.use('/api/site/:site/view', passport.authenticate('jwt', { session: false }), views));
+    app.use(router.use('/api/site/:site/connection', passport.authenticate('jwt', { session: false }), connections));
+    //app.use(router.use('/api/site/:site/view', passport.authenticate('jwt', { session: false }), views));
+	app.use(router.use('/api/site/:site/templates/email', passport.authenticate('jwt', { session: false }), emailTemplates));
 
     // catch 404 and forward to main app
     app.use(function(req, res) {

@@ -1,0 +1,54 @@
+<h1>plugins</h1>
+
+<md-tabs md-dynamic-height md-border-bottom>
+
+	<md-tab label="installed">
+        <md-content class="md-padding">
+			<md-list ng-cloak>
+				<md-list-item class="secondary-button-padding" ng-repeat="plugin in installed" >
+					
+					<md-button class="md-button-toggle"
+							   ng-click="togglePluginDetails()"
+							   aria-controls="plugin-btn-{{plugin.name}}"
+							   flex layout="row"
+							   aria-expanded="{{isOpen()}}">
+						{{plugin.name}}
+						<span aria-hidden="true" class=" pull-right fa fa-chevron-down md-toggle-icon"
+							  ng-class="{'toggled' : isOpen()}"></span>
+						  
+						
+					</md-button>
+					
+				</md-list-item>
+			
+			</md-list>
+		  
+		  
+        </md-content>
+    </md-tab>
+	
+	
+	<md-tab label="available">
+        <md-content class="md-padding">
+			<md-list ng-cloak>
+				<md-list-item class="secondary-button-padding" ng-repeat="plugin in available" ">
+					
+					<md-button class="md-button-toggle"
+							   ng-click="toggleGroupDetails()"
+							   aria-controls="plugin-btn-{{plugin.name}}"
+							   flex layout="row"
+							   aria-expanded="{{isOpen()}}">
+						{{plugin.name}}
+						<span aria-hidden="true" class=" pull-right fa fa-chevron-down md-toggle-icon"
+							  ng-class="{'toggled' : isOpen()}"></span>
+						  
+						
+					</md-button>
+					
+				</md-list-item>
+			
+			</md-list>
+        </md-content>
+    </md-tab>
+
+</md-tabs>

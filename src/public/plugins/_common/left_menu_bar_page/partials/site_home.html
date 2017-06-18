@@ -30,7 +30,7 @@
 				</div>
 			</md-toolbar>
 			<md-content role="navigation">
-				<form>
+
 					<ul class="side-menu">
 						<li ng-repeat="section in menu.sections" class="parent-list-item"
 							ng-class="{'parentActive' : isSectionSelected(section)}">
@@ -42,15 +42,15 @@
 							<menu-toggle section="section" ng-if="section.type === 'toggle'"></menu-toggle>
 						</li>
 					</ul>
-				</form>
+
 
 			</md-content>
 
 		</md-sidenav>
 
 		<md-content flex>
-			<ui-view name="content"></ui-view>
-
+			<!--<ui-view name="content"></ui-view>-->
+			<div ui-view="content" flex></div>
 		</md-content>
 
 

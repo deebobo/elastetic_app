@@ -38,6 +38,16 @@ class Groups{
         let query = this._groups.find({site: site});
         return query.exec();
     }
+	
+	/** Returns all the groups for a particular site.
+	* @param {string} `site` The name of the site to list the groups for.
+	* @param {string} `level` The name of the level that the groups need to belong too..
+	* @return {Promise}] a promise to perform async operations with. The result of the promise is the list of groups
+	*/
+    listForLevel(site, level){
+        let query = this._groups.find({site: site, level: level});
+        return query.exec();
+    }
 }
 
 module.exports = Groups;

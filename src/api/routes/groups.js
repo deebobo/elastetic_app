@@ -1,17 +1,10 @@
 var express = require('express');
 var router = express.Router({mergeParams: true});
+const ctrlGroups = require.main.require('../api/controllers/groups');
 
-/* GET users listing. */
-router.get('/', async function(req, res, next) {
-    try{
-        let db = await req.app.get('plugins');
-        db = db.db;
-        groups = await db.groups.list(req.params.site);
-        res.json(groups);
-    }
-    catch(err){
-        return next(err);
-    }
-});
+router.get('/', ctrlGroups.list);
+router.get('/view', ctrlGroups.listViews);
+router.get('/:group', ctrlGroups.getGrp);
+router.post('/', ctrlGroups.create);
 
 module.exports = router;

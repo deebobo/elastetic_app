@@ -17,7 +17,7 @@ module.exports.get = async function(req, res)
             if(auth.allowed(item.groups, req.user.groups))
                 allowed.push(item);
         }
-        res.status(200).res.json(allowed);
+        res.status(200).json(allowed);
     }
     catch(err){
         res.status(500).json({message:err.message});
@@ -31,8 +31,14 @@ module.exports.getPage = async function(req, res) {
         let db = await req.app.get('plugins');
         db = db.db;
         page = await db.pages.find(req.params.page, req.params.site);
-        if(auth.allowed(page.groups, req.user.groups, res))         //auth will set the error message in res if there is a problem.
-            res.status(200).json(page);
+        if(page) {
+            if (auth.allowed(page.groups, req.user.groups, res))         //auth will set the error message in res if there is a problem.
+                res.status(200).json(page);
+            else
+                res.status(401).json({message: "unauthorized request"});
+        }
+        else
+            res.status(404).json({message: "record not found"});
     }
     catch(err){
         res.status(500).json({message:err.message});
@@ -47,7 +53,7 @@ module.exports.create = async function(req, res) {
             db = db.db;
             let rec = req.body;
             rec.site = req.params.site;
-            let res = await db.pages.add(site);
+            let res = await db.pages.add(rec);
             res.status(200).json(res);
         }
     }

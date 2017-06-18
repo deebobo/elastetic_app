@@ -1,0 +1,15 @@
+{
+  "comment": "description for the particle.io plugin",
+  "name": "particle_io",
+  "description": "connection to the particle.io cloud.",
+  "version": "0.0.1",
+  "author": "Deebobo",
+  "type": "connection",
+  "config": {
+      "scripts": [
+      ],
+      "partials": [
+        "partials/particle_io_config.html"
+      ]
+    }
+}

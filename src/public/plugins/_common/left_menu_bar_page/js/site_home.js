@@ -6,13 +6,10 @@
 
 
 
-angular.module("deebobo").controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav',
-    function ($scope, $location, menu, $stateParams, $state,  $mdSidenav) {
+angular.module("deebobo").controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', '$rootScope',
+//deebobo.controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', '$rootScope',
+    function ($scope, $location, menu, $stateParams, $state,  $mdSidenav, $rootScope) {
 
-        var aboutMeArr = ['Family', 'Location', 'Lifestyle'];
-        var budgetArr = ['Housing', 'LivingExpenses', 'Healthcare', 'Travel'];
-        var incomeArr = ['SocialSecurity', 'Savings', 'Pension', 'PartTimeJob'];
-        var advancedArr = ['Assumptions', 'BudgetGraph', 'AccountBalanceGraph', 'IncomeBalanceGraph'];
 
         var page = {name: "home"};                                                          //the data for the page that is shown at the site home.
 
@@ -30,30 +27,34 @@ angular.module("deebobo").controller('siteHomeController', ['$scope', '$location
             menu.toggleSelectSection(section);
         }
 
-        function gotoPage(page){
-            $state.go( $scope.sitename + '.' + page);
-        }
-
-        function gotoView(view){
-            $state.go( $scope.sitename + '.' + page.name + '.' + view);
-        }
-
 
         function toggleSidenav(navid){
             $mdSidenav(navid).toggle();
         }
 
+        /*function gotoPage(page){
+            $state.go( $scope.sitename + '.' + page);
+        }
+
+        function gotoView(view){
+            $state.go( $scope.sitename + '.' + page.name + '.' + view);
+        }*/
+
+
         //functions for menu-link and menu-toggle
         $scope.isOpen = isOpen;
         $scope.toggleOpen = toggleOpen;
-        $scope.gotoPage = gotoPage;
-        $scope.gotoView = gotoView;
+        //$scope.gotoPage = gotoPage;
+        //$scope.gotoView = gotoView;
         $scope.toggleSidenav = toggleSidenav;
         $scope.autoFocusContent = false;
         $scope.menu = menu;
 
         $scope.sitename = $stateParams.site;
 
+        //when the state has changed, make certain that the menu closes again.
+        menu.onselect = function(){$mdSidenav('left').close();};
+
     }]);
 
-console.log("working");
+//console.log("working");

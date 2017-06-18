@@ -4,16 +4,15 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-deebobo.controller('sitesController', ['$scope', '$location', 'siteService', '$http',
-    function ($scope, $location, siteService, $http) {
+deebobo.controller('sitesController', ['$scope', '$location', 'siteService', '$http','messages',
+    function ($scope, $location, siteService, $http, messages) {
 
         $http({method: 'GET', url: '/api/site'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
                     $scope.sites = response.data
                 },
                 function (response) {
-                    $scope.error = true;
-                    $scope.errorMessage = response.data;
+					messages.error(response.data);
                 }
                 );
 

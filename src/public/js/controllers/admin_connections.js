@@ -83,7 +83,7 @@ deebobo.controller('adminConnectionsController',
                         );
                 }
                 else {
-                    $http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/connection', data: connection})      //get the list of groups that can view
+                    $http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/connection/' + connection._id, data: connection})      //get the list of groups that can view
                         .then(function (response) {
                                 connection.needsSave = false;
                             },

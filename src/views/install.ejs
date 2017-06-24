@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html ng-app="deebobo">
+    <head>
+        <title>installation</title>
+
+
+    </head>
+    <body flex>
+    <form action="/install" method="post"> 
+		
+		admin user name:<br>
+		<input type="text" name="name" value="admin"><br>
+		admin email address:<br>
+		<input type="email" name="email" ><br>
+		admin password:<br>
+		<input type="password" name="password" ><br>
+		db type to use:<br>
+		<input type="text" name="db" value="mongodb" ><br>
+		uri to db:<br>
+		<input type="text" name="dbpath" value="mongodb://localhost/deebobo" ><br>
+		
+		<br>
+		<input type="submit" value="Submit">
+	
+	</form>
+
+
+
+    </body>
+</html>

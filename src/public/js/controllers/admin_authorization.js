@@ -5,14 +5,20 @@
  */
 
 deebobo.controller('AdminAuthorizationController',
-    ['$scope', '$mdDialog',
-        function ($scope, $mdDialog) {
+    ['$scope', '$http', 'messages', '$mdDialog', '$stateParams',
+        function ($scope, $http, messages, $mdDialog, $stateParams) {
 
+			//scope vars
+            //--------------------------------------------------------------------------------------
+
+            $scope.groups = [];
+			$scope.users = [];
+		
             //get data from site for scope
 			//--------------------------------------------------------------------------------------
             $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/user'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
-                    $scope.users = response.data;
+					$scope.users.push.apply($scope.users, response.data);
                 },
                 function (response) {
                     messages.error(response.data);
@@ -21,7 +27,7 @@ deebobo.controller('AdminAuthorizationController',
 			
 			$http({method: 'GET', url: '/api/site/' + $stateParams.site + '/group'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
-                    $scope.groups = response.data;
+					$scope.groups.push.apply($scope.groups, response.data);
                 },
                 function (response) {
                     messages.error(response.data);
@@ -63,10 +69,12 @@ deebobo.controller('AdminAuthorizationController',
 				  .targetEvent(ev)
 				  .ok('ok')
 				  .cancel('cancel');
-
+				
 				$mdDialog.show(confirm).then(function(result) {
-					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/user/invite'}, {email: result} )      //get the list of groups that can view
+					var newUser = {email: result};
+					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/user/invite'}, newUser )      //get the list of groups that can view
 					.then(function (response) {
+							$scope.users.push(newUser);
 						},
 						function (response) {
 							messages.error(response.data);
@@ -89,8 +97,10 @@ deebobo.controller('AdminAuthorizationController',
 				  .cancel('cancel');
 
 				$mdDialog.show(confirm).then(function(result) {
-					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/group/' + result})      //get the list of groups that can view
+					var newGroup = {name: result};
+					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/group', newGroup})      //get the list of groups that can view
 					.then(function (response) {
+							$scope.groups.push(newGroup);
 						},
 						function (response) {
 							messages.error(response.data);
@@ -104,6 +114,7 @@ deebobo.controller('AdminAuthorizationController',
 			$scope.deleteUser = function(user){
 				$http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/user/' + user._id})      //get the list of groups that can view
 				.then(function (response) {
+						$scope.users.splice($scope.users.indexOf(user), 1);
 					},
 					function (response) {
 						messages.error(response.data);
@@ -114,6 +125,7 @@ deebobo.controller('AdminAuthorizationController',
 			$scope.deleteGroup = function(group){
 				$http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/group/' + group.name})      //get the list of groups that can view
 				.then(function (response) {
+						$scope.groups.splice($scope.groups.indexOf(user), 1);
 					},
 					function (response) {
 						messages.error(response.data);
@@ -126,6 +138,7 @@ deebobo.controller('AdminAuthorizationController',
 			$scope.groupAddedTo = function(user, chip){
 				$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/user/' + user._id + '/group/' + chip.name})      //get the list of groups that can view
 				.then(function (response) {
+						//user.groups.push(chip);
 					},
 					function (response) {
 						messages.error(response.data);

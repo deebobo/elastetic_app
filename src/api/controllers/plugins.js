@@ -37,6 +37,38 @@ module.exports.getForType = async function (req, res, next) {
     }
 };
 
+module.exports.getDefaultforType = async function (req, res){
+	try {
+		if(req.params.type == 'mail'){
+			let plugins = await req.app.get('plugins');
+			let plugin = await plugins.getMailHandlerFor(req.params.site);
+			res.json(plugin);
+		}
+		else{
+			res.status(400).json({message: 'plugin has no known default'});
+		}
+    }
+    catch (err) {
+        res.status(500).json({message: err});
+    }
+}
+
+module.exports.setDefaultforType = async function (req, res){
+	try {
+		if(req.params.type == 'mail'){
+			let plugins = await req.app.get('plugins');
+			await plugins.setMailHandlerFor(req.params.site, req.body);
+			res.json(plugins);
+		}
+		else{
+			res.status(400).json({message: 'plugin has no known default'});
+		}
+    }
+    catch (err) {
+        res.status(500).json({message: err});
+    }
+}
+
 /* add a new plugin. */
 module.exports.post = async function (req, res, next) {
     try {

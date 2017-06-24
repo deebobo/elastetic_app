@@ -1,24 +1,26 @@
 <h1>Configure email</h1>
 <md-tabs md-dynamic-height md-border-bottom>
 
-	<md-tab label="configuration">
+	<md-tab label="configuration" controlller="AdminEmailController">
         <md-content class="md-padding">
-          <form ng-submit="submitEmailplugin(email)">
+          <form ng-submit="selectEmailplugin(email)">
 			
-			<label for="emailTemmplate" >email template: </label><br />
-			<select id="emailTemmplate" ng-model="email.template" ng-options="x.name for x in emailPlugins" >
+			<label for="emailPlugin" >email processor plugin: </label><br />
+			<select id="emailPlugin" 
+					ng-model="plugin" 
+					ng-options="x.name for x in emailPlugins" >
 				<md-tooltip >The plugin used for sending out emails.</md-tooltip>
 			</select>
 			<br />
 			
 			<input type="submit" value="Submit" />
 		  </form>
-		  <ng-include src="{{emailConfigPartial}}"></ng-include>
+		  <ng-include src="emailConfigPartial"></ng-include>
         </md-content>
     </md-tab>
 	
 	
-	<md-tab label="templates">
+	<md-tab label="templates" controlller="AdminEmailTemplatesController">
         <md-content class="md-padding">
 		
 			<md-button class="md-primary"
@@ -37,15 +39,21 @@
 							  ng-class="{'toggled' : isOpen()}"></span>
 						  
 						<md-button class="md-primary"
-									ng-click="deleteTemplate()">delete</md-button>  
+									ng-click="delete(template, $event)">delete</md-button>
 						  
-						<form ng-submit="submitTemplate()">
+						<form ng-submit="save(template)">			
+							<md-input-container  ng-show="isOpen()" flex layout-fill style="margin-top: 20px;">
+								<textarea type="text" 
+										  id="template-input-{{template.name | nospace}}" 
+										  ng-model="content"  
+										  ng-change="template.needsSave = true"
+										  flex 
+										  rows="5"></textarea>
+								<md-tooltip >The template content</md-tooltip>
+							</md-input-container>
 							
-							<input ng-show="isOpen()" id="template-input-{{template.name | nospace}}" ng-model="content">
-							</input>
-							<br />
-							
-							<input type="submit" value="Submit" />
+							<input type="submit" value="save"
+									   ng-if="template.needsSave === true"/>
 						</form> 
 					</md-button>
 					

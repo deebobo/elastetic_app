@@ -19,11 +19,13 @@ const connections =    require('../routes/connections');
 const emailTemplates =    require('../routes/email_templates');
 const verifiedsite =  require('../routes/verifiedsite');
 const express =  require('express');
+const install = require('../routes/install')
 
 let router = express.Router({mergeParams: true});
 
 function initPaths(app, passport) {
     app.use('/', index);
+	app.use('/install', install);
     app.use('/api', appAuth);
 	app.use('/api/site', sites);
     app.use(router.use('/api/site/:site', auth));

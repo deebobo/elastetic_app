@@ -24,7 +24,7 @@ const winston = require('winston');
  * @type {{db: string, db_connection_string: string}}
  */
 let config = {
-    db: 'mongodb',
+    db: '',
     db_connection_string: 'mongodb://localhost/deebobo',
     security:{
         secret: 'IOT4AllWebsitebyDeebobo_plugabletools',
@@ -47,7 +47,7 @@ function load(){
 
 //saves the config data to file
 function save(){
-    let data = JSON.stringify(config);
+    let data = JSON.stringify(module.exports.config);
     return new Promise((resolve, reject) =>
         {
             fs.writeFile('./config.json', data, function (err) {

@@ -14,6 +14,12 @@ router.get('/', ctrlPlugins.get);
 /* GET all plugins for current site of a particulartype. */
 router.get('/:type', ctrlPlugins.getForType);
 
+/* set the default plugin for a particular type. */
+router.put('/:type/default', ctrlPlugins.setDefaultforType);
+
+/* get the default plugin for a particular type. */
+router.get('/:type/default', ctrlPlugins.getDefaultforType);
+
 /* add a new plugin. */
 router.post('/', ctrlPlugins.post);
 

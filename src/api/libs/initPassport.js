@@ -34,11 +34,19 @@ async function initPassport(app, passport){
     passport.use(new JwtStrategy(options,
         async function(req, payload, done) {
             try{
-                let user = await db.users.find(payload.id);
-                if (!user || req.params.site != payload.site) { 		//the user must also be allowed to go to the requested site.
-					return done(null, false); 
-					}
-                done(null, user);
+                if(db == null){                                         //in case that the system was not yet installed and is now accessed for the first time
+                    db = await app.get('plugins');
+                    db = db.db;
+                }
+                if(db != null) {
+                    let user = await db.users.find(payload.id);
+                    if (!user || req.params.site != payload.site) { 		//the user must also be allowed to go to the requested site.
+                        return done(null, false);
+                    }
+                    done(null, user);
+                }
+                else
+                    done("database not loaded", false);
             }
             catch (err) {
                 return done(err, false);

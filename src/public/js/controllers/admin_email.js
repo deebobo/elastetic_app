@@ -11,12 +11,12 @@ deebobo.controller('AdminEmailController',
 			//helper functions
 			//--------------------------------------------------------------------------------------
 			function loadPluginSettings(pluginName){
-				//todo: load email plugin details
+				$scope.plugin = pluginName;
 				if(pluginName){
 					$http({method: 'GET', url: '/api/site/' + $stateParams.site + "/plugin/" + pluginName})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
 					.then(function (response) {
 							pluginService.load(response.data.config.scripts).
-							then(function(){ $scope.emailConfigPartial = response.data.config.partials[0];},
+							then(function(){ $scope.emailConfigPartial = "plugins/" + response.data.config.partials[0];},
 								 function(){ messages.error("failed to load scripts for plugin: " + pluginName); }
 							);
 						},
@@ -31,15 +31,22 @@ deebobo.controller('AdminEmailController',
 				
 			}
 		
-		
-		
-			loadPluginSettings();																	//when the controller starts, we need the template details of the current email plugin.
 			
             //get data from site for scope
 			//--------------------------------------------------------------------------------------
             $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/plugin/mail'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
-                    $scope.emailPlugins = response.data;
+					$scope.emailPlugins = response.data;
+                },
+                function (response) {
+                    messages.error(response.data);
+                }
+            );
+			
+			
+			$http({method: 'GET', url: '/api/site/' + $stateParams.site })      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+            .then(function (response) {
+                    loadPluginSettings(response.data);
                 },
                 function (response) {
                     messages.error(response.data);
@@ -49,8 +56,8 @@ deebobo.controller('AdminEmailController',
 			
 			//html callbacks.
 			//--------------------------------------------------------------------------------------
-			$scope.submitEmailplugin = function(email){
-				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/plugin/mail', data: email})      //get the list of groups that can view
+			$scope.selectEmailplugin = function(email){
+				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/plugin/mail/default', data: email})      //get the list of groups that can view
 				.then(function (response) {
 						loadPluginSettings(email);
 					},
@@ -72,7 +79,7 @@ deebobo.controller('AdminEmailController',
 				  .cancel('cancel');
 
 				$mdDialog.show(confirm).then(function(result) {
-					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/templates/email'}, {"name": result })      //get the list of groups that can view
+					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/templates/email', data: {"name": result }})      //get the list of groups that can view
 					.then(function (response) {
 						},
 						function (response) {

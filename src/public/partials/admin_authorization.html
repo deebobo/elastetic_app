@@ -8,33 +8,38 @@
 			<md-button class="md-primary"
 					   ng-click="addUser()">Add user</md-button>
 			
-			<md-list ng-cloak>
-				<md-list-item class="secondary-button-padding" ng-repeat="user in users" >
+			<md-list ng-cloak layout="column">
+				<md-list-item class="secondary-button-padding" ng-repeat="user in users" layout-align="center stretch" layout-fill layout="column">
 					
 					<md-button class="md-button-toggle"
-							   ng-click="toggleUserDetails()"
+							   ng-click="user.isOpen = !user.isOpen"
 							   aria-controls="user-btn-{{user.name}}"
-							   flex layout="row"
-							   aria-expanded="{{isOpen()}}">
-						{{user.name}}
-						<span aria-hidden="true" class=" pull-right fa fa-chevron-down md-toggle-icon"
-							  ng-class="{'toggled' : isOpen()}"></span>
+							   flex 
+							   aria-expanded="user.isOpen = !user.isOpen">
+					
+						<div flex layout="row"
+							 layout-align="end center">
+							{{user.name}}
+
+							<span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
+								  ng-class="{'toggled' : user.isOpen}" ></span>
+						</div>
+					</md-button>		   
 						  
-						<md-button class="md-primary"
-								   ng-click="deleteUser(user)">delete user</md-button>  
-								   
-						<md-button class="md-primary"
-								   ng-click="resetPwd(user)">reset password</md-button>  
-						  
-						<md-chips placeholder="Enter a tag"
-								  ng-model="groups"
-								  delete-button-label="Remove Tag"
-								  delete-hint="Press delete to remove tag"
- 								  secondary-placeholder="+Tag"
-								  md-on-add="groupAddedTo(user, $chip)"
-								  md-on-remove="groupRemovedFrom(user, $chip)">
-						</md-chips>
-					</md-button>
+					<md-button class="md-primary"
+							   ng-click="deleteUser(user)">delete user</md-button>  
+							   
+					<md-button class="md-primary"
+							   ng-click="resetPwd(user)">reset password</md-button>  
+					  
+					<md-chips placeholder="Enter a tag"
+							  ng-model="groups"
+							  delete-button-label="Remove Tag"
+							  delete-hint="Press delete to remove tag"
+							  secondary-placeholder="+Tag"
+							  md-on-add="groupAddedTo(user, $chip)"
+							  md-on-remove="groupRemovedFrom(user, $chip)">
+					</md-chips>
 					
 				</md-list-item>
 			
@@ -55,29 +60,33 @@
 				<md-list-item class="secondary-button-padding" ng-repeat="group in groups" >
 					
 					<md-button class="md-button-toggle"
-							   ng-click="toggleGroupDetails()"
+							   ng-click="group.isOpen = !group.isOpen"
 							   aria-controls="groups-btn-{{group.name}}"
 							   flex layout="row"
-							   aria-expanded="{{isOpen()}}">
-						{{group.name}}
+							   aria-expanded="group.isOpen = !group.isOpen"">
+					   <div flex="95" >
+                            {{group.name}}
+                        </div>
 						<span aria-hidden="true" class=" pull-right fa fa-chevron-down md-toggle-icon"
-							  ng-class="{'toggled' : isOpen()}"></span>
+							  ng-class="{'toggled' : group.isOpen}"></span>
 							  
-						<md-button class="md-primary"
+						<div ng-show="group.isOpen == true" layout="column">
+							<md-button class="md-primary"
 								   ng-click="deleteGroup(group)">delete group</md-button>  
-						  
-						<md-chips ng-model="groups"
-								  md-contacts="delayedQuerySearch($query)"
- 								  md-contact-name="name"
-								  md-contact-image="image"
-								  md-contact-email="email"
-								  md-require-match="true"
-								  md-highlight-flags="i"
-								  filter-selected="filterSelected"
-								  placeholder="add user"
-								  md-on-add="groupAddedTo($chip, group)"
-								  md-on-remove="groupRemovedFrom($chip, group)">
-						</md-chips>  
+							  
+							<md-chips ng-model="groups"
+									  md-contacts="delayedQuerySearch($query)"
+									  md-contact-name="name"
+									  md-contact-image="image"
+									  md-contact-email="email"
+									  md-require-match="true"
+									  md-highlight-flags="i"
+									  filter-selected="filterSelected"
+									  placeholder="add user"
+									  md-on-add="groupAddedTo($chip, group)"
+									  md-on-remove="groupRemovedFrom($chip, group)">
+							</md-chips>  
+						</div>
 						
 					</md-button>
 					

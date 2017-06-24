@@ -12,18 +12,21 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const expressValidator = require('express-validator');
+const config = require.main.require('../api/libs/config');
 
 const pluginMan = require('./plugin_manager');
 
 /**
  * loads all the plugins
  */
-async function loadPlugins(){
+function loadPlugins(){
     let result = new pluginMan();
     result.initPluginMonitor();
-    result.load();
-    result.db.connect();
-    result.db.createDb();                                   //make certain that the db is initialized properly
+    if(config.config.db){                                       //if there is a db configured, load it, otherwise pospone to later.
+        result.load();
+        result.db.connect();
+        result.db.createDb();                                   //make certain that the db is initialized properly
+    }
     return result;
 }
 
@@ -45,7 +48,7 @@ function initApp(){
     app.use(express.static(path.join(__dirname, 'public')));
 }
 
-
+config.load();
 var app = express();
 app.set('plugins',loadPlugins());
 initApp();

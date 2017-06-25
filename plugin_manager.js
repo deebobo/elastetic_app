@@ -4,7 +4,7 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-const config = require.main.require('../api/libs/config').config;
+const config = require.main.require('../api/libs/config');
 const PluginLoader = require.main.require('../api/libs/plugin_loader').PluginLoader;       //auto load/unload server side plugins
 const winston = require('winston');
 const path = require("path");
@@ -85,7 +85,7 @@ class PluginManager {
     //loads the database plugin into the plugin.
     _loadDb(){
         let found = this.plugins.filter(function(el){
-                return el.category === 'db' && el.name === config.db;
+                return el.category === 'db' && el.name === config.config.db;
             }
         );
         if(found.length === 1){
@@ -93,8 +93,8 @@ class PluginManager {
             this.db = new this._dbPlugin.create();      //create the
         }
         else{
-            winston.log('error', 'failed to find plugin for db: ', config.db);
-            throw new Error('failed to find plugin for db: ' + config.db)
+            winston.log('error', 'failed to find plugin for db: ', config.config.db);
+            throw new Error('failed to find plugin for db: ' + config.config.db)
         }
     }
 }

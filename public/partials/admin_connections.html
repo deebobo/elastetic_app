@@ -12,8 +12,8 @@
                 <div ng-if="connection.isOpen == true" flex="95">
 					
 					<md-input-container flex layout-fill>
-						<label for="particleToken" >name </label>
-						<input type="text" ng-model="connection.name" class="form-control" ng-change="connection.needsSave = true" ng-click="$event.stopPropagation()" />
+						<label for="name-{{connection.name}}" >name </label>
+						<input id="name-{{connection.name}}" type="text" ng-model="connection.name" class="form-control" ng-change="connection.needsSave = true" ng-click="$event.stopPropagation()" />
 						<md-tooltip >The name of the connection</md-tooltip>
 					</md-input-container>
 					

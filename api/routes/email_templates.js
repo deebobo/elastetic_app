@@ -10,7 +10,7 @@ router.get('/', ctrlEmailTemplates.get);
 router.post('/', ctrlEmailTemplates.post);
 
 /* update a template. */
-router.put('/', ctrlEmailTemplates.put);
+router.put('/:template', ctrlEmailTemplates.put);
 
 /* remove a template. */
 router.delete('/', ctrlEmailTemplates.delete);

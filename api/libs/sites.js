@@ -46,7 +46,7 @@ module.exports.create = async function(db, sitename, adminname, adminemail, pass
     let adminRec = await db.groups.add(admins);
     let editorRec =await db.groups.add(editors);
 
-    await db.sites.add({_id: sitename, viewGroup: viewGroup._id, contactEmail: adminemail, homepage: 'home'});
+    await db.sites.add({_id: sitename, title: sitename, viewGroup: viewGroup._id, contactEmail: adminemail, homepage: 'home'});
 
     let grps = asAdmin === true ? adminRec._id : viewGroup._id;
     let admin = {name: adminname, email: adminemail, password: password, site: sitename, groups: [grps]}; // we need the id of the admin record

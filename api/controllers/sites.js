@@ -64,3 +64,16 @@ module.exports.get = async function(req, res){
         res.status(500).json({message:err.message});
     }
 };
+
+module.exports.put = async function(req, res){
+    try{
+        let db = await req.app.get('plugins');
+        db = db.db;
+        let rec = req.body;
+        let newRec = await db.sites.update(rec);
+        res.status(200).json(newRec);
+    }
+    catch(err){
+        res.status(500).json({message:err.message});
+    }
+};

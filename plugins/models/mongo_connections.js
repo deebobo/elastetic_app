@@ -60,8 +60,8 @@ class Connections{
     /**
      * updates a connection definition to the db
      *
-     * @name .add()
-     * @param {Object} `template` details about the connection. The object should contain the following fields:
+     * @name .update()
+     * @param {Object} `connection` details about the connection. The object should contain the following fields:
      *	- name: the name of the template.
      * 	- site: the site on which the email template was created
      *	- connection: id of the plugin

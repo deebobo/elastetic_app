@@ -47,7 +47,8 @@ module.exports.put = async function (req, res, next) {
             let db = await req.app.get('plugins');
             db = db.db;
             pluginRec.site = req.params.site;
-            await db.emailTemplates.add(pluginRec);
+            pluginRec._id = req.params.template;
+            await db.emailTemplates.update(pluginRec);
             res.status(200).json(pluginRec);
         }
     }

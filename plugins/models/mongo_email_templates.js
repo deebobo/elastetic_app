@@ -34,6 +34,18 @@ class EmailTemplates{
         return record.save();
     }
 
+    /**
+     * updates an email template
+     *
+     * @name .update()
+     * @param {Object} `template` details about the email template. See add for more info
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was added
+     */
+    update(template){
+        return this._templates.findOneAndUpdate({"_id": template._id}, template).exec();
+    }
+
 	/** Get a list of all the available templates for a site.
 	* @return {Promise}] a promise to perform async operations with. The result of the promise is the list of plugins
 	*/

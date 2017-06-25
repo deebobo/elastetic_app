@@ -39,6 +39,12 @@ function initPaths(app, passport) {
     //app.use(router.use('/api/site/:site/view', passport.authenticate('jwt', { session: false }), views));
 	app.use(router.use('/api/site/:site/templates/email', passport.authenticate('jwt', { session: false }), emailTemplates));
 
+
+	//catch all for invalid api calls
+	app.use("/api/*", function(req, res){
+        res.status(404).json({message:"invalid request"});
+    });
+
     // catch 404 and forward to main app
     app.use(function(req, res) {
         res.render('index', { title: 'Deebobo' });

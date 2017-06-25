@@ -1,59 +1,59 @@
 <h1>General configuration</h1>
 <md-tabs md-dynamic-height md-border-bottom>
-	<md-tab label="site">
+	<md-tab label="site" layout-fill>
         <md-content class="md-padding">
 			<form ng-submit="submitSiteDetails(site)">
 			
-				<div layout-gt-sm="row" layout="column">
-					<div flex-gt-sm="50" flex>>
+				<div layout-gt-sm="row" layout="column" >
+					<div flex-gt-sm="50" flex layout="column">
 					
-						<md-input-container flex layout-fill>
+						<md-input-container flex="100" >
 							<label for="siteTitle" >site title</label>
 							<input type="text" id="siteTitle" ng-model="site.title">
-								<md-tooltip >The title for the site</md-tooltip>
 							</input>
+							<md-tooltip >The title for the site</md-tooltip>
 						</md-input-container>
 					
-						<md-input-container flex layout-fill>
+						<md-input-container flex >
 							<label for="adminEmail" >admin email </label>
 							<input type="text" id="adminEmail" ng-model="site.contactEmail">
 								<md-tooltip >The email address of the administrator for this site.</md-tooltip>
 							</input>
 						</md-input-container>
 						
-						<md-input-container flex layout-fill>
-							<label for="viewGroup" >view group</label> <br />
-							<select id="viewGroup" ng-model="site.viewGroup" ng-options="x.name for x in viewGroups" >
-								<md-tooltip >Select the group that newly registered users will be assigned to.</md-tooltip>
+						<md-input-container flex >
+							<label for="viewGroup" >view group</label> <br /><br />
+							<select id="viewGroup" ng-model="site.viewGroup" ng-options="x._id as x.name for x in viewGroups" >
 							</select>
+							<md-tooltip >Select the group that newly registered users will be assigned to.</md-tooltip>
 						</md-input-container>
 
-						<md-input-container flex layout-fill>
-							<label for="homepage" >homepage</label> <br />
-							<select id="homepage" ng-model="site.homepage" ng-options="x.name for x in pages" >
-								<md-tooltip >Select the page that will function as the homepage.</md-tooltip>
+						<md-input-container flex >
+							<label for="homepage" >homepage</label> <br /><br />
+							<select id="homepage" ng-model="site.homepage" ng-options="x.name for x in pages"  >
 							</select>
+							<md-tooltip >Select the page that will function as the homepage.</md-tooltip>
 						</md-input-container>
 					
 					</div>
 					
-					<div flex-gt-sm="50" flex>
-						<md-input-container flex layout-fill>
+					<div flex-gt-sm="50" flex layout="column">
+						<md-input-container flex >
 							<label for="allowRegistration" >allow registration </label>
 							<input type="checkbox" ng-model="site.allowRegistration" id="allowRegistration">
 								<md-tooltip >Determines if users can register on this site or only through invitation.</md-tooltip>
 							</input>
 						</md-input-container>
 
-						<md-input-container flex layout-fill>
+						<md-input-container flex >
 							<label for="requestEmailConfirmation" >request email confirmation: </label>
 							<input type="checkbox" ng-model="site.requestEmailConfirmation" id="requestEmailConfirmation">
 								<md-tooltip >Determines if users can register on this site or only through invitation.</md-tooltip>
 							</input>
 						</md-input-container>
 
-						<md-input-container flex layout-fill>
-							<label for="sendHelloEmail" >send hello email: 
+						<md-input-container flex >
+							<label for="sendHelloEmail" >send hello email:</label>
 							<input type="checkbox" ng-model="site.sendHelloEmail" id="sendHelloEmail"/>
 								<md-tooltip >when true, a hello email is sent to newly registered users (if the email template exists).</md-tooltip>
 							</input>

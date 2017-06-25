@@ -5,25 +5,15 @@
  */
 
 deebobo.controller('adminGeneralController',
-    ['$scope', '$http', '$stateParams', 'messages',
-        function ($scope, $http, $stateParams, messages) {
+    ['$scope', '$http', '$stateParams', 'messages', 'siteDetails',
+        function ($scope, $http, $stateParams, messages, siteDetails) {
 
 			//scope vars
 			//--------------------------------------------------------------------------------------
 			$scope.skinNeedsSave = false;
 			$scope.siteNeedsSave = false;
-		
-		
-			//get data from site for scope
-			//--------------------------------------------------------------------------------------
-            $http({method: 'GET', url: '/api/site/' + $stateParams.site})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
-            .then(function (response) {
-                    $scope.site = response.data;
-                },
-                function (response) {
-                    messages.error(response.data);
-                }
-            );
+			$scope.site = siteDetails;							//site details comes from 'resolve' in ui-router (on app.js)
+
 			
 			$http({method: 'GET', url: '/api/site/' + $stateParams.site + '/page'})      //get the list of pages
             .then(function (response) {
@@ -45,7 +35,7 @@ deebobo.controller('adminGeneralController',
 			
 			$http({method: 'GET', url: '/api/site/' + $stateParams.site + '/skin'})      //get the list of available/known skins
             .then(function (response) {
-                    $scope.viewGroups = response.data;
+                    //$scope.skins = response.data;
                 },
                 function (response) {
                     messages.error(response.data);

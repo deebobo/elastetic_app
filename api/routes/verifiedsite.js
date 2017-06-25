@@ -10,6 +10,7 @@ let router = express.Router({mergeParams: true});
 const ctrlSites = require.main.require('../api/controllers/sites');
 
 router.get('/',ctrlSites.get);
+router.put('/', ctrlSites.put);
 
 
 module.exports = router;

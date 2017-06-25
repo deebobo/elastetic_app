@@ -6,9 +6,9 @@
 
 
 
-angular.module("deebobo").controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', '$rootScope',
+angular.module("deebobo").controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', 'siteDetails',
 //deebobo.controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', '$rootScope',
-    function ($scope, $location, menu, $stateParams, $state,  $mdSidenav, $rootScope) {
+    function ($scope, $location, menu, $stateParams, $state,  $mdSidenav, siteDetails) {
 
 
         var page = {name: "home"};                                                          //the data for the page that is shown at the site home.
@@ -50,7 +50,8 @@ angular.module("deebobo").controller('siteHomeController', ['$scope', '$location
         $scope.autoFocusContent = false;
         $scope.menu = menu;
 
-        $scope.sitename = $stateParams.site;
+        //$scope.sitename = $stateParams.site;
+        $scope.site = siteDetails;
 
         //when the state has changed, make certain that the menu closes again.
         menu.onselect = function(){$mdSidenav('left').close();};

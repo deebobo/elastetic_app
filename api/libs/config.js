@@ -35,14 +35,25 @@ let config = {
 
 //loads the config data from file
 function load(){
-    let data = fs.readFileSync('./config.json');
-    try{
-        config = JSON.parse(data);
-        winston.log("info", 'succesfully loaded config from disk', config);
-    }
-    catch(err){
-        winston.log("error", 'failed to load config data from disk');
-    }
+    return new Promise((resolve, reject) =>
+        {
+            fs.exists('./config.json', function(exists)
+            {
+                if(exists) {                            //at first run, this file doesn't exist, use defaults instead
+                    let data = fs.readFileSync('./config.json');
+                    try {
+                        module.exports.config = JSON.parse(data);
+                        winston.log("info", 'succesfully loaded config from disk', config);
+                        resolve();
+                    }
+                    catch (err) {
+                        winston.log("error", 'failed to load config data from disk');
+                        reject(err);
+                    }
+                }
+            });
+        }
+    );
 }
 
 //saves the config data to file

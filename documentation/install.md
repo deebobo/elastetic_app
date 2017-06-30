@@ -12,7 +12,7 @@ For this type of installation procedure, the application must be able to permane
 Some deployement types, like on heroku or in docker containers, don't allow for the application to store a config file. On the next run, these settings will be lost.  
 For this reason, the system can also work with an enviroment variable to pass in the configuration values. An installation is still required to create and populate the database, but the parameters will be passed into the application through the enviroment and not a config file.
 
-To install to heroku:
+###To install to heroku:
 
 - load your application into heroku
 - set up a mongo database

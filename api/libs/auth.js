@@ -29,11 +29,19 @@ module.exports.login = async function(res, plugins, site, name, pwd){
 		if( ! user )
 			res.status(401).json({message:"invalid name or password."});
 
-		if(user.checkPassword(pwd)) {
-			res.cookie("jwt", user.generateJwt());            //return the token as a cookie, this is more secure to store it client side
-			res.json({message: "ok"});
-		} else {
-			res.status(401).json({message:"invalid name or passowrd"});
+		if(user.accountState == 'verified'){
+			if(user.checkPassword(pwd)) {
+				res.cookie("jwt", user.generateJwt());            //return the token as a cookie, this is more secure to store it client side
+				res.json({message: "ok"});
+			} else {
+				res.status(401).json({message:"invalid name or passowrd"});
+			}
+		}
+		else if (user.accountState == 'created'){
+			res.status(401).json({message:"account not verified"});
+		}
+		else {
+			res.status(401).json({message:"password was reset"});
 		}
 	}
     catch(err){

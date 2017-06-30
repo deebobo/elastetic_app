@@ -4,9 +4,6 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-//npm install unzipper
-//npm install tmp
-//npm install mkdirp			//create dir
 
 
 const unzip = require('unzip');

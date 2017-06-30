@@ -39,9 +39,9 @@ function load(){
         {
             fs.exists('./config.json', function(exists)
             {
-                if(exists) {                            //at first run, this file doesn't exist, use defaults instead
-                    let data = fs.readFileSync('./config.json');
+                if(exists){                             							//at first run, this file doesn't exist, use defaults instead. In case of heroku or similar, there
                     try {
+                        let data = fs.readFileSync('./config.json');
                         module.exports.config = JSON.parse(data);
                         winston.log("info", 'succesfully loaded config from disk', config);
                         resolve();
@@ -50,6 +50,12 @@ function load(){
                         winston.log("error", 'failed to load config data from disk');
                         reject(err);
                     }
+                }
+                else{
+                    module.exports.config.db = process.env.db;                                  //for heroku and others that cant store files locally
+                    module.exports.config.db_connection_string = process.env.MONGODB_URI;
+                    module.exports.config.secret = process.env.secret;
+                    module.exports.config.expires = process.env.expires;
                 }
             });
         }

@@ -7,13 +7,14 @@
  /**
  @ignore
  */
-const config = require.main.require('../api/libs/config').config;
+const config = require.main.require('../api/libs/config');
 const mongoose = require('mongoose');
 const winston = require('winston');
 const usersModel = require.main.require('../plugins/models/mongo_users');
 const groupsModel = require.main.require('../plugins/models/mongo_groups');
 const sitesModel = require.main.require('../plugins/models/mongo_sites');
 const pagesModel = require.main.require('../plugins/models/mongo_pages');
+const viewsModel = require.main.require('../plugins/models/mongo_views');
 const siteCollectionModel = require.main.require('../plugins/models/mongo_site_collection');
 const emailTemplatesModel = require.main.require('../plugins/models/mongo_email_templates');
 const pluginsModel = require.main.require('../plugins/models/mongo_plugins');
@@ -37,6 +38,8 @@ class MongoDb{
 		this.pluginSiteData = null;
 		this.emailTemplates = null;
 		this.plugins = null;
+		this.connections = null;
+		this.views = null;
         mongoose.Promise = global.Promise;
     }
 
@@ -45,7 +48,7 @@ class MongoDb{
 	* @return {Promise} a promise to perform async operations with.
 	*/
     connect(){
-        return mongoose.connect(config.db_connection_string);
+        return mongoose.connect(config.config.db_connection_string);
     }
 
 	/**
@@ -71,6 +74,7 @@ class MongoDb{
 		this._createEmailTemplates();
 		this._createPlugins();
 		this.connections = new connectionsModel();
+		this.views = new viewsModel();
     }
 
     /**
@@ -124,7 +128,7 @@ class MongoDb{
 
         usersSchema.methods.generateJwt = function() {
             let expiry = new Date();
-            expiry.setDate(expiry.getDate() + config.security.expires);
+            expiry.setDate(expiry.getDate() + config.config.security.expires);
             try {
                 return jwt.sign({
                     id: this._id,
@@ -132,7 +136,7 @@ class MongoDb{
                     name: this.name,
 					site: this.site,
                     exp: parseInt(expiry.getTime() / 1000),
-                }, config.security.secret);
+                }, config.config.security.secret);
             }
             catch (err){
                 winston.log("error", err);

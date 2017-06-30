@@ -34,6 +34,31 @@ class Users{
         let record = new this._users(user);
         return record.save();
     }
+	
+	/**
+     * updates a user
+     *
+     * @name .update()
+     * @param {Object} `user` see add for more details
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was added
+     */
+    update(user){
+        return this._users.findOneAndUpdate({"_id": user._id}, user).exec();
+    }
+	
+	/**
+     * updates the account state of a user
+     *
+     * @name .update()
+     * @param {string} `id` the id of the user
+	 * @param {string} `value` the new value of the account state
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was added
+     */
+	updateAccountState(id, value){
+		return this._users.findOneAndUpdate({"_id": id}, {accountState: value}).exec();
+	}
 
     /**
      * finds a single record by id

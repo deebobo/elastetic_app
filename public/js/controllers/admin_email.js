@@ -97,8 +97,7 @@ deebobo.controller('AdminEmailController',
                 $scope.templates.push({name: "new template", isOpen: true, needsSave: true, isNew: true});
             }
 
-
-            $scope.save = function(template){
+            $scope.saveTemplate = function(template){
                 if(template.isNew){
                     $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/templates/email', data: template})      //get the list of groups that can view
                         .then(function (response) {

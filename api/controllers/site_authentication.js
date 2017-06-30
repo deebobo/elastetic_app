@@ -5,6 +5,10 @@
  */
  
 const auth = require.main.require('../api/libs/auth');
+const email = require.main.require('../api/libs/email');
+const url = require('url');
+const jwt = require('jsonwebtoken');
+const config = require.main.require('../api/libs/config');
 
 /**
  * register a new user to a specific site. If the user already exists, the site is added to the list of possible sites.
@@ -23,8 +27,8 @@ module.exports.register = async function(req, res) {
         res.send(errors, 400);
     } else {
         try{
-            let db = await req.app.get('plugins');
-            db = db.db;
+            let pluginMan = await req.app.get('plugins');
+            db = pluginMan.db;
 
             let site = await db.sites.find(req.params.site);
             if(! site)
@@ -35,7 +39,13 @@ module.exports.register = async function(req, res) {
                 let user = await db.users.findByNameOrEmail(req.body.name, req.params.site);
                 if( ! user ) {
                     let user = { name: req.body.name, email: req.body.email, password: req.body.password, site: req.params.site, groups: [site.viewGroup]};
-                    db.users.add(user);
+					if(site.requestEmailConfirmation == true)
+						email.sendEmailConfirmation(site, user, pluginMan, url.resolve(req.protocol + '://' + req.get('host'), "site", req.params.site));
+					else
+						user.accountState = 'verified';
+					db.users.add(user);
+					if(site.sendHelloEmail)
+						email.sendHello(site, user,  pluginMan, "welcome");
                     res.status(200).json({message: "ok"});
                 }
                 else if (user.name === name) {
@@ -69,3 +79,34 @@ module.exports.login = async function(req, res){
 		res.status(400).json({message:"missing username or password"});
 };
 
+async function _internalActivate(activationKey, site){
+	return new Promise((resolve, reject) => {
+		jwt.verify(req.params.activationKey, config.security.secret, async function(err, decoded){
+			if(err)
+				reject(err);
+			else if(decoded.site != site)
+				reject('invalid activation key');
+			else{
+				let pluginMan = await req.app.get('plugins');
+				db = pluginMan.db;
+				await db.users.updateAccountState(decoded.id, "verified");
+				resolve(true);
+			}
+		});
+}
+
+module.exports.activate = async function(req, res){
+	try{
+		let result = await _internalActivate(req.params.activationKey, req.params.site);
+		if(result === true){
+			res.status(200).json({message:"ok"});
+		}
+		else
+			res.status(400).json({message:result});
+	}
+	catch(err)
+	{
+		res.status(400).json({message:err});
+	}
+    activationKey
+};

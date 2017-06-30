@@ -21,7 +21,9 @@ class Pages{
      * @param {Object} `page` details about the page. The object should contain the following fields:
 	 *	- name: the name of the group. 
 	 * 	- site: the site to which the group belongs
-	 * 	- content: the content of the page
+	 *  - plugin: ref to the plugin that needs to be used
+	 *  - partial: nr of the partial to use as main
+	 *  - controller: the name of the controller to use.
 	 *  - groups: the groups for this page to determine the access.
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
      * was added
@@ -29,6 +31,18 @@ class Pages{
     add(page){
         let record = new this._pages(page);
         return record.save();
+    }
+	
+	/**
+     * updates a page definition 
+     *
+     * @name .update()
+     * @param {Object} `page` see add for more info
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was added
+     */
+    update(page){
+        return this._connections.findOneAndUpdate({"_id": page._id}, page).exec();
     }
 
 	/** Returns all the pages for a particular site, without the actual content.
@@ -56,6 +70,18 @@ class Pages{
      */
     find(name, site){
         return this._pages.findOne( { name: name, site: site } ).populate('plugin').populate('groups').exec();
+    }
+	
+	/**
+     * removes a page.
+     *
+     * @name .delete()
+     * @param id {String}  - the id of the object that needs to be deleted.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was found
+     */
+    delete(id){
+        return this._pages.findOneAndRemove( { _id: id } ).exec();
     }
 }
 

@@ -5,15 +5,15 @@
  */
 const auth = require.main.require('../api/libs/auth');
 
-/* GET pages listing that the current user is allowed to see. */
+/* GET views listing that the current user is allowed to see. */
 module.exports.get = async function(req, res)
 {
     try{
         let db = await req.app.get('plugins');
         db = db.db;
-        let pages = await db.pages.list(req.params.site);
+        let views = await db.views.list(req.params.site);
         let allowed = [];
-        for(let item of pages){
+        for(let item of views){
             if(auth.allowed(item.groups, req.user.groups))
                 allowed.push(item);
         }
@@ -24,16 +24,16 @@ module.exports.get = async function(req, res)
     }
 };
 
-/* GET single page, if the requestor is allowed to see it. */
-module.exports.getPage = async function(req, res) {
-    let page = null;
+/* GET single view, if the requestor is allowed to see it. */
+module.exports.getview = async function(req, res) {
+    let view = null;
     try{
         let db = await req.app.get('plugins');
         db = db.db;
-        page = await db.pages.find(req.params.page, req.params.site);
-        if(page) {
-            if (auth.allowed(page.groups, req.user.groups, res))         //auth will set the error message in res if there is a problem.
-                res.status(200).json(page);
+        view = await db.views.find(req.params.view, req.params.site);
+        if(view) {
+            if (auth.allowed(view.groups, req.user.groups, res))         //auth will set the error message in res if there is a problem.
+                res.status(200).json(view);
             else
                 res.status(401).json({message: "unauthorized request"});
         }
@@ -45,7 +45,7 @@ module.exports.getPage = async function(req, res) {
     }
 };
 
-/* GET pages listing. */
+/* GET views listing. */
 module.exports.create = async function(req, res) {
     try{
         if(auth.canWrite(req.user.groups, res)){                //auth will set the error message in res if there is a problem.
@@ -53,7 +53,7 @@ module.exports.create = async function(req, res) {
             db = db.db;
             let rec = req.body;
             rec.site = req.params.site;
-            let res = await db.pages.add(rec);
+            let res = await db.views.add(rec);
             res.status(200).json(res);
         }
     }
@@ -62,14 +62,14 @@ module.exports.create = async function(req, res) {
     }
 };
 
-/* GET pages listing. */
+/* GET views listing. */
 module.exports.update = async function(req, res) {
     try{
         if(auth.canWrite(req.user.groups, res)){                //auth will set the error message in res if there is a problem.
             let db = await req.app.get('plugins');
             db = db.db;
             let rec = req.body;
-            let newRec = await db.pages.update(rec);
+            let newRec = await db.views.update(rec);
             res.status(200).json(newRec);
         }
     }
@@ -78,13 +78,13 @@ module.exports.update = async function(req, res) {
     }
 };
 
-/* GET pages listing. */
+/* GET views listing. */
 module.exports.delete = async function(req, res) {
     try{
         if(auth.canWrite(req.user.groups, res)){                //auth will set the error message in res if there is a problem.
             let db = await req.app.get('plugins');
             db = db.db;
-            let newRec = await db.pages.delete(req.params.connection);
+            let newRec = await db.views.delete(req.params.connection);
             res.status(200).json(newRec);
         }
     }

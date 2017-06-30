@@ -13,6 +13,7 @@ const auth =     require('../routes/site_authentication');
 const sites =    require('../routes/sites');
 const plugins =    require('../routes/plugins');
 const pages =    require('../routes/pages');
+const views =    require('../routes/views');
 const index =    require('../routes/index');
 const connections =    require('../routes/connections');
 //const views =    require('../routes/views');
@@ -35,6 +36,7 @@ function initPaths(app, passport) {
     app.use(router.use('/api/site/:site/group', passport.authenticate('jwt', { session: false }), groups));
 	app.use(router.use('/api/site/:site/plugin', passport.authenticate('jwt', { session: false }), plugins));
     app.use(router.use('/api/site/:site/page', passport.authenticate('jwt', { session: false }), pages));
+	app.use(router.use('/api/site/:site/view', passport.authenticate('jwt', { session: false }), views));
     app.use(router.use('/api/site/:site/connection', passport.authenticate('jwt', { session: false }), connections));
     //app.use(router.use('/api/site/:site/view', passport.authenticate('jwt', { session: false }), views));
 	app.use(router.use('/api/site/:site/templates/email', passport.authenticate('jwt', { session: false }), emailTemplates));

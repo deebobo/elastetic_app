@@ -5,13 +5,14 @@
  */
 
 const installer = require.main.require('../api/libs/install');
+const config = require.main.require('../api/libs/config');
  
 var express = require('express');
 var router = express.Router({mergeParams: true});
 
 router.get('/', function(req, res, next){
     try{
-        res.render('install');
+        res.render('install', config.config);
     }
     catch(err){
         return next(err);

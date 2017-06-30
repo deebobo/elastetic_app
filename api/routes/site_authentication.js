@@ -20,5 +20,6 @@ router.use(function timeLog (req, res, next) {
 // authentication
 router.post('/register', ctrlAuth.register);
 router.post('/login', ctrlAuth.login);
+router.get('/activate/:activationKey', ctrlAuth.activate);
 
 module.exports = router;

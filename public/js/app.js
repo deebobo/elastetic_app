@@ -80,14 +80,14 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
         $stateProvider.state('site.register', {
             url: '/register',
             templateUrl: 'partials/site_register.html',
-            controller: 'siteRegisterController',
+            controller: 'registerController',
             access: {restricted: false}
         });
 
         $stateProvider.state('site.login', {
             url: '/login',
             templateUrl: 'partials/site_login.html',
-            controller: 'siteLoginController',
+            controller: 'loginController',
             access: {restricted: false}
         });
 
@@ -169,7 +169,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             }],
             controllerProvider: ['page','$q', 'pluginService',  function (page, $q, pluginService) {
                 var deferred = $q.defer();
-                pluginService.loadSingle(page.plugin.client.scripts[0])
+                pluginService.load(page.plugin.client.scripts)
                     .then(function(){ deferred.resolve(page.controller); });
                 return deferred.promise;
             }],
@@ -195,7 +195,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     }],
                     controllerProvider: ['view','$q', 'pluginService',  function (view, $q, pluginService) {
                         var deferred = $q.defer();
-                        pluginService.loadSingle(view.plugin.client.scripts[0])
+                        pluginService.load(view.plugin.client.scripts)
                             .then(function(){ deferred.resolve(view.controller); });
                         return deferred.promise;
                     }]

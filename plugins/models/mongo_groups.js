@@ -29,6 +29,18 @@ class Groups{
         let grp = new this._groups(group);
         return grp.save();
     }
+	
+	/**
+     * updates a group
+     *
+     * @name .update()
+     * @param {Object} `group` see add for more details
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was added
+     */
+    update(group){
+        return this._users.findOneAndUpdate({"_id": group._id}, group).exec();
+    }
 
 	/** Returns all the groups for a particular site.
 	* @param {string} `site` The name of the site to list the groups for.

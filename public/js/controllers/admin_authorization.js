@@ -85,6 +85,17 @@ deebobo.controller('AdminAuthorizationController',
 				});
 			}
 			
+			$scope.saveUser = function(user){
+				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/user/' + user._id, data: user})      //get the list of groups that can view
+                        .then(function (response) {
+                                user.needsSave = false;
+                            },
+                            function (response) {
+                                messages.error(response.data);
+                            }
+                        );
+			}
+			
 			$scope.addGroup = function(){
 				var confirm = $mdDialog.prompt()
 				  .title('Add new group')
@@ -156,6 +167,17 @@ deebobo.controller('AdminAuthorizationController',
 						messages.error(response.data);
 					}
 				);
+			}
+			
+			$scope.saveGroup = function(group){
+				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/group/' + group.name, data: group})      //get the list of groups that can view
+                        .then(function (response) {
+                                group.needsSave = false;
+                            },
+                            function (response) {
+                                messages.error(response.data);
+                            }
+                        );
 			}
         }
     ]

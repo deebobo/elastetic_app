@@ -1,7 +1,7 @@
 <h1>Configure email</h1>
 <md-tabs md-dynamic-height md-border-bottom>
 
-	<md-tab label="configuration" controlller="AdminEmailController">
+	<md-tab label="configuration" >
         <md-content class="md-padding">
           <form ng-submit="selectEmailplugin(email)">
 			
@@ -68,7 +68,7 @@
 
                     <div ng-show="template.isOpen == true" layout="column">
 
-                        <form ng-submit="save(template)">
+                        <form ng-submit="saveTemplate(template)">
 
                             <md-input-container flex layout-fill>
                                 <label for="subject-{{template.name}}" >subject </label>

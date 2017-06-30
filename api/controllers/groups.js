@@ -50,6 +50,21 @@ module.exports.getGrp = async function(req, res) {
     }
 };
 
+module.exports.updateGrp = async function(req, res) {
+    try{
+        if(auth.canWrite(req.user.groups, res)){                //auth will set the error message in res if there is a problem.
+            let db = await req.app.get('plugins');
+            db = db.db;
+            let rec = req.body;
+            let newRec = await db.groups.update(rec);
+            res.status(200).json(newRec);
+        }
+    }
+    catch(err){
+        res.status(500).json({message:err.message});
+    }
+};
+
 /* create group. */
 module.exports.create = async function(req, res) {
     try{

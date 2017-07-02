@@ -45,7 +45,7 @@ class PluginManager {
 		winston.log('error', 'request for email plugin not satisfied');
 		return null;
 	}
-	
+
 
     //initialize the monitor that keeps track of when a plugin is added or removed.
     initPluginMonitor(){

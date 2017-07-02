@@ -14,13 +14,16 @@ async function installPlugin(db, pluginName, file)
     def.site = "_common";
     if(def.hasOwnProperty('client')){
         for(path = 0; path < def.client.scripts.length; path++)
-            def.client.scripts[path] = "_common/" + pluginName + '/' + def.client.scripts[path]
+            def.client.scripts[path] = "./plugins/_common/" + pluginName + '/' + def.client.scripts[path]
+        if(def.client.hasOwnProperty('external')){
+            def.client.scripts.push.apply(def.client.scripts, def.client.external);
+        }
         for(path = 0; path < def.client.partials.length; path++)
             def.client.partials[path] = "_common/" + pluginName + '/' + def.client.partials[path]
     }
     if(def.hasOwnProperty('config')){
         for(path = 0; path < def.config.scripts.length; path++)
-            def.config.scripts[path] = "_common/" + pluginName + '/' + def.config.scripts[path]
+            def.config.scripts[path] = "./plugins/_common/" + pluginName + '/' + def.config.scripts[path]
         for(path = 0; path < def.config.partials.length; path++)
             def.config.partials[path] = "_common/" + pluginName + '/' + def.config.partials[path]
     }
@@ -39,6 +42,7 @@ async function installPlugins(db)
     await installPlugin(db, 'private mail', '../public/plugins/_common/private mail/pluginconfig.json');
     await installPlugin(db, 'left_menu_bar_page', '../public/plugins/_common/left_menu_bar_page/pluginconfig.json');
     await installPlugin(db, 'particle_io', '../public/plugins/_common/particle_io/pluginconfig.json');
+    await installPlugin(db, 'particle_io_devices_view', '../public/plugins/_common/particle_io_devices_view/pluginconfig.json');
 }
 
 async function install(plugins, result)

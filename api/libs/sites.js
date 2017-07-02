@@ -6,7 +6,6 @@
 
 //const config = require.main.require('../api/libs/config').config;
 
-let _homepagePluginId = null;                           //a global for this script only: only need to retrieve the id 1 time, it always remains the same value.
 
 /**
  * create a record for the home page that points to a homepage plugin.
@@ -16,12 +15,16 @@ let _homepagePluginId = null;                           //a global for this scri
  * @returns {Promise.<void>}
  */
 async function createHomepage(db, sitename, grps){
-    if (_homepagePluginId === null)
-        _homepagePluginId = await db.plugins.find("left-menu-bar homepage", "_common");
-    let page = { name: "home", site: sitename, plugin:_homepagePluginId._id, groups: grps, partial: 0, controller: "siteHomeController" };
+    let homepagePluginId = await db.plugins.find("left-menu-bar homepage", "_common");
+    let page = { name: "home", site: sitename, plugin:homepagePluginId._id, groups: grps, partial: 0, controller: "siteHomeController" };
     await db.pages.add(page);
 }
 
+async function createParticleIODevicesView(db, sitename, grps) {
+    let particlePluginId = await db.plugins.find("particle_io_devices_view", "_common");
+    let view = { name: "particle io devices", site: sitename, plugin:particlePluginId._id, groups: grps, partial: 0, controller: "particlIODevicesViewController" };
+    await db.views.add(view);
+}
 /**
  * create a new site.
  * @param db{object} ref to the db object
@@ -49,8 +52,11 @@ module.exports.create = async function(db, sitename, adminname, adminemail, pass
     await db.sites.add({_id: sitename, title: sitename, viewGroup: viewGroup._id, contactEmail: adminemail, homepage: 'home'});
 
     let grps = asAdmin === true ? adminRec._id : viewGroup._id;
-    let admin = {name: adminname, email: adminemail, password: password, site: sitename, groups: [grps]}; // we need the id of the admin record
+    let admin = {name: adminname, email: adminemail, password: password, site: sitename, groups: [grps], accountState: 'verified'}; // we need the id of the admin record
     await db.users.add(admin);
 
-    await createHomepage(db, sitename, [adminRec._id, viewGroup._id, editorRec._id]);
+    let allgroups =  [adminRec._id, viewGroup._id, editorRec._id]
+    await createHomepage(db, sitename, allgroups);
+
+    await createParticleIODevicesView(db, sitename, allgroups);
 };

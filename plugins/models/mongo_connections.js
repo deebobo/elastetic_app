@@ -24,6 +24,7 @@ class Connections{
             createdOn:{type: Date, default: Date.now()}
         });
         connectionSchema.index({ name: 1, site: 1}, {unique: true});        //fast access at name & site level
+        connectionSchema.index({ plugin: 1, site: 1});        //fast access at name & site level
         this._connections = mongoose.model('connections', connectionSchema);
     }
 
@@ -75,10 +76,17 @@ class Connections{
     }
 
     /** Get a list of all the available connections for a site.
+     * @param site {string}  - name of the site.
+     * @param plugin {string}  -  optional id of the plugin to filter on.
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the list of connections
      */
-    list(site){
-        let query = this._connections.find({site: site}).populate('plugin');
+    list(site, plugin){
+        let query = null;
+        if(plugin){
+            query = this._connections.find({site: site, plugin: plugin}).populate('plugin');
+        }else{
+            query = this._connections.find({site: site}).populate('plugin');
+        }
         return query.exec();
     }
 

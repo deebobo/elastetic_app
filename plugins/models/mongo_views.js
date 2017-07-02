@@ -3,7 +3,7 @@
  * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
-
+const mongoose = require('mongoose');
 
 class views{
 
@@ -12,7 +12,7 @@ class views{
      * @param collection {object} a reference to the mongo collection that represents the views
      */
     constructor(collection){
-        let connectionSchema = new mongoose.Schema({
+        let viewSchema = new mongoose.Schema({
             name: String,															//name of the template
             site: String,
             plugin: {type: mongoose.Schema.Types.ObjectId, ref: 'plugins'},
@@ -21,8 +21,8 @@ class views{
 			groups: [{type: mongoose.Schema.Types.ObjectId, ref: 'groups'}],
             createdOn:{type: Date, default: Date.now()}
         });
-        connectionSchema.index({ name: 1, site: 1}, {unique: true});        //fast access at name & site level
-        this._views = mongoose.model('connections', connectionSchema);
+        viewSchema.index({ name: 1, site: 1}, {unique: true});        //fast access at name & site level
+        this._views = mongoose.model('views', viewSchema);
     }
 
 	/**

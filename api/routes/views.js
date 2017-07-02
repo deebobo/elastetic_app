@@ -4,7 +4,7 @@ const ctrlViews = require.main.require('../api/controllers/views');
 
 
 router.get('/', ctrlViews.get);
-router.get('/:view', ctrlViews.getPage);
+router.get('/:view', ctrlViews.getview);
 router.post('/', ctrlViews.create);
 router.put('/:view', ctrlViews.update);
 router.delete('/:view', ctrlViews.delete);

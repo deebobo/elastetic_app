@@ -93,6 +93,7 @@ async function _internalActivate(activationKey, site){
 				resolve(true);
 			}
 		});
+	});
 }
 
 module.exports.activate = async function(req, res){
@@ -108,5 +109,5 @@ module.exports.activate = async function(req, res){
 	{
 		res.status(400).json({message:err});
 	}
-    activationKey
+    //activationKey
 };

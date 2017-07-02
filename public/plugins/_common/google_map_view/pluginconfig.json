@@ -1,0 +1,19 @@
+{
+  "comment": "description for the google maps plugin",
+  "name": "google_map_view",
+  "description": "A view containing a google map used to display information related to coordinates.",
+  "version": "0.0.1",
+  "author": "Deebobo",
+  "type": "view",
+  "client": {
+      "scripts": [
+        "js/site_home.js"
+      ],
+      "external": [
+        "//cdn.jsdelivr.net/particle-api-js/5/particle.min.js"
+      ],
+      "partials": [
+        "partials/site_home.html"
+      ]
+    }
+}

@@ -20,7 +20,7 @@ const connections =    require('../routes/connections');
 const emailTemplates =    require('../routes/email_templates');
 const verifiedsite =  require('../routes/verifiedsite');
 const express =  require('express');
-const install = require('../routes/install')
+const install = require('../routes/install');
 
 let router = express.Router({mergeParams: true});
 

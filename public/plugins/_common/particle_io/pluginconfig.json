@@ -7,6 +7,10 @@
   "type": "connection",
   "config": {
       "scripts": [
+        "js/particle_io_config.js"
+      ],
+      "external":[
+        "//cdn.jsdelivr.net/particle-api-js/5/particle.min.js"
       ],
       "partials": [
         "partials/particle_io_config.html"

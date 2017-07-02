@@ -34,13 +34,26 @@ class Sites{
     /**
      * updates a site definition
      *
-     * @name .add()
+     * @name .update()
      * @param {Object} 'site' see add for more details
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
      * was added
      */
     update(site){
         return this._sites.findOneAndUpdate({"_id": site._id}, site).exec();
+    }
+
+    /**
+     * updates the mailhandler for the site.
+     *
+     * @name .updatemailHandler()
+     * @param {string} 'siteId' id of site
+     * @param {String} 'value' id of of the mailhandler plugin
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was added
+     */
+    updatemailHandler(siteId, value){
+        return this._sites.findOneAndUpdate({"_id": siteId}, {mailHandler: value}).exec();
     }
 
 	/**

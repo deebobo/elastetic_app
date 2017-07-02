@@ -8,7 +8,10 @@ var express = require('express');
 var router = express.Router({mergeParams: true});
 const ctrlConnections = require.main.require('../api/controllers/connections');
 
-/* GET all template for current site. */
+/* GET all template for current site.
+ optional variable: plugin
+ example:  connection?plugin=028289823
+* */
 router.get('/', ctrlConnections.get);
 
 /* GET all template for current site. */

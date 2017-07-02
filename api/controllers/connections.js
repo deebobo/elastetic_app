@@ -6,13 +6,15 @@
 
 const auth = require.main.require('../api/libs/auth');
 
-/* GET pages listing that the current user is allowed to see. */
+/* GET pages listing that the current user is allowed to see.
+   optionally provide a filter value through a variable. Example: GET connection?puglin=sdfsfiower
+ *  */
 module.exports.get = async function(req, res)
 {
     try{
         let db = await req.app.get('plugins');
         db = db.db;
-        let pages = await db.connections.list(req.params.site);
+        let pages = await db.connections.list(req.params.site, req.query.plugin);
         res.status(200).json(pages);
     }
     catch(err){

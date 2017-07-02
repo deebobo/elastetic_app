@@ -46,11 +46,13 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             resolve: {                                   //need to load
                 siteDetails: ['siteService', '$stateParams',
                     function (siteService, $stateParams) {
-                        return siteService.get($stateParams);
+                        var res = siteService.get($stateParams);
+                        return res;
                     }],
-                homepage: ['pageService', 'siteDetails',
-                    function (pageService, siteDetails) {
+                homepage: ['pageService', 'siteDetails', "menu",
+                    function (pageService, siteDetails, menu) {
                         var temp = pageService.get(siteDetails._id, siteDetails.homepage);
+                        menu.homepage = siteDetails.homepage;                       //let the menu know the name of the homepage, so it can use this while changing states (go to different webpage), so it can use the homepage name if no other page is currently loaded.
                         return temp;
                     }]
             },
@@ -174,34 +176,34 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                 return deferred.promise;
             }],
             access: {restricted: false}
-        });
-
-        $stateProvider.state('site.page.view', {
+        }).state('site.view', {
             resolve: {                                   //need to load
-                view: ['viewService', '$stateParams',
+                viewData: ['viewService', '$stateParams',
                     function (viewService, $stateParams) {
                         return viewService.get($stateParams.site, $stateParams.view);
                     }]
             },
-            url: '/{view}',
+            url: '/{page}/{view}',
             views:{
                 content:{
-                    templateProvider: ['view', '$q', '$http', function (view, $q, $http) {
+                    //controller: 'adminGeneralController',
+                    //templateUrl: 'partials/admin_gen.html',
+                    templateProvider: ['viewData', '$q', '$http', function (viewData, $q, $http) {
                         var deferred = $q.defer();
-                        $http.get("plugins/" + view.client.partial).then(function(data) {
+                        $http.get("plugins/" + viewData.plugin.client.partials[viewData.partial]).then(function(data) {
                             deferred.resolve(data.data);
                         });
                         return deferred.promise;
                     }],
-                    controllerProvider: ['view','$q', 'pluginService',  function (view, $q, pluginService) {
+                    controllerProvider: ['viewData','$q', 'pluginService',  function (viewData, $q, pluginService) {
                         var deferred = $q.defer();
-                        pluginService.load(view.plugin.client.scripts)
-                            .then(function(){ deferred.resolve(view.controller); });
+                        pluginService.load(viewData.plugin.client.scripts)
+                            .then(function(){ deferred.resolve(viewData.controller); });
                         return deferred.promise;
                     }]
                 }
             },
-            access: {restricted: false}
+            access: {restricted: true}
         });
 
         $stateProvider.state('logout', {

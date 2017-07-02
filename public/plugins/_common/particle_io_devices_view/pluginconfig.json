@@ -1,6 +1,6 @@
 {
   "comment": "description for the particle.io devices view plugin",
-  "name": "particle_io",
+  "name": "particle_io_devices_view",
   "description": "view all the devices on the particle.io cloud.",
   "version": "0.0.1",
   "author": "Deebobo",
@@ -8,6 +8,9 @@
   "client": {
       "scripts": [
         "js/particle_io_devices_view.js"
+      ],
+      "external": [
+        "//cdn.jsdelivr.net/particle-api-js/5/particle.min.js"
       ],
       "partials": [
         "partials/particle_io_devices_view.html"

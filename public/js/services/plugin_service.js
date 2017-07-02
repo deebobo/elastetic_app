@@ -35,7 +35,7 @@ deebobo.factory('pluginService',
                     deferred.resolve();
                 };
 
-                var toInject = '<script type="text/javascript" src="./plugins/' + path + '"></script>';
+                var toInject = '<script type="text/javascript" src="' + path + '"></script>';
                 injector.insert(toInject);
                 plugins[path] = deferred;
                 return deferred.promise;

@@ -1,5 +1,12 @@
-<md-input-container flex layout-fill style="margin-top: 20px;">
-    <label for="particleToken" >particle.io token </label>
-    <input type="text" id="particleToken" ng-model="connection.content.token" ng-change="connection.needsSave = true" flex></input>
-    <md-tooltip >The access token for particle.io cloud</md-tooltip>
-</md-input-container>
+<div flex layout="row"  layout-align="start center"
+    ng-controller="extAdminConnectionsController">
+    <md-input-container flex  style="margin-top: 20px;">
+        <label for="particleToken" >particle.io token </label>
+            <input type="text" id="particleToken" ng-model="connection.content.token" ng-change="connection.needsSave = true" flex></input>
+        <md-tooltip >The access token for particle.io cloud</md-tooltip>
+    </md-input-container>
+    <md-button class="md-primary"
+               ng-click="get_particle_io_access_token(connection)">
+        get token
+    </md-button>
+</div>

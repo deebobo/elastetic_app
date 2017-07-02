@@ -1,65 +1,74 @@
-<md-button class="md-primary"
-           ng-click="addConnection()">Add connection</md-button>
-
-<md-list ng-cloak  layout="column">
-    <md-list-item class="secondary-button-padding" ng-repeat="connection in connections" layout-align="center stretch" layout-fill layout="column">
 
 
-        <form ng-submit="save(connection)" layout-align="center stretch" layout-fill layout="column" layout-padding="10%">
+<div layout="row" layout-align="center center" >
+
+    <div flex="80" layout="column" layout-align="center stretch">
+
+        <h1>Connections</h1>
+        <md-button class="md-primary"
+                   ng-click="addConnection()">Add connection</md-button>
+
+        <md-list ng-cloak  layout="column">
+            <md-list-item class="secondary-button-padding" ng-repeat="connection in connections" layout-align="center stretch" layout-fill layout="column">
 
 
-            <div layout="row" layout-align="start center">
-                <div ng-if="connection.isOpen == true" flex="95">
-					
-					<md-input-container flex layout-fill>
-						<label for="name-{{connection.name}}" >name </label>
-						<input id="name-{{connection.name}}" type="text" ng-model="connection.name" class="form-control" ng-change="connection.needsSave = true" ng-click="$event.stopPropagation()" />
-						<md-tooltip >The name of the connection</md-tooltip>
-					</md-input-container>
-					
-                </div>
+                <form ng-submit="save(connection)" layout-align="center stretch" layout-fill layout="column" layout-padding="10%">
 
-                <md-button class="md-button-toggle"
-                           ng-click="connection.isOpen = !connection.isOpen"
-                           aria-controls="connections-btn-{{connection.name}}"
-                           aria-expanded="connection.isOpen = !connection.isOpen"
-                           flex
-                           style="min-width:30px"
-                           >
-                    <div flex layout="row"
-                         layout-align="end center">
-                        <div ng-if="!connection.isOpen" flex="95" >
-                            {{connection.name}}
+
+                    <div layout="row" layout-align="start center">
+                        <div ng-if="connection.isOpen == true" flex="95">
+
+                            <md-input-container flex layout-fill>
+                                <label for="name-{{connection.name}}" >name </label>
+                                <input id="name-{{connection.name}}" type="text" ng-model="connection.name" class="form-control" ng-change="connection.needsSave = true" ng-click="$event.stopPropagation()" />
+                                <md-tooltip >The name of the connection</md-tooltip>
+                            </md-input-container>
+
                         </div>
 
-                        <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
-                              ng-class="{'toggled' : connection.isOpen}" ></span>
+                        <md-button class="md-button-toggle"
+                                   ng-click="connection.isOpen = !connection.isOpen"
+                                   aria-controls="connections-btn-{{connection.name}}"
+                                   aria-expanded="connection.isOpen = !connection.isOpen"
+                                   flex
+                                   style="min-width:30px"
+                                   >
+                            <div flex layout="row"
+                                 layout-align="end center">
+                                <div ng-if="!connection.isOpen" flex="95" >
+                                    {{connection.name}}
+                                </div>
+
+                                <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
+                                      ng-class="{'toggled' : connection.isOpen}" ></span>
+                            </div>
+
+                        </md-button>
                     </div>
 
-                </md-button>
-            </div>
 
 
 
 
+                    <div ng-show="connection.isOpen == true" layout="column">
 
-            <div ng-show="connection.isOpen == true" layout="column">
+                        <select class="form-control"  ng-model="connection.plugin" ng-options="x.name + '(' + x.description + ')' for x in connectionPlugins" required ng-change="pluginChanged(connection)"></select>
 
-                <select class="form-control"  ng-model="connection.plugin" ng-options="x.name + '(' + x.description + ')' for x in connectionPlugins" required ng-change="pluginChanged(connection)"></select>
-
-                <ng-include src="connection.template" flex></ng-include>
+                        <ng-include src="connection.template" flex></ng-include>
 
 
-                <div layout="row" layout-align="end center">
-                    <md-button class="md-primary"
-                               ng-click="delete(connection, $event)">delete</md-button>
+                        <div layout="row" layout-align="end center">
+                            <md-button class="md-primary"
+                                       ng-click="delete(connection, $event)">delete</md-button>
 
-                    <input type="submit" value="save"
-                           ng-if="connection.needsSave === true"/>
-                </div>
+                            <input type="submit" value="save"
+                                   ng-if="connection.needsSave === true"/>
+                        </div>
 
-            </div>
-        </form>
-    </md-list-item>
-</md-list>
+                    </div>
+                </form>
+            </md-list-item>
+        </md-list>
 
+    </div>
+</div>

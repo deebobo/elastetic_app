@@ -59,7 +59,7 @@ deebobo.controller('AdminAuthorizationController',
 				});
 			}
 			
-			$scope.addUser = function(){
+			$scope.addUser = function(ev){
 				var confirm = $mdDialog.prompt()
 				  .title('Add new user')
 				  .textContent('What is the email address of the user that you want to invite?')
@@ -96,7 +96,7 @@ deebobo.controller('AdminAuthorizationController',
                         );
 			}
 			
-			$scope.addGroup = function(){
+			$scope.addGroup = function(ev){
 				var confirm = $mdDialog.prompt()
 				  .title('Add new group')
 				  .textContent('What is the name of the group?')

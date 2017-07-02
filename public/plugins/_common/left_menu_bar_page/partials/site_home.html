@@ -1,4 +1,4 @@
-<div  ng-cloak>
+<div  ng-cloak layout="column" flex>
 	<md-toolbar class="md-hue-2">
 		<div class="md-toolbar-tools">
 			<md-button class="md-icon-button" aria-label="menu" ng-disabled="false"
@@ -15,7 +15,7 @@
 		</div>
 	</md-toolbar>
 
-	<section layout="row" flex>
+	<section layout="row" flex layout-align="center stretch">
 
 		<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left"
 					 md-whiteframe="4"
@@ -49,7 +49,6 @@
 		</md-sidenav>
 
 		<md-content flex>
-			<!--<ui-view name="content"></ui-view>-->
 			<div ui-view="content" flex></div>
 		</md-content>
 

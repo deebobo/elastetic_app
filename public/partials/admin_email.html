@@ -1,108 +1,117 @@
-<h1>Configure email</h1>
-<md-tabs md-dynamic-height md-border-bottom>
+<div layout="row" layout-align="center center" >
 
-	<md-tab label="configuration" >
-        <md-content class="md-padding">
-          <form ng-submit="selectEmailplugin(email)">
-			
-			<label for="emailPlugin" >email processor plugin: </label><br />
-			<select id="emailPlugin" 
-					ng-model="plugin" 
-					ng-options="x.name for x in emailPlugins" >
-				<md-tooltip >The plugin used for sending out emails.</md-tooltip>
-			</select>
-			<br />
-			
-			<input type="submit" value="Submit" />
-		  </form>
-		  <ng-include src="emailConfigPartial"></ng-include>
-        </md-content>
-    </md-tab>
-	
-	
-	<md-tab label="templates">
-        <md-content class="md-padding" >
+    <div flex="80" layout="column" layout-align="center stretch">
 
-			<div >
-				<md-button class="md-primary"
-						   ng-click="addTemplate()">Add template</md-button>
+        <h1>Configure email</h1>
+        <md-tabs md-dynamic-height md-border-bottom>
 
-			</div>
+            <md-tab label="configuration" >
+                <md-content class="md-padding">
+                  <form ng-submit="selectEmailplugin(plugin._id)">
 
-			<md-list ng-cloak layout="column">
-				<md-list-item class="secondary-button-padding" ng-repeat="template in templates" layout-align="center stretch" layout-fill layout="column">
+                    <label for="emailPlugin" >email processor plugin: </label><br />
+                    <select id="emailPlugin"
+                            ng-model="plugin"
+                            ng-options="x.name for x in emailPlugins"
+                            ng-change="pluginNeedsSave = true">
+                        <md-tooltip >The plugin used for sending out emails.</md-tooltip>
+                    </select>
+                    <br />
 
-                    <div layout="row" layout-align="start center">
-                        <div ng-if="template.isOpen == true" flex="95">
-
-                            <md-input-container flex layout-fill>
-                                <label for="name-{{template.name}}" >name </label>
-                                <input id="name-{{template.name}}" type="text" ng-model="template.name" class="form-control" ng-change="template.needsSave = true" ng-click="$event.stopPropagation()" />
-                                <md-tooltip >The name of the email template</md-tooltip>
-                            </md-input-container>
-
-                        </div>
+                    <input type="submit" value="Save"
+                           ng-if="pluginNeedsSave === true"/>
+                  </form>
+                  <ng-include src="emailConfigPartial"></ng-include>
+                </md-content>
+            </md-tab>
 
 
+            <md-tab label="templates">
+                <md-content class="md-padding" >
 
-                        <md-button class="md-button-toggle"
-                                   ng-click="template.isOpen = !template.isOpen"
-                                   aria-controls="templates-btn-{{template.name | nospace}}"
-                                   flex layout="row"
-                                   aria-expanded="template.isOpen = !template.isOpen"
-                                   style="min-width:30px">
+                    <div >
+                        <md-button class="md-primary"
+                                   ng-click="addTemplate()">Add template</md-button>
 
-                            <div flex layout="row"
-                                 layout-align="end center">
-                                <div ng-if="!template.isOpen" flex="95" >
-                                    {{template.name}}
+                    </div>
+
+                    <md-list ng-cloak layout="column">
+                        <md-list-item class="secondary-button-padding" ng-repeat="template in templates" layout-align="center stretch" layout-fill layout="column">
+
+                            <div layout="row" layout-align="start center">
+                                <div ng-if="template.isOpen == true" flex="95">
+
+                                    <md-input-container flex layout-fill>
+                                        <label for="name-{{template.name}}" >name </label>
+                                        <input id="name-{{template.name}}" type="text" ng-model="template.name" class="form-control" ng-change="template.needsSave = true" ng-click="$event.stopPropagation()" />
+                                        <md-tooltip >The name of the email template</md-tooltip>
+                                    </md-input-container>
+
                                 </div>
 
-                                <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
-                                      ng-class="{'toggled' : template.isOpen}" ></span>
+
+
+                                <md-button class="md-button-toggle"
+                                           ng-click="template.isOpen = !template.isOpen"
+                                           aria-controls="templates-btn-{{template.name | nospace}}"
+                                           flex layout="row"
+                                           aria-expanded="template.isOpen = !template.isOpen"
+                                           style="min-width:30px">
+
+                                    <div flex layout="row"
+                                         layout-align="end center">
+                                        <div ng-if="!template.isOpen" flex="95" >
+                                            {{template.name}}
+                                        </div>
+
+                                        <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
+                                              ng-class="{'toggled' : template.isOpen}" ></span>
+                                    </div>
+
+                                </md-button>
                             </div>
 
-                        </md-button>
-                    </div>
+
+                            <div ng-show="template.isOpen == true" layout="column">
+
+                                <form ng-submit="saveTemplate(template)">
+
+                                    <md-input-container flex layout-fill>
+                                        <label for="subject-{{template.name}}" >subject </label>
+                                        <input id="subject-{{template.name}}" type="text" ng-model="template.subject" class="form-control" ng-change="template.needsSave = true" ng-click="$event.stopPropagation()" />
+                                        <md-tooltip >The subject line of the email template</md-tooltip>
+                                    </md-input-container>
 
 
-                    <div ng-show="template.isOpen == true" layout="column">
+                                    <md-input-container flex layout-fill style="margin-top: 20px;">
+                                            <textarea type="text"
+                                                      id="template-input-{{template.name | nospace}}"
+                                                      ng-model="template.body"
+                                                      ng-change="template.needsSave = true"
+                                                      flex
+                                                      rows="5"></textarea>
+                                        <md-tooltip >The template body</md-tooltip>
+                                    </md-input-container>
 
-                        <form ng-submit="saveTemplate(template)">
+                                    <div layout="row" layout-align="end center">
+                                        <md-button class="md-primary"
+                                                   ng-click="delete(template, $event)">delete</md-button>
 
-                            <md-input-container flex layout-fill>
-                                <label for="subject-{{template.name}}" >subject </label>
-                                <input id="subject-{{template.name}}" type="text" ng-model="template.subject" class="form-control" ng-change="template.needsSave = true" ng-click="$event.stopPropagation()" />
-                                <md-tooltip >The subject line of the email template</md-tooltip>
-                            </md-input-container>
+                                        <input type="submit" value="save"
+                                               ng-if="template.needsSave === true"/>
+                                    </div>
 
-
-                            <md-input-container flex layout-fill style="margin-top: 20px;">
-                                    <textarea type="text"
-                                              id="template-input-{{template.name | nospace}}"
-                                              ng-model="template.body"
-                                              ng-change="template.needsSave = true"
-                                              flex
-                                              rows="5"></textarea>
-                                <md-tooltip >The template body</md-tooltip>
-                            </md-input-container>
-
-                            <div layout="row" layout-align="end center">
-                                <md-button class="md-primary"
-                                           ng-click="delete(template, $event)">delete</md-button>
-
-                                <input type="submit" value="save"
-                                       ng-if="template.needsSave === true"/>
+                                </form>
                             </div>
 
-                        </form>
-                    </div>
 
-					
-				</md-list-item>
-			
-			</md-list>
-        </md-content>
-    </md-tab>
+                        </md-list-item>
 
-</md-tabs>
+                    </md-list>
+                </md-content>
+            </md-tab>
+
+        </md-tabs>
+
+    </div>
+</div>

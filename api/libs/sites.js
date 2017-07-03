@@ -25,6 +25,13 @@ async function createParticleIODevicesView(db, sitename, grps) {
     let view = { name: "particle io devices", site: sitename, plugin:particlePluginId._id, groups: grps, partial: 0, controller: "particlIODevicesViewController" };
     await db.views.add(view);
 }
+
+async function createGoogleMapView(db, sitename, grps) {
+    let googleMapPluginId = await db.plugins.find("google_map_view", "_common");
+    let view = { name: "map", site: sitename, plugin:googleMapPluginId._id, groups: grps, partial: 0, controller: "googleMapViewController" };
+    await db.views.add(view);
+}
+
 /**
  * create a new site.
  * @param db{object} ref to the db object
@@ -55,8 +62,9 @@ module.exports.create = async function(db, sitename, adminname, adminemail, pass
     let admin = {name: adminname, email: adminemail, password: password, site: sitename, groups: [grps], accountState: 'verified'}; // we need the id of the admin record
     await db.users.add(admin);
 
-    let allgroups =  [adminRec._id, viewGroup._id, editorRec._id]
+    let allgroups =  [adminRec._id, viewGroup._id, editorRec._id];
     await createHomepage(db, sitename, allgroups);
 
     await createParticleIODevicesView(db, sitename, allgroups);
+    await createGoogleMapView(db, sitename, allgroups);
 };

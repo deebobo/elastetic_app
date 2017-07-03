@@ -14,8 +14,8 @@ angular.module('common.directives', ['common.services']);
 var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap']);  //'ngMdIcons',
 
 
-deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide',
-    function ($stateProvider, $locationProvider, $controllerProvider, $provide) {
+deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider',
+    function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider) {
         deebobo.controller = $controllerProvider.register;				//needed for dynamically loading controllers
         $locationProvider.hashPrefix('');
         $locationProvider.html5Mode(true);                  //don't use the # in the path
@@ -93,9 +93,6 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             access: {restricted: false}
         });
 
-
-
-
         $stateProvider.state('site.general', {
             url: '/administration/general',
             views:{
@@ -117,7 +114,6 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             },
             access: {restricted: true}
         });
-
 
 
         $stateProvider.state('site.email', {
@@ -226,7 +222,8 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
 				$delegate(exception, cause);
 			};
     });
-		
+
+        deebobo.compileProvider = $compileProvider;
     }]);
 
 deebobo.run(function ($rootScope, $location, $state, AuthService) {

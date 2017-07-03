@@ -74,10 +74,16 @@ deebobo.factory('menu', [
             name: 'Views',
             type: 'toggle',
             pages: [{
-                name: 'particle io devices',
-                type: 'link',
-                view: 'particle io devices',
-                icon: 'fa fa-list'
+                    name: 'particle io devices',
+                    type: 'link',
+                    view: 'particle io devices',
+                    icon: 'fa fa-list'
+                },
+                {
+                    name: 'map',
+                    type: 'link',
+                    view: 'map',
+                    icon: 'fa fa-globe'
                 }
                 ]
         });

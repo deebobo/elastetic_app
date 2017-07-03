@@ -43,6 +43,7 @@ async function installPlugins(db)
     await installPlugin(db, 'left_menu_bar_page', '../public/plugins/_common/left_menu_bar_page/pluginconfig.json');
     await installPlugin(db, 'particle_io', '../public/plugins/_common/particle_io/pluginconfig.json');
     await installPlugin(db, 'particle_io_devices_view', '../public/plugins/_common/particle_io_devices_view/pluginconfig.json');
+    await installPlugin(db, 'google_map_view', '../public/plugins/_common/google_map_view/pluginconfig.json');
 }
 
 async function install(plugins, result)

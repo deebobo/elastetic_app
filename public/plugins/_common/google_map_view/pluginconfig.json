@@ -7,13 +7,15 @@
   "type": "view",
   "client": {
       "scripts": [
-        "js/site_home.js"
+        "js/google_map_view.js",
+        "js/dbbmap.js"
       ],
       "external": [
-        "//cdn.jsdelivr.net/particle-api-js/5/particle.min.js"
+        "//cdn.jsdelivr.net/particle-api-js/5/particle.min.js",
+        "https://maps.googleapis.com/maps/api/js?key=AIzaSyADMiCiu6lavxB6vf5PbVRfOy3UXCC5yJ4"
       ],
       "partials": [
-        "partials/site_home.html"
+        "partials/google_map_view.html"
       ]
     }
 }

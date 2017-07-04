@@ -6,25 +6,36 @@
 
 
 
-angular.module("deebobo").controller('particlIODevicesViewController', ['$scope', 'messages',
-    function ($scope, messages) {
+angular.module("deebobo").controller('particlIODevicesViewController',
+    ['$scope', 'messages', '$http', '$stateParams', 'viewData',
+    function ($scope, messages, $http, $stateParams, viewData) {
+
+        $scope.devices = [];
+
+        $scope.selected = [];                       //the selected devices.
+
         var particle = new Particle();
 
-        $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection?' + $scope.viewData.plugin._id})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+        $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection?' + viewData.plugin._id})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
-                    particle.listDevices({ auth: response.content.token }).then(
-                        function(devices){
-                            $scope.devices = devices;
-                        },
-                        function(err){
-                            messages.error(err);
-                        }
-                    );
+                    for(i=0; i < response.data.length; i++){
+                        particle.listDevices({ auth: response.data[i].content.token }).then(
+                            function(result){
+                                if(result.statusCode == 200)
+                                    $scope.devices.push.apply($scope.devices, result.body);
+                            },
+                            function(err){
+                                messages.error(err);
+                            }
+                        );
+                    }
                 },
                 function (response) {
                     messages.error(response.data);
                 }
             );
+
+
 
     }]);
 

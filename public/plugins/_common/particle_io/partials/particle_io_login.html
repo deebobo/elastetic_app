@@ -11,7 +11,7 @@
         </md-toolbar>
 
         <md-dialog-content>
-            <div class="md-dialog-content">
+            <div class="md-dialog-content"  layout="column">
 
                 <md-input-container flex >
                     <label for="particle_io_login_name" >name </label>
@@ -19,8 +19,8 @@
                     <md-tooltip >The username of your account on particle.io</md-tooltip>
                 </md-input-container>
                 <md-input-container flex >
-                    <label for="particle_io_login_pwd" >name </label>
-                    <input id="particle_io_login_pwd" type="text" ng-model="result.pwd" class="form-control" />
+                    <label for="particle_io_login_pwd" >password </label>
+                    <input id="particle_io_login_pwd" type="password" ng-model="result.pwd" class="form-control" />
                     <md-tooltip >The username of your account on particle.io</md-tooltip>
                 </md-input-container>
 

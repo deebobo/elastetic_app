@@ -4,15 +4,49 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+const mongoose = require('mongoose');
 
 class Plugins{
 
     /**
      * @constructor
-     * @param collection {object} a reference to the mongo collection that represents the sites
+     * creates the collection that stores all the pages for each site.
+     * required fields:
+     *  - name: the name of the page
+     * 	- site: the site to which this group applies
+     * 	- description: a description of the plugin.
+     *  - client:   (if the plugin is a client plugin)
+     *      - partial: the name and location of the partial that should be used for this plugin (if it's a client side plugin)
+     *      - code: the code files that should be loaded for this plugin.
+     *  - config:
+     *    - partial: he name and location of the partial that should be used to configure this plugin
+     *    - code: the code files that should be loaded for this plugin.
+     *  - installedOn: date of record creation
+     *  - type: "mail', 'page', 'view'
+     *  - version: the version of the plugin that is installed.
+     *  - author: the creator of the plugin
+     * @private
      */
-    constructor(collection){
-        this._plugins = collection;
+    constructor(){
+        let angularSchema = new mongoose.Schema({
+            partials: [String],
+            scripts: [String],
+            css: [String],
+            load: [String]
+        });
+        let pluginSchema = new mongoose.Schema({
+            name: String,                                        		//the email address of the person that created the site (admin)
+            description: String,
+            site: String,
+            type: String,
+            version: String,
+            author: String,
+            client: angularSchema,
+            config: angularSchema,
+            installedOn:{type: Date, default: Date.now()}
+        });
+        pluginSchema.index({ name: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
+        this._plugins = mongoose.model('plugins', pluginSchema);
     }
 
 	/**

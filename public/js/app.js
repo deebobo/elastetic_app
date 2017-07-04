@@ -11,8 +11,7 @@ angular.module('common.services', []);
 angular.module('deebobo.controllers', ['common.directives']);
 angular.module('common.directives', ['common.services']);
 
-var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap']);  //'ngMdIcons',
-
+var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap', 'md.data.table']);  //'ngMdIcons',
 
 deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider',
     function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider) {
@@ -193,7 +192,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     }],
                     controllerProvider: ['viewData','$q', 'pluginService',  function (viewData, $q, pluginService) {
                         var deferred = $q.defer();
-                        pluginService.load(viewData.plugin.client.scripts)
+                        pluginService.load(viewData.plugin.client)
                             .then(function(){ deferred.resolve(viewData.controller); });
                         return deferred.promise;
                     }]
@@ -224,6 +223,10 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
     });
 
         deebobo.compileProvider = $compileProvider;
+
+
+        deebobo.requires.push()
+
     }]);
 
 deebobo.run(function ($rootScope, $location, $state, AuthService) {

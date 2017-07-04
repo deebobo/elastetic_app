@@ -8,25 +8,37 @@ const config = require.main.require('../api/libs/config');
 const winston = require('winston');
 const sitesLib = require.main.require('../api/libs/sites');
 
+/**
+ * prepares the paths to the code (js, html, css) files for the specified section
+ * @param section
+ */
+function prepareCode(section, pluginName){
+    for(path = 0; path < section.scripts.length; path++)
+        section.scripts[path] = "./plugins/_common/" + pluginName + '/' + section.scripts[path]
+    if(section.hasOwnProperty('external')){
+        section.scripts.push.apply(section.scripts, section.external);
+    }
+    for(path = 0; path < section.partials.length; path++)
+        section.partials[path] = "_common/" + pluginName + '/' + section.partials[path]
+    if(section.hasOwnProperty('css')){
+        for(path = 0; path < section.css.length; path++)
+            section.css[path] = "_common/" + pluginName + '/' + section.css[path]
+    }
+    if(section.hasOwnProperty('externalCss'))
+        if(section.hasOwnProperty('css'))
+            section.css.push.apply(section.css, section.externalCss);
+        else
+            section.css = section.externalCss;
+}
+
 async function installPlugin(db, pluginName, file)
 {
     let def = require.main.require(file);
     def.site = "_common";
-    if(def.hasOwnProperty('client')){
-        for(path = 0; path < def.client.scripts.length; path++)
-            def.client.scripts[path] = "./plugins/_common/" + pluginName + '/' + def.client.scripts[path]
-        if(def.client.hasOwnProperty('external')){
-            def.client.scripts.push.apply(def.client.scripts, def.client.external);
-        }
-        for(path = 0; path < def.client.partials.length; path++)
-            def.client.partials[path] = "_common/" + pluginName + '/' + def.client.partials[path]
-    }
-    if(def.hasOwnProperty('config')){
-        for(path = 0; path < def.config.scripts.length; path++)
-            def.config.scripts[path] = "./plugins/_common/" + pluginName + '/' + def.config.scripts[path]
-        for(path = 0; path < def.config.partials.length; path++)
-            def.config.partials[path] = "_common/" + pluginName + '/' + def.config.partials[path]
-    }
+    if(def.hasOwnProperty('client'))
+        prepareCode(def.client, pluginName);
+    if(def.hasOwnProperty('config'))
+        prepareCode(def.config, pluginName);
     try{
         await db.plugins.add(def);
         winston.log("info", "succesfully installed plugin", file);

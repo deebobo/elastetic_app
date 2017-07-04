@@ -5,8 +5,8 @@
  */
 
 deebobo.controller('adminConnectionsController',
-    ['$scope', '$http', 'messages', '$stateParams', '$mdDialog', 'pluginService',
-        function ($scope, $http, messages, $stateParams, $mdDialog, pluginService) {
+    ['$scope', '$http', 'messages', '$stateParams', '$mdDialog', 'pluginService', '$q',
+        function ($scope, $http, messages, $stateParams, $mdDialog, pluginService, $q) {
 
             //scope vars
             //--------------------------------------------------------------------------------------
@@ -20,22 +20,32 @@ deebobo.controller('adminConnectionsController',
              * @param plugins
              */
             function tryConvertPluginRefs(recs, plugins){
+                var deferred = $q.defer();
                 if(recs && plugins) {
+                    var promises = [];
                     for (i = 0; i < recs.length; i++) {
                         if(recs[i].plugin){
                             recs[i].template = "plugins/" + recs[i].plugin.config.partials[0];
                             recs[i].plugin = plugins.find(function(x){ return x._id === recs[i].plugin._id; });
+                            promises.push(pluginService.load(recs[i].plugin.config));
                         }
                     }
+                    $q.all(promises).then(function() {
+                        deferred.resolve();
+                    });
                 }
+                else
+                    deferred.resolve();
+                return deferred.promise;
             }
 
             //get data from site for scope
             //--------------------------------------------------------------------------------------
             $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                 .then(function (response) {
-                        tryConvertPluginRefs(response.data, $scope.connectionPlugins);
-                        $scope.connections.push.apply($scope.connections, response.data);
+                        tryConvertPluginRefs(response.data, $scope.connectionPlugins).then(function(){
+                            $scope.connections.push.apply($scope.connections, response.data);
+                        });
                     },
                     function (response) {
                         messages.error(response.data);
@@ -44,8 +54,9 @@ deebobo.controller('adminConnectionsController',
 
             $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/plugin/connection'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                 .then(function (response) {
-                        $scope.connectionPlugins = response.data;
-                        tryConvertPluginRefs($scope.connections, $scope.connectionPlugins);
+                        tryConvertPluginRefs($scope.connections, response.data).then(function(){
+                            $scope.connectionPlugins = response.data;
+                        });
                     },
                     function (response) {
                         messages.error(response.data);
@@ -61,7 +72,7 @@ deebobo.controller('adminConnectionsController',
 
             $scope.pluginChanged = function(connection){
                 if(connection.plugin.config){
-                    pluginService.load(connection.plugin.config.scripts)
+                    pluginService.load(connection.plugin.config)
                         .then(function(){
                             connection.needsSave = true;
                             connection.template = "plugins/" + connection.plugin.config.partials[0];

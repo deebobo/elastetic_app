@@ -4,22 +4,34 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+
 angular.module("deebobo").controller('extAdminConnectionsController',
-    ['$scope', '$controller', 'messages',
-    function($scope, $controller, messages) {
+    ['$scope', '$controller', 'messages', '$mdDialog',
+    function($scope, $controller, messages, $mdDialog) {
     angular.extend(this, $controller('adminConnectionsController', {$scope: $scope}));
 
+    var _currentPluginPath = null;
 
     var currentPluginPath = function () {
 
-        var currentScript = document.currentScript.src;
-        var currentScriptChunks = currentScript.split( '/' );
-        var currentScriptFile = currentScriptChunks[ currentScriptChunks.length - 2 ];
-
-        return currentScript.replace( currentScriptFile, '' );
+        if(!_currentPluginPath){
+            var scripts = document.getElementsByTagName("script");
+            var scriptSrc = null;
+            for(i = 0; i < scripts.length; i++){
+                if(scripts[i].src.endsWith("/particle_io_config.js")){
+                    scriptSrc =  scripts[i].src;
+                }
+            }
+            if(scriptSrc) {
+                var currentScriptChunks = scriptSrc.split('/');
+                currentScriptChunks.splice(currentScriptChunks.length - 2, 2);
+                _currentPluginPath = currentScriptChunks.join('/');
+            }
+        }
+        return _currentPluginPath;
     };
 
-    $scope.get_particle_io_access_token = function(connection){
+    $scope.get_particle_io_access_token = function(connection, ev){
 
         $mdDialog.show({
             controller: DialogController,
@@ -32,9 +44,12 @@ angular.module("deebobo").controller('extAdminConnectionsController',
             .then(function(answer) {
                 var particle = new Particle();
 
-                particle.login({username: answer.usename, password: answer.pwd}).then(
+                particle.login({username: answer.username, password: answer.pwd}).then(
                     function(data) {
-                        connection.content.token = data.body.access_token;
+                        if(connection.content)                                      //could be that there was no value set yet, in which case this is empty.
+                            connection.content.token = data.body.access_token;
+                        else
+                            connection.content = {token: data.body.access_token};
                     },
                     function (err) {
                         messages.error('Could not log in: ' + err);

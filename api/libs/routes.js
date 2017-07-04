@@ -16,7 +16,7 @@ const pages =    require('../routes/pages');
 const views =    require('../routes/views');
 const index =    require('../routes/index');
 const connections =    require('../routes/connections');
-//const views =    require('../routes/views');
+const historicalData = require('../routes/historicalData');
 const emailTemplates =    require('../routes/email_templates');
 const verifiedsite =  require('../routes/verifiedsite');
 const express =  require('express');
@@ -38,8 +38,8 @@ function initPaths(app, passport) {
     app.use(router.use('/api/site/:site/page', passport.authenticate('jwt', { session: false }), pages));
 	app.use(router.use('/api/site/:site/view', passport.authenticate('jwt', { session: false }), views));
     app.use(router.use('/api/site/:site/connection', passport.authenticate('jwt', { session: false }), connections));
-    //app.use(router.use('/api/site/:site/view', passport.authenticate('jwt', { session: false }), views));
 	app.use(router.use('/api/site/:site/templates/email', passport.authenticate('jwt', { session: false }), emailTemplates));
+    app.use(router.use('/api/site/:site/data', passport.authenticate('jwt', { session: false }), historicalData));
 
 
 	//catch all for invalid api calls

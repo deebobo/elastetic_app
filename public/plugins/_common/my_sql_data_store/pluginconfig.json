@@ -1,0 +1,16 @@
+{
+  "comment": "description for the my-sql plugin",
+  "name": "my_sql",
+  "description": "connection to a my sql db for storing time series data.",
+  "version": "0.0.1",
+  "author": "Deebobo",
+  "type": "connection",
+  "config": {
+      "scripts": [
+        "js/particle_io_config.js"
+      ],
+      "partials": [
+        "partials/particle_io_config.html"
+      ]
+    }
+}

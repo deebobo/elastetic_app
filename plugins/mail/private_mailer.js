@@ -76,7 +76,7 @@ let getPluginConfig = function (){
 			partial: "private_mailer_config_partial.html",
 			code: ["private_mailer_config_controller.js"]
 		},
-        create: PrivateMailer
+        create: function(){ return new PrivateMailer();}
     };
 }
 

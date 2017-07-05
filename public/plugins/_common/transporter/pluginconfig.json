@@ -1,0 +1,16 @@
+{
+  "comment": "description for the transporter plugin",
+  "name": "transporter",
+  "description": "transport streaming data from one connection to the historical data of another",
+  "version": "0.0.1",
+  "author": "Deebobo",
+  "type": "function",
+  "config": {
+      "scripts": [
+        "js/transporter_config_controller.js"
+      ],
+      "partials": [
+        "partials/transporter_config_partial.html"
+      ]
+    }
+}

@@ -18,13 +18,21 @@ class PluginManager {
     constructor (){
         this.db = null;
         this._dbPlugin = null;                                //a reference to the plugin object itself (the id record), so we can see if the user is trying to unload the db plugin, whichi is illegal
-        this.plugins = [];                                  //list of all the plugins, so that they can be accessed from the website (show them)
+        this._plugins = [];                                  //list of all the plugins, so that they can be accessed from the website (show them)
+        this.plugins = {};                                   //fast access to the plugins
         //this._initPluginMonitor();
     }
 
     //load all the availble plugin modules with require.
     load(){
+        let self = this;
         this._loadDb();
+        this._plugins.foreach(                                  //all plugins that have a 'runAtStartup' function need to be called now (db is now known)
+            function(plugin){
+                if(plugin.hasOwnProperty('runAtStartup'))
+                    plugin.runAtStartup(self.db);
+            }
+        );
     }
 	
 	/** returns the mail handler plugin for the specified site, if there is any.
@@ -54,9 +62,16 @@ class PluginManager {
         this.monitor.on('pluginLoaded', function(pluginName, plugin){
                 if('getPluginConfig' in plugin){
                     let info = plugin.getPluginConfig();
-                    info.ref = plugin;                                              //make certain we get a reference to the actual object, so we can use it later on if need be.
-                    self.plugins.push(info);
-                    winston.log('info', 'plugin loaded: ', pluginName);
+                    if(info.name in self.plugins)
+                        winston.log('error', 'a plugin with the name: ' + pluginName + " already exists");
+                    else {
+                        info.ref = plugin;                                              //make certain we get a reference to the actual object, so we can use it later on if need be.
+                        self._plugins.push(info);
+                        self.plugins[info.name] = info;
+                        if(self.db && plugin.hasOwnProperty('runAtStartup'))            //if called during execution( vs at startup), then db is alrady known, and there is no more 'load' function, so call runAtStartup now, otherwise it isnt called..
+                            plugin.runAtStartup(self.db);
+                        winston.log('info', 'plugin loaded: ', pluginName);
+                    }
                 }
             }
         );
@@ -66,12 +81,13 @@ class PluginManager {
                     winston.log('error', "can't unload the db: ", pluginName);
                     throw new Error("invalid operation: can't unload the db plugin")
                 }
-                let found = self.plugins.filter(function(el){
+                let found = self._plugins.filter(function(el){
                         return el.plugin === plugin;
                     }
                 );
                 if( found.length === 1){
-                    self.plugins.splice(self.plugins.indexOf(found[0]));
+                    delete self.plugins[found[0].name];
+                    self._plugins.splice(self._plugins.indexOf(found[0]));
                     winston.log('info', 'plugin unloaded: ', pluginName);
                 }
                 else{
@@ -84,13 +100,10 @@ class PluginManager {
 
     //loads the database plugin into the plugin.
     _loadDb(){
-        let found = this.plugins.filter(function(el){
-                return el.category === 'db' && el.name === config.config.db;
-            }
-        );
-        if(found.length === 1){
-            this._dbPlugin = found[0];
-            this.db = new this._dbPlugin.create();      //create the
+        if(config.config.db in this.plugins){
+            let found = this.plugins[config.config.db];
+            this._dbPlugin = found;
+            this.db = this._dbPlugin.create();      //create the
         }
         else{
             winston.log('error', 'failed to find plugin for db: ', config.config.db);

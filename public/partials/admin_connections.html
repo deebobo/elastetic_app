@@ -38,7 +38,7 @@
                                 <div ng-if="!connection.isOpen" flex="95" >
                                     {{connection.name}}
                                 </div>
-
+                                <span ng-if="connection.warning">error</span>
                                 <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
                                       ng-class="{'toggled' : connection.isOpen}" ></span>
                             </div>
@@ -51,6 +51,8 @@
 
 
                     <div ng-show="connection.isOpen == true" layout="column">
+
+                        <span ng-if="connection.warning">connection.warning</span>
 
                         <select class="form-control"  ng-model="connection.plugin" ng-options="x.name + '(' + x.description + ')' for x in connectionPlugins" required ng-change="pluginChanged(connection)"></select>
 

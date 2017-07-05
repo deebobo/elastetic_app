@@ -274,7 +274,7 @@ let getPluginConfig = function (){
         version: "0.0.1",
         icon: "/images/plugin_images/MongoDB_Gray_Logo_FullColor_RGB-01.jpg",
         license: "GPL-3.0",
-        create: MongoDb
+        create: function(){ return new MongoDb();}
     };
 };
 

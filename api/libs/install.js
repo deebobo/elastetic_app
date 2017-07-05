@@ -52,10 +52,13 @@ async function installPlugins(db)
 {
     winston.log("info", "installing plugins...");
     await installPlugin(db, 'private mail', '../public/plugins/_common/private mail/pluginconfig.json');
+    await installPlugin(db, 'my_sql_data_store', '../public/plugins/_common/my_sql_data_store/pluginconfig.json');
     await installPlugin(db, 'left_menu_bar_page', '../public/plugins/_common/left_menu_bar_page/pluginconfig.json');
     await installPlugin(db, 'particle_io', '../public/plugins/_common/particle_io/pluginconfig.json');
     await installPlugin(db, 'particle_io_devices_view', '../public/plugins/_common/particle_io_devices_view/pluginconfig.json');
     await installPlugin(db, 'google_map_view', '../public/plugins/_common/google_map_view/pluginconfig.json');
+
+    await installPlugin(db, 'transporter', '../public/plugins/_common/transporter/pluginconfig.json');
 }
 
 async function install(plugins, result)

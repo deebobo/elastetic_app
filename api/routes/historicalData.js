@@ -9,6 +9,9 @@ var router = express.Router({mergeParams: true});
 const ctrlHistData = require.main.require('../api/controllers/historicalData');
 
 
+//get historical data stored by this connection
 router.get('/', ctrlHistData.get);
+//store historical data on this connection
+router.post('/', ctrlHistData.post);
 
 module.exports = router;

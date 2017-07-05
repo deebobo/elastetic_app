@@ -16,11 +16,13 @@ class Plugins{
      * 	- site: the site to which this group applies
      * 	- description: a description of the plugin.
      *  - client:   (if the plugin is a client plugin)
-     *      - partial: the name and location of the partial that should be used for this plugin (if it's a client side plugin)
-     *      - code: the code files that should be loaded for this plugin.
+     *      - partials: the relative paths to all the available partials for this plugin.
+     *      - scripts: all the scripts that need to be loaded for this plugin
+     *      - css: all the css scripts that need to be loade
      *  - config:
-     *    - partial: he name and location of the partial that should be used to configure this plugin
-     *    - code: the code files that should be loaded for this plugin.
+     - partials: the relative paths to all the available partials for this plugin.
+     *      - scripts: all the scripts that need to be loaded for this plugin
+     *      - css: all the css scripts that need to be loade
      *  - installedOn: date of record creation
      *  - type: "mail', 'page', 'view'
      *  - version: the version of the plugin that is installed.
@@ -31,8 +33,7 @@ class Plugins{
         let angularSchema = new mongoose.Schema({
             partials: [String],
             scripts: [String],
-            css: [String],
-            load: [String]
+            css: [String]
         });
         let pluginSchema = new mongoose.Schema({
             name: String,                                        		//the email address of the person that created the site (admin)
@@ -64,7 +65,16 @@ class Plugins{
         let rec = new this._plugins(plugin);
         return rec.save();
     }
-	
+
+    /**
+     * find a plugin by id.
+     * @param id the id of the plugin
+     * @returns {Promise}
+     */
+    findById(id){
+        return this._plugins.findOne( { _id: id } ).exec();
+    }
+
 	/**
      * adds a plugins with the specified name on the specified site
      *

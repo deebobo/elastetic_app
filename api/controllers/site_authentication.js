@@ -9,6 +9,7 @@ const email = require.main.require('../api/libs/email');
 const url = require('url');
 const jwt = require('jsonwebtoken');
 const config = require.main.require('../api/libs/config');
+const winston = require('winston');
 
 /**
  * register a new user to a specific site. If the user already exists, the site is added to the list of possible sites.
@@ -56,6 +57,7 @@ module.exports.register = async function(req, res) {
             }
         }
         catch(err){
+            winston.log("error", err);
             res.status(500).json({message:err.message});
         }
     }
@@ -107,6 +109,7 @@ module.exports.activate = async function(req, res){
 	}
 	catch(err)
 	{
+        winston.log("error", err);
 		res.status(400).json({message:err});
 	}
     //activationKey

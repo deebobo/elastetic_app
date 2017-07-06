@@ -6,6 +6,7 @@
 
 const mongoose = require('mongoose');
 
+
 /**
  * @class represents the collection of connection
  */
@@ -100,7 +101,19 @@ class Connections{
      * was found
      */
     find(name, site){
-        return this._connections.findOne( { name: value, site: site } ).populate('plugin').exec();
+        return this._connections.findOne( { name: name, site: site } ).populate('plugin').exec();
+    }
+
+    /**
+     * finds a connection by it's id
+     *
+     * @name .findById()
+     * @param id {string}  - id  the connection.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was found
+     */
+    findById(id){
+        return this._connections.findOne( { _id: id } ).populate('plugin').exec();
     }
 
     /**

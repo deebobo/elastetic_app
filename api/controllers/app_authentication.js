@@ -4,6 +4,9 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+const winston = require('winston');
+
+
 /**
  * create a new site and admin user for that site. If the site name already exists, the operation is illegal.
  * @param req
@@ -43,6 +46,7 @@ module.exports.register = async function(req, res) {
             }
         }
         catch (err){
+            winston.log("error", err);
             res.status(500).json({message:err.message});
         }
     }

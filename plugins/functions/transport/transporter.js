@@ -4,6 +4,8 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+const winston = require('winston');
+
 class Transporter {
 
     constructor() {
@@ -13,29 +15,82 @@ class Transporter {
 
     /**
      * create a tansport between the 2 connections and store it in the system
-     * @param from {object} the connection that will produce the data. Should havea registerCallback function
-     * @param to {object} the connection that will store the data as historical data. Should have a storeHistory function
+     * @param db {Object} ref to the db
+     * @param funcDef {object} the object that represents a transport def.
+     * @param req {Object} the request object that triggered this operation (used for building urls, getting user info and such.
+     * $returns true if the functDe object has been changed and needs to be saved again in the db.
      */
-    createTransport(site, db, from, to){
-
-        function onData(data){
-            to.storeHistory(data);
+    async create(plugins, funcDef, req){
+        if(!funcDef.data.hasOwnProperty('to'))
+            throw Error("missing to field");
+        let fromConnection = await plugins.db.connections.find(funcDef.data.from, funcDef.site);
+        if(funcDef.data.hasOwnProperty('from')) {
+            if(fromConnection.plugin.name in plugins.plugins){
+                let plugin = plugins.plugins[fromConnection.plugin.name].create();
+                if (plugin.registerCallback)
+                    await plugin.registerCallback(fromConnection, funcDef, req);
+                return true;
+            }
+            else
+                throw Error("unknown plugin: " + fromConnection.plugin.name);
         }
-
-        if(from.hasOwnProperty('registerCallback')) {
-            from.registerCallback(onData);
-        }
-
-        let record = { site: site, source: "transporter", data: {from: from.name, to: to.name}};
-        db.functionData.add(record)
+        else
+            throw Error("missing from field");
+        return false;
     }
 
-    load(db){
+    /**
+     * called when the function is deleted
+     * @param funcDef
+     * @param db {Object} ref to the db
+     */
+    async destroy(plugins, funcDef){
+        let fromConnection = await plugins.db.connections.find(funcDef.data.from, funcDef.site);
+        if(funcDef.data.hasOwnProperty('from')) {
+            if(fromConnection.plugin.name in plugins.plugins) {
+                let plugin = plugins.plugins[fromConnection.plugin.name].create();
+                if (plugin.unRegisterCallback)
+                    await plugin.unRegisterCallback(fromConnection, funcDef);
+            }
+            else
+                throw Error("unknown plugin: " + fromConnection.plugin.name);
+        }
+    }
 
+    /**
+     * called when the function is changed.
+     * @param oldFuncDef
+     * @param newFuncDef
+     */
+    async update(plugins, oldFuncDef, newFuncDef, req){
+        await this.destroy(plugins, oldFuncDef);
+        return this.create(plugins, newFuncDef, req);
+    }
+
+
+    /**
+     * performs the function (transport data from source to dest).
+     * @param plugins {Object} a ref to the plugins object, for finding the connection plugins.
+     * @param funcDef {Object} the function instance data (defines the connection source and destination)
+     * @param params {Object} the params that were given by the source and that need to be stored in the destination.
+     */
+    async call(db, plugins, funcDef, params){
+        let toConnection = await db.connections.find(funcDef.data.to, funcDef.site);
+        if(toConnection){
+            let to =  plugins[toConnection.plugin.name];
+            to.connect(toConnection);                                       //make certain that we have an open connection
+            try{
+                await to.storeHistory(params, toConnection);
+            }
+            finally {
+                await to.close();                                           //make certain that the connection is closed again.
+            }
+        }
+        else{
+            winston.log("error", "failed to find connection:", funcDef.data.to, "site:", funcDef.data.site)
+        }
     }
 }
-
-let _transporter = new Transporter();                                       //the singleton object.
 
 //required for all plugins. returns information about the plugin
 let getPluginConfig = function (){
@@ -52,8 +107,7 @@ let getPluginConfig = function (){
             partial: "transporter_config_partial.html",
             code: ["transporter_config_controller.js"]
         },
-        create: function(){ return _transporter;},
-        runAtStartup: function(db) {_transporter.load(db);}
+        create: function(){ return new Transporter();}
     };
 };
 

@@ -21,7 +21,7 @@ router.get('/:connection', ctrlConnections.get);
 router.post('/', ctrlConnections.create);
 
 /* update a template. */
-router.put('/', ctrlConnections.update);
+router.put('/:connection', ctrlConnections.update);
 
 /* remove a template. */
 router.delete('/:connection', ctrlConnections.delete);

@@ -4,6 +4,7 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+const winston = require('winston');
 const auth = require.main.require('../api/libs/auth');
 
 /* GET connections list.
@@ -14,10 +15,11 @@ module.exports.get = async function(req, res)
     try{
         let db = await req.app.get('plugins');
         db = db.db;
-        let pages = await db.connections.list(req.params.site, req.query.plugin);
-        res.status(200).json(pages);
+        let result = await db.connections.list(req.params.site, req.query.plugin);
+        res.status(200).json(result);
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -28,10 +30,11 @@ module.exports.getConnection = async function(req, res) {
     try{
         let db = await req.app.get('plugins');
         db = db.db;
-        connection = await db.connections.find(req.params.connection, req.params.site);
-        res.status(200).json(page);
+        let connection = await db.connections.find(req.params.connection, req.params.site);
+        res.status(200).json(connection);
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -54,12 +57,13 @@ async function cleanPluginRef(rec, db){
     return pluginName;
 }
 
-async function preparePlugin(rec, plugins){
+async function preparePlugin(pluginName, rec, plugins){
 
     if(pluginName in plugins.plugins){                  //check if the server side needs to do something for the connection.
         let plugin = plugins.plugins[pluginName].create();
         await plugin.connect(rec.content);                    //check for the connection to succeed
-        plugin.create(rec.content);                                //make certain that everything is set up correctly for the plugin.
+        await plugin.create(rec.content);                                //make certain that everything is set up correctly for the plugin.
+        await plugin.close();                                   //close it again, don't want to keep 1000+ connections open at the same time.
     }
 }
 
@@ -83,6 +87,7 @@ module.exports.create = async function(req, res) {
         }
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -94,10 +99,11 @@ module.exports.update = async function(req, res) {
             let plugins = await req.app.get('plugins');
             let db = plugins.db;
             let rec = req.body;
-            await cleanPluginRef(rec, db);
+            rec._id = req.params.connection;
+            let pluginName = await cleanPluginRef(rec, db);
             let newRec = await db.connections.update(rec);
             try {
-                await preparePlugin(rec, plugins);                    //do after add, so that a failure will only cause a warning.
+                await preparePlugin(pluginName, rec, plugins);                    //do after add, so that a failure will only cause a warning.
             }
             catch (err){
                 newRec.warning = err;
@@ -121,6 +127,7 @@ module.exports.delete = async function(req, res) {
         }
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };

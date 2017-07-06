@@ -18,6 +18,7 @@ module.exports.get = async function (req, res, next) {
         res.json(recs);
     }
     catch (err) {
+        winston.log("error", err);
         res.status(400).json({message: err});
     }
 };
@@ -33,6 +34,7 @@ module.exports.getForType = async function (req, res, next) {
         res.json(plugins);
     }
     catch (err) {
+        winston.log("error", err);
         res.status(400).json({message: err});
     }
 };
@@ -49,6 +51,7 @@ module.exports.getDefaultforType = async function (req, res){
 		}
     }
     catch (err) {
+        winston.log("error", err);
         res.status(500).json({message: err});
     }
 }
@@ -66,6 +69,7 @@ module.exports.setDefaultforType = async function (req, res){
 		}
     }
     catch (err) {
+        winston.log("error", err);
         res.status(500).json({message: err});
     }
 }
@@ -97,6 +101,7 @@ module.exports.post = async function (req, res, next) {
         }
     }
     catch (err) {
+        winston.log("error", err);
         res.status(400).json({message: err});
     }
 };
@@ -118,6 +123,7 @@ module.exports.delete = async function (req, res) {
         }
     }
     catch (err) {
+        winston.log("error", err);
         res.status(400).json({message: err});
     }
 }

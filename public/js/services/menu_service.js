@@ -41,6 +41,11 @@ deebobo.factory('menu', [
                 type: 'link',
                 icon: 'fa fa-cloud'
             }, {
+                name: 'functions',
+                url: 'site.functions',
+                type: 'link',
+                icon: 'fa fa-connectdevelop'
+            }, {
                 name: 'Plugins',
                 url: 'site.plugins',
                 type: 'link',

@@ -4,6 +4,7 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+const winston = require('winston');
 
 /* GET historical data.
   param from the path: connection = the connection name that represents the data store.
@@ -20,18 +21,22 @@ module.exports.get = async function(req, res)
     try{
         let plugins = await req.app.get('plugins');
         let db = plugins.db;
-        let connection = await db.connections.get(req.params.connection, req.params.site);
+        let connection = await db.connections.findById(req.params.connection);
         if(connection){
-            if(connection.plugin in plugins.plugins) {
-                let plugin = plugins.plugins[connection.plugin].create();
+            if(connection.plugin.name in plugins.plugins) {
+                let plugin = plugins.plugins[connection.plugin.name].create();
                 await plugin.connect(connection.content);                                 //allow the plugin to connect, if not yet done.
-                let res = plugin.queryHistory({
+                let results = await plugin.queryHistory(connection.content, {
                     from: req.query.from,
                     to: req.query.to,
                     source: req.query.source,
-                    device: req.query.device
+                    device: req.query.device,
+                    field: req.query.field,
+                    page: req.query.page,
+                    pagesize: req.query.pagesize
                 });
-                res.status(200).json(pages);
+                await plugin.close();
+                res.status(200).json(results);
             }
             else
                 res.status(401).json({message:"unknown connection-plugin: " + connection.plugin});
@@ -40,6 +45,7 @@ module.exports.get = async function(req, res)
             res.status(401).json({message:"unknown connection: " + req.params.connection});
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -48,12 +54,13 @@ module.exports.post = async function(req, res){
     try{
         let plugins = await req.app.get('plugins');
         let db = plugins.db;
-        let connection = await db.connections.get(req.params.connection, req.params.site);
+        let connection = await db.connections.findById(req.params.connection);
         if(connection){
-            if(connection.plugin in plugins.plugins) {
-                let plugin = plugins.plugins[connection.plugin].create();
+            if(connection.plugin.name in plugins.plugins) {
+                let plugin = plugins.plugins[connection.plugin.name].create();
                 await plugin.connect(connection.content);                                 //allow the plugin to connect, if not yet done.
-                let res = await plugin.storeHistory(req.body);
+                let res = await plugin.storeHistory(req.params.site, req.body, connection);
+                await plugin.close();
                 res.status(200).json(res);
             }
             else
@@ -63,6 +70,7 @@ module.exports.post = async function(req, res){
             res.status(401).json({message:"unknown connection: " + req.params.connection});
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };

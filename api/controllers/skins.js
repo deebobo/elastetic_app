@@ -17,6 +17,7 @@ module.exports.list = async function(req, res)
 		winston.log("warning", "add check to see if user has admin rights");
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -29,6 +30,7 @@ module.exports.set = async function(req, res) {
         //todo: set the new skin
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };

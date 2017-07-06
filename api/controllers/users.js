@@ -17,6 +17,7 @@ module.exports.list = async function(req, res)
 		winston.log("warning", "add check to see if user has admin rights");
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -32,6 +33,7 @@ module.exports.getUser = async function(req, res) {
 		res.status(200).json(grp);
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -46,6 +48,7 @@ module.exports.create = async function(req, res) {
 		res.status(200).json(res);
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -58,6 +61,7 @@ module.exports.addToGrp = async function(req, res) {
 		res.status(200).json(res);
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -73,6 +77,7 @@ module.exports.updateUser = async function(req, res) {
         }
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -85,6 +90,7 @@ module.exports.removeFromGrp = async function(req, res) {
 		res.status(200).json(res);
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -103,9 +109,10 @@ module.exports.invite = async function(req, res){
 		}
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
-}
+};
 
 module.exports.resetPwd = async function(req, res){
-}
+};

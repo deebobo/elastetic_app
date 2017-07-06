@@ -4,9 +4,16 @@
 
     <div flex="80" layout="column" layout-align="center stretch">
 
-        <h1>Connections</h1>
-        <md-button class="md-primary"
-                   ng-click="addConnection()">Add connection</md-button>
+        <md-toolbar class="md-table-toolbar md-default" layout="row">
+            <div class="md-toolbar-tools">
+                <span>Connections</span>
+            </div>
+            <div flex></div>
+            <md-button class="md-primary"
+                       ng-click="addConnection()">
+                <md-icon md-font-icon="fa-plus-circle" class="fa fa-lg"></md-icon>
+            </md-button>
+        </md-toolbar>
 
         <md-list ng-cloak  layout="column">
             <md-list-item class="secondary-button-padding" ng-repeat="connection in connections" layout-align="center stretch" layout-fill layout="column">

@@ -4,6 +4,7 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 const auth = require.main.require('../api/libs/auth');
+const winston = require('winston');
 
 /* GET pages listing that the current user is allowed to see. */
 module.exports.get = async function(req, res)
@@ -20,6 +21,7 @@ module.exports.get = async function(req, res)
         res.status(200).json(allowed);
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -41,6 +43,7 @@ module.exports.getPage = async function(req, res) {
             res.status(404).json({message: "record not found"});
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -58,6 +61,7 @@ module.exports.create = async function(req, res) {
         }
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -74,6 +78,7 @@ module.exports.update = async function(req, res) {
         }
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -89,6 +94,7 @@ module.exports.delete = async function(req, res) {
         }
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };

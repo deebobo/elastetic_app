@@ -6,6 +6,7 @@
 
 const mysql = require('mysql');
 const Particle = require('particle-api-js');
+const winston = require('winston');
 
 let particle = new Particle();
 
@@ -21,14 +22,28 @@ class ParticleIoConnection {
 
     /**
      * registers a function that will be called when a data event arrives on this connection.
-     * @param onData
+     * @param definition
+     * * @param req {Object} the request object that triggered this operation (used for building urls, getting user info and such.
      */
-    registerCallback(onData){
-        particle.getEventStream({ auth: token}).then(function(stream) {
-            stream.on('event', function(data) {
-               onData(data);
+    async registerCallback(connection, definition, req){
+        definition.data.webhookIds = [];
+        for(let i=0; i< definition.data.extra.fields.length; i++){
+            let id = await particle.createWebhook({
+                name: definition.data.extra.fields[i],
+                url: req.protocol + '://' + req.get('host') + req.originalUrl + "/" + definition._id,
+                headers: {jwt: req.cookies.jwt}, auth: connection.content.token
             });
-        });
+            definition.data.webhookIds.push(id);                                                //store the id so we can delete it later on again.
+        }
+    }
+
+    async unRegisterCallback(connection, definition){
+        if(definition.data.webhookIds){
+            for(let i=0; i< definition.data.webhookIds.length; i++){
+                await particle.deleteWebhook({hookId: definition.data.webhookIds[i], auth: connection.content.token});
+            }
+            definition.data.webhookIds = [];
+        }
     }
 }
 

@@ -148,6 +148,17 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             access: {restricted: true}
         });
 
+        $stateProvider.state('site.functions', {
+            url: '/administration/function',
+            views:{
+                content:{
+                    controller: 'adminFunctionsController',
+                    templateUrl: 'partials/admin_functions.html'
+                }
+            },
+            access: {restricted: true}
+        });
+
 
         $stateProvider.state('site.page', {
             resolve: {                                   //need to load

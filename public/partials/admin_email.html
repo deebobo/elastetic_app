@@ -2,10 +2,24 @@
 
     <div flex="80" layout="column" layout-align="center stretch">
 
-        <h1>Configure email</h1>
+        <md-toolbar class="md-table-toolbar md-default" layout="row">
+            <div class="md-toolbar-tools">
+                <span>Configure email</span>
+            </div>
+            <div flex></div>
+            <md-button class="md-primary"
+                       ng-click="addTemplate()"
+                       ng-if="templatesSelected == true">
+                <md-icon md-font-icon="fa-plus-circle" class="fa fa-lg"></md-icon>
+                <md-tooltip>Add a new template</md-tooltip>
+            </md-button>
+        </md-toolbar>
+
+
         <md-tabs md-dynamic-height md-border-bottom>
 
-            <md-tab label="configuration" >
+            <md-tab label="configuration"
+                    md-on-select="templatesSelected = false">
                 <md-content class="md-padding">
                   <form ng-submit="selectEmailplugin(plugin._id)">
 
@@ -26,14 +40,10 @@
             </md-tab>
 
 
-            <md-tab label="templates">
+            <md-tab label="templates"
+                    md-on-select="templatesSelected = true">
                 <md-content class="md-padding" >
 
-                    <div >
-                        <md-button class="md-primary"
-                                   ng-click="addTemplate()">Add template</md-button>
-
-                    </div>
 
                     <md-list ng-cloak layout="column">
                         <md-list-item class="secondary-button-padding" ng-repeat="template in templates" layout-align="center stretch" layout-fill layout="column">

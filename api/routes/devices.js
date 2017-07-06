@@ -9,7 +9,7 @@ var express = require('express');
 var router = express.Router({mergeParams: true});
 
 //get list of devices on this connection
-router.get('/', null);
+//router.get('/', null);
 
 
 module.exports = router;

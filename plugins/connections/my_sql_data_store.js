@@ -5,6 +5,7 @@
  */
 
 const mysql = require('mysql');
+const winston = require('winston');
 
 /**
  * a plugin that provides access to a mysql data store for storing and retrieving time series, historical data of
@@ -19,6 +20,7 @@ class MySqlDataStore {
     /**
      * initiate the connection using the specified connection information.
      * @param connectionInfo
+     * @param dbCreated {bool} true if the db is already created and the connect can specify the db name.
      */
     async connect(connectionInfo){
         let self = this;
@@ -26,16 +28,17 @@ class MySqlDataStore {
                 self.con = mysql.createConnection({
                     host: connectionInfo.url,
                     user: connectionInfo.username,
-                    password: connectionInfo.password
+                    password: connectionInfo.password,
+                    database: connectionInfo.dbName
                 });
                 self.con.connect(function (err) {
                     if (err) {
-                        reject(err);
                         winston.log("error", 'connection failed', connectionInfo);
+                        reject(err);
                     }
                     else {
-                        resolve();
                         winston.log("info", 'connected to', connectionInfo);
+                        resolve();
                     }
                 });
             }
@@ -44,26 +47,38 @@ class MySqlDataStore {
     }
 
     /**
+     * closes the connection.
+     * @returns {Promise.<void>}
+     */
+    async close(){
+        return new Promise((resolve, reject) => {
+            if(this.con)
+                this.con.destroy();
+            resolve();
+        });
+    }
+
+    /**
      * called when a connection is created (after connect is called, so the db is already connected).
      * Makes certain that the db and table exist (if need be)
      *
      * table fields
-     * - from: date
-     * - to: date
+     * - time: date
+     * - site: string: name of the site/application that owns the data.
      * - source: id of connection that stored the data  (ex: source = particle.io connection) .
      * - device: unique identifier (within the source) for the device
      * - field: unique identifier of field within device (optional)
      * - data: json data value.
      */
-    create(connectionInfo){
+    async create(connectionInfo){
         let self = this;
         return new Promise((resolve, reject) => {
             if(self.con){
 
-                function createTable(){
+                try{
                     if(connectionInfo.createTable){
-                        var sql = "CREATE TABLE " + connectionInfo.tableName + " (time datetime, source: VARCHAR(255), device: VARCHAR(255), field: VARCHAR(255), data: JSON   )";
-                        self.con.query(sql, function (err, result) {
+                        var sql = "CREATE TABLE " + connectionInfo.tableName + " (time datetime, site VARCHAR(255), source VARCHAR(255), device VARCHAR(255), field VARCHAR(255), data JSON   )";
+                        self.con.query(sql, function (err, result, fields) {
                             if (err) {
                                 winston.log("error", 'table creation failed', connectionInfo);
                                 reject(err);
@@ -75,22 +90,9 @@ class MySqlDataStore {
                         });
                     }
                 }
-
-                if(connectionInfo.createDb){
-                    var sql = "CREATE DATABASE " + connectionInfo.dbName;
-                    self.con.query(sql, function (err, result) {
-                        if (err) {
-                            winston.log("error", 'db creation failed', connectionInfo);
-                            reject(err);
-                        }
-                        else {
-                            winston.log("info", 'db created', connectionInfo);
-                            createTable();
-                        }
-                    });
+                catch (err){
+                    reject(err);
                 }
-                else
-                    createTable();
             }
             else
                 reject("connection is not opened")
@@ -105,26 +107,26 @@ class MySqlDataStore {
      */
     _buildWhere(filter){
         let res = '';
-        if(filter.hasOwnProperty('to'))
+        if(filter.hasOwnProperty('to')  && filter.to)
             res += 'time <= ' + filter.to;
-        if(filter.hasOwnProperty('from'))
+        if(filter.hasOwnProperty('from') && filter.from)
             res += res.length > 0 ? ' and ' : '' + 'time >= ' + filter.from;
-        if(filter.hasOwnProperty('source'))
+        if(filter.hasOwnProperty('source') && filter.source)
             res += res.length > 0 ? ' and ' : '' + 'source = ' + filter.source;
-        if(filter.hasOwnProperty('device'))
+        if(filter.hasOwnProperty('device') && filter.device)
             res += res.length > 0 ? ' and ' : '' + 'device = ' + filter.device;
-        if(filter.hasOwnProperty('field'))
+        if(filter.hasOwnProperty('field') && filter.field)
             res += res.length > 0 ? ' and ' : '' + 'field = ' + filter.field;
 
         if(res.length > 0)
             res = " WHERE " + res;
 
-        if(filter.hasOwnProperty('page')){
+        if(filter.hasOwnProperty('page') && filter.page){
             let pagesize = 50;
-            if(filter.hasOwnProperty('pagesize'))
-                pagesize = filter.pagesize;
+            if(filter.hasOwnProperty('pagesize') && filter.pagesize)
+                pagesize = parseInt(filter.pagesize);
 
-            res += ' LIMIT ' + toString(filter.page * pagesize) + ', ' + toString(pagesize);
+            res += ' LIMIT ' + (parseInt(filter.page) * pagesize).toString() + ', ' + pagesize.toString();
         }
         return res;
     }
@@ -140,19 +142,18 @@ class MySqlDataStore {
      * - page
      * - pagesize
      */
-    queryHistory(filter){
+    async queryHistory(connectionInfo, filter){
         let self = this;
         return new Promise((resolve, reject) => {
             if(this.con){
-                var sql = "SELECT * from " + connectionInfo.tableName + self.buildWhere(filter);
+                var sql = "SELECT * from " + connectionInfo.tableName + self._buildWhere(filter);
                 self.con.query(sql, function (err, result, fields) {
                     if (err) {
                         reject(err);
-                        winston.log("error", 'table creation failed', connectionInfo);
+                        winston.log("error", 'table query failed', sql);
                     }
                     else {
                         resolve(result);
-                        winston.log("info", 'table created', connectionInfo);
                     }
                 });
             }
@@ -161,16 +162,25 @@ class MySqlDataStore {
         });
     }
 
-    storeHistory(data){
+    /**
+     * called by a function to store data in the db.
+     * @param connectionInfo {object} the connection definition reocord.
+     * @param data: the data to store in the db.
+     * @returns {Promise}
+     */
+    async storeHistory(site, data, connectionInfo){
         let self = this;
         return new Promise((resolve, reject) => {
+            if(!this.con)
+                reject("connection not opened");
             if(this.con){
-                var sql = "INSERT INTO " + connectionInfo.tableName + "(time, source, device, field, data) VALUES ('"
-                                                    + data.time + "', '" +
-                                                    + data.source + "', '" +
-                                                    + data.device + "', '" +
-                                                    + data.field + "', " +
-                                                    + toString(data.data) + ")";
+                var sql = "INSERT INTO " + connectionInfo.content.tableName + " (time, site, source, device, field, data) VALUES ('"
+                                                    + data.time + "', '"
+                                                    + site + "', '"
+                                                    + connectionInfo.name + "', '"
+                                                    + data.device + "', '"
+                                                    + data.field + "', '"
+                                                    + JSON.stringify(data.data) + "')";
                 self.con.query(sql, function (err, result, fields) {
                     if (err) {
                         reject(err);

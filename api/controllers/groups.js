@@ -17,6 +17,7 @@ module.exports.list = async function(req, res)
 		winston.log("warning", "add check to see if user has admin rights");
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -32,6 +33,7 @@ module.exports.listViews = async function(req, res)
 		winston.log("warning", "add check to see if user has admin rights");
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -46,6 +48,7 @@ module.exports.getGrp = async function(req, res) {
 		res.status(200).json(grp);
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -61,6 +64,7 @@ module.exports.updateGrp = async function(req, res) {
         }
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -77,6 +81,7 @@ module.exports.create = async function(req, res) {
         }
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };

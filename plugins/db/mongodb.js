@@ -19,6 +19,7 @@ const siteCollectionModel = require.main.require('../plugins/models/mongo_site_c
 const emailTemplatesModel = require.main.require('../plugins/models/mongo_email_templates');
 const pluginsModel = require.main.require('../plugins/models/mongo_plugins');
 const connectionsModel = require.main.require('../plugins/models/mongo_connections');
+const functionsModel = require.main.require('../plugins/models/mongo_functions');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
@@ -40,6 +41,7 @@ class MongoDb{
 		this.plugins = null;
 		this.connections = null;
 		this.views = null;
+		this.functions = null;
         mongoose.Promise = global.Promise;
     }
 
@@ -74,6 +76,7 @@ class MongoDb{
 		this._createEmailTemplates();
 		this.plugins = new pluginsModel();
 		this.connections = new connectionsModel();
+        this.functions = new functionsModel();
 		this.views = new viewsModel();
     }
 

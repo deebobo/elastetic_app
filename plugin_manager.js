@@ -25,14 +25,7 @@ class PluginManager {
 
     //load all the availble plugin modules with require.
     load(){
-        let self = this;
         this._loadDb();
-        this._plugins.foreach(                                  //all plugins that have a 'runAtStartup' function need to be called now (db is now known)
-            function(plugin){
-                if(plugin.hasOwnProperty('runAtStartup'))
-                    plugin.runAtStartup(self.db);
-            }
-        );
     }
 	
 	/** returns the mail handler plugin for the specified site, if there is any.
@@ -68,8 +61,6 @@ class PluginManager {
                         info.ref = plugin;                                              //make certain we get a reference to the actual object, so we can use it later on if need be.
                         self._plugins.push(info);
                         self.plugins[info.name] = info;
-                        if(self.db && plugin.hasOwnProperty('runAtStartup'))            //if called during execution( vs at startup), then db is alrady known, and there is no more 'load' function, so call runAtStartup now, otherwise it isnt called..
-                            plugin.runAtStartup(self.db);
                         winston.log('info', 'plugin loaded: ', pluginName);
                     }
                 }

@@ -6,8 +6,11 @@
 
 
 
-angular.module("deebobo").controller('googleMapViewController', ['$scope',
-    function ($scope) {
+angular.module("deebobo").controller('googleMapViewController', [
+    '$scope', 'connectionDataService', 'messages','$http', '$stateParams',
+    function ($scope, connectionDataService, messages, $http, $stateParams) {
+
+        var particle = new Particle();
 
         $scope.mapCenter = [43.6650000, -79.4103000];
         $scope.zoom = 8;
@@ -29,5 +32,88 @@ angular.module("deebobo").controller('googleMapViewController', ['$scope',
                 ]
             }
         ];
+
+        $scope.devices = {};                         //a dict of routes per device, so we can load the data quickly.
+        $scope.isOpen = false;
+
+        /**
+         * if the connection is a particle.io connection, then register an event stream for each device.
+         * Filter on devices cause otherwise we get a public stream, which contains all possible devices.
+         * @param connection
+         */
+        function tryRegisterParticleEventStream(connection){
+            if(connection.plugin.name === "particle_io") {
+                particle.listDevices({auth: connection.content.token}).then(
+                    function (result) {
+                        if (result.statusCode == 200)
+                            for (var i = 0; i < result.body.length; i++) {
+                                particle.getEventStream({
+                                    auth: connection.content.token,
+                                    deviceId: result.body[i].id
+                                }).then(function (stream) {
+                                    stream.on('event', function (data) {
+                                        data.device = data.coreid;
+                                        storeRoutePoint(data);
+                                    });
+                                });
+                            }
+                    },
+                    function (err) {
+                        messages.error(err);
+                    }
+                );
+            }
+        }
+
+        //load the list of connections, so we can query every connection for data.
+        $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+            .then(function (response) {
+                    response.data.forEach((connection) => {
+                        loadRoutes(connection);
+                        tryRegisterParticleEventStream(connection);
+                    })
+                },
+                function (response) {
+                    messages.error(response.data);
+                }
+            );
+
+        //retrieves all the routes from the server async and renders the data.
+        function loadRoutes(connection){
+            function loadRouteSection(page){
+                connectionDataService.get(connection._id, {page:0, pagesize:50}).then(
+                    function(data) {
+                        storeRoutePoints(data);
+                        if(data.length === 50)                                   //as long as we have a full record set, try to get a next set.
+                            loadRouteSection(page + 1);
+                        },
+                    function(err){messages.error(err);}
+                )
+            }
+            loadRouteSection(0);
+        }
+
+        /**
+         * sorts the data per device and renders them on the graph.
+         * @param data
+         */
+        function storeRoutePoints(data){
+            for(var i=0; i < data.length; i++){
+                var point = data[i];
+                storeRoutePoint(point);
+            }
+        }
+
+        function storeRoutePoint(point){
+            if($scope.devices.hasOwnProperty(point.device)){            //existing device
+                $scope.devices[point.device].path.push(JSON.parse(point.data));
+            }
+            else{
+                var newList = {path:[ JSON.parse(point.data)]};
+                $scope.devices[point.device] = newList;
+                $scope.routes.push(newList);
+            }
+        }
+
     }]);
 

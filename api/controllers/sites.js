@@ -5,6 +5,7 @@
  */
 
 const sitesLib = require.main.require('../api/libs/sites');
+const winston = require('winston');
 
 /**
  * create a new site and admin user for that site. If the site name already exists, the operation is illegal.
@@ -20,6 +21,7 @@ module.exports.create = async function(req, res){
         res.status(200).json({message: 'ok'});
     }
     catch (err){
+        winston.log("error", err);
         if(err.id == 'siteExists')
             res.status(401).json({message:err.message});
         res.status(500).json({message:err.message});
@@ -40,6 +42,7 @@ module.exports.list = async function(req, res){
         res.json(sites);
     }
     catch (err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -61,6 +64,7 @@ module.exports.get = async function(req, res){
             res.status(404).json({message:"unknown site"});
     }
     catch (err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };
@@ -74,6 +78,7 @@ module.exports.put = async function(req, res){
         res.status(200).json(newRec);
     }
     catch(err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };

@@ -16,15 +16,21 @@ async function initPassport(app, passport){
     let db = await app.get('plugins');
     db = db.db;
 
-    let cookieExtractor = function(req) {                       //we store the key as a cookie, this is more secure for storing locally on client.
+    let tokenExtractor = function(req) {                       //we store the key as a cookie, this is more secure for storing locally on client.
         let token = null;
-        if (req && req.cookies) token = req.cookies['jwt'];
+        if (req){
+            if(req.cookies && 'jwt' in req.cookies)
+                token = req.cookies['jwt'];
+            else if(req.headers && 'jwt' in req.headers)
+                token = req.headers['jwt'];
+
+        }
         return token;
     };
 
     let options = {
         passReqToCallback: true,                        // default false
-        jwtFromRequest: cookieExtractor,
+        jwtFromRequest: tokenExtractor,
         secretOrKey: config.security.secret
     };
 

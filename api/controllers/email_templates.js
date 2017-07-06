@@ -17,6 +17,7 @@ module.exports.get = async function (req, res, next) {
         res.json(recs);
     }
     catch (err) {
+        winston.log("error", err);
         res.status(400).json({message: err});
     }
 };
@@ -35,6 +36,7 @@ module.exports.post = async function (req, res, next) {
         }
     }
     catch (err) {
+        winston.log("error", err);
         res.status(400).json({message: err});
     }
 };
@@ -53,6 +55,7 @@ module.exports.put = async function (req, res, next) {
         }
     }
     catch (err) {
+        winston.log("error", err);
         res.status(400).json({message: err});
     }
 }
@@ -67,6 +70,7 @@ module.exports.delete = async function (req, res) {
 		res.status(200).json(pluginRec);
     }
     catch (err) {
+        winston.log("error", err);
         res.status(400).json({message: err});
     }
 }

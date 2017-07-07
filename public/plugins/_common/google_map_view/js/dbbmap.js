@@ -157,9 +157,11 @@ deebobo.factory('dbbMapService',
          * @returns {Bluebird<R>}
          */
         function addPointToRoute(value, point){
-            var path = value.route.getPath();
-            path.push(point);
-            value.route.setPath(path);
+            if(value.route) {
+                var path = value.route.getPath();
+                path.push(point);
+                value.route.setPath(path);
+            }
         }
     }]
 );

@@ -77,7 +77,7 @@ class Transporter {
     async call(db, plugins, funcDef, params){
         let toConnection = await db.connections.find(funcDef.data.to, funcDef.site);
         if(toConnection){
-            let to =  plugins[toConnection.plugin.name];
+            let to =  plugins[toConnection.plugin.name].create();
             to.connect(toConnection);                                       //make certain that we have an open connection
             try{
                 await to.storeHistory(params, toConnection);

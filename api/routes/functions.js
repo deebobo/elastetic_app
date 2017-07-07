@@ -16,7 +16,7 @@ router.get('/:funcInstance', ctrlFunctions.getInstance);
 router.post('/', ctrlFunctions.create);
 router.put('/:funcInstance', ctrlFunctions.update);
 router.delete('/:funcInstance', ctrlFunctions.delete);
-router.post('/:funcName/:funcInstance', ctrlFunctions.call);
+router.post('/:funcInstance/call', ctrlFunctions.call);
 
 
 module.exports = router;

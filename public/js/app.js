@@ -13,9 +13,8 @@ angular.module('common.directives', ['common.services']);
 
 var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap', 'md.data.table']);  //'ngMdIcons',
 
-deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider',
-    function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider) {
-        deebobo.controller = $controllerProvider.register;				//needed for dynamically loading controllers
+deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider', '$filterProvider',
+    function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider, $filterProvider) {
         $locationProvider.hashPrefix('');
         $locationProvider.html5Mode(true);                  //don't use the # in the path
         $stateProvider.state('home', {
@@ -233,7 +232,11 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
 			};
     });
 
-        deebobo.compileProvider = $compileProvider;
+        deebobo.controller = $controllerProvider.register;   //needed to dynamically load items
+        deebobo.directive = $compileProvider.directive;
+        deebobo.filter = $filterProvider.register;
+        deebobo.factory = $provide.factory;
+        deebobo.service = $provide.service;
 
 
         deebobo.requires.push()

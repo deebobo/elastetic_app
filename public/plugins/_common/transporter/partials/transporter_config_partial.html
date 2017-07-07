@@ -5,7 +5,8 @@
 
         <md-input-container  class="md-block" flex="50">
             <label for="from-{{data.name}}" >from</label>
-            <md-select id="from-{{data.name}}" ng-model="func.data.from">
+            <md-select id="from-{{data.name}}" ng-model="func.data.from"
+                       ng-change="func.needsSave = true">
                 <md-option ng-value="x.name" ng-repeat="x in connections">{{ x.name }}</md-option>
             </md-select>
             <md-tooltip >Select the source connection, which will produce the data.</md-tooltip>
@@ -13,7 +14,8 @@
 
         <md-input-container  class="md-block" flex="50">
             <label for="to-{{data.to}}" >to</label>
-            <md-select id="to-{{data.to}}" ng-model="func.data.to">
+            <md-select id="to-{{data.to}}" ng-model="func.data.to"
+                       ng-change="func.needsSave = true">
                 <md-option ng-value="x.name" ng-repeat="x in connections">{{ x.name }}</md-option>
             </md-select>
             <md-tooltip >Select the destination connection, which will store the data.</md-tooltip>
@@ -23,7 +25,8 @@
 
     <md-input-container  class="md-block" flex="50">
         <label for="name-{{data.token}}" >authentication token</label>
-        <input type="text" id="name-{{data.token}}" ng-model="func.data.token">
+        <input type="text" id="name-{{data.token}}" ng-model="func.data.token"
+               ng-change="func.needsSave = true">
         <md-tooltip >The authentication token that will be used for this transport by any webhooks.</md-tooltip>
         </input>
     </md-input-container>

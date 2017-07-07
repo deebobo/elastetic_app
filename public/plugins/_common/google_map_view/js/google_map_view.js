@@ -7,8 +7,8 @@
 
 
 angular.module("deebobo").controller('googleMapViewController', [
-    '$scope', 'connectionDataService', 'messages','$http', '$stateParams', '$mdSidenav',
-    function ($scope, connectionDataService, messages, $http, $stateParams, $mdSidenav) {
+    '$scope', 'connectionDataService', 'messages','$http', '$stateParams', '$mdSidenav', 'dbbMapService',
+    function ($scope, connectionDataService, messages, $http, $stateParams, $mdSidenav, dbbMapService) {
 
         var particle = new Particle();
 
@@ -110,6 +110,7 @@ angular.module("deebobo").controller('googleMapViewController', [
             var data = {lat: parseInt(coordinates[0]), lng: parseInt(coordinates[1])};
             if($scope.devices.hasOwnProperty(point.device)){            //existing device
                 $scope.devices[point.device].path.push(data);
+                dbbMapService.addPointToRoute($scope.devices[point.device], data);
             }
             else{
                 var newList = {path:[ data]};

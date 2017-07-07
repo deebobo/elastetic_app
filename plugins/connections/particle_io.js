@@ -30,7 +30,7 @@ class ParticleIoConnection {
         for(let i=0; i< definition.data.extra.fields.length; i++){
             let id = await particle.createWebhook({
                 name: definition.data.extra.fields[i],
-                url: req.protocol + '://' + req.get('host') + req.originalUrl + "/" + definition._id + '/data',
+                url: req.protocol + '://' + req.get('host') + req.originalUrl + "/call",
                 requestType: "POST",
                 headers: {jwt: req.cookies.jwt},
                 auth: connection.content.token

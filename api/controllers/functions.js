@@ -70,11 +70,11 @@ module.exports.create = async function(req, res) {
                 let plugin = plugins.plugins[pluginName].create();
                 try {
                     if (plugin.create)             //try to create the function after storing the def, cause the plugin might need the id of the newly ceated record. also: if the create fails, it is still stored for the user
-                        if (await plugin.create(db, newRec, req))    //the plugin has changed the record, so it needs to be saved again.
+                        if (await plugin.create(plugins, newRec, req))    //the plugin has changed the record, so it needs to be saved again.
                             newRec = await db.functions.update(rec);
                 }
                 catch(err){
-                    winston.log("error", err);
+                    winston.log("warning", err);
                     newRec = {data: newRec, warning: err};
                 }
                 res.status(200).json(newRec);
@@ -105,7 +105,7 @@ module.exports.update = async function(req, res) {
                         newRec = await db.functions.update(newRec);
             }
             catch(err){
-                winston.log("error", err);
+                winston.log("warning", err);
                 newRec = {data: newRec, warning: err};
             }
             res.status(200).json(newRec);
@@ -155,14 +155,16 @@ module.exports.call = async function(req, res){
     try{
         let plugins = await req.app.get('plugins');
         let db = plugins.db;
-        if(req.params.funcName in plugins.plugins) {
-            let plugin = plugins.plugins[req.params.funcName];
-            let record = await db.functions.findById(req.params.funcInstance);
+        let record = await db.functions.findById(req.params.funcInstance);
+        if(record) {
+            let plugin = plugins.plugins[record.source.name];
             plugin.call(db, plugins, record, req.body);                             //do the function.
             res.status(200).json(result);
         }
-        else
-            res.status(403).json({message:"unknown function name: " + req.params.funcName});
+        else {
+            winston.log("error", "unknown function: " + req.params.funcInstance);
+            res.status(403).json({message: "unknown function: " + req.params.funcInstance});
+        }
     }
     catch(err){
         winston.log("error", err);

@@ -151,6 +151,7 @@ module.exports.delete = async function(req, res) {
  * @returns {Promise.<void>}
  */
 module.exports.call = async function(req, res){
+    winston.log("info", "call params: ", req.body);
     let page = null;
     try{
         let plugins = await req.app.get('plugins');
@@ -159,7 +160,7 @@ module.exports.call = async function(req, res){
         if(record) {
             let plugin = plugins.plugins[record.source.name].create();
             plugin.call(db, plugins, record, req.body);                             //do the function.
-            res.status(200).json(result);
+            res.status(200).json({result: "ok"});
         }
         else {
             winston.log("error", "unknown function: " + req.params.funcInstance);

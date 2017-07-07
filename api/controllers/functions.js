@@ -157,7 +157,7 @@ module.exports.call = async function(req, res){
         let db = plugins.db;
         let record = await db.functions.findById(req.params.funcInstance);
         if(record) {
-            let plugin = plugins.plugins[record.source.name];
+            let plugin = plugins.plugins[record.source.name].create();
             plugin.call(db, plugins, record, req.body);                             //do the function.
             res.status(200).json(result);
         }

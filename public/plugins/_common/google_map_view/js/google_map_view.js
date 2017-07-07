@@ -107,7 +107,7 @@ angular.module("deebobo").controller('googleMapViewController', [
 
         function storeRoutePoint(point){
             var coordinates = point.data.split(',');
-            var data = {lat: parseInt(coordinates[0]), lng: parseInt(coordinates[1])};
+            var data = new google.maps.LatLng(parseInt(coordinates[0]), parseInt(coordinates[1]));
             if($scope.devices.hasOwnProperty(point.device)){            //existing device
                 $scope.devices[point.device].path.push(data);
                 dbbMapService.addPointToRoute($scope.devices[point.device], data);

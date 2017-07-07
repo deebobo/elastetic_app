@@ -1,5 +1,6 @@
 
 
+
 <div layout="row" layout-align="center stretch" flex>
     <div flex layout="column" layout-align="center stretch">
 
@@ -8,10 +9,81 @@
                 <span>Map</span>
             </div>
             <div flex></div>
-            
+            <md-button class="md-primary"
+                       ng-click="togglerFilterMenu()">
+                <md-icon md-font-icon="fa-filter" class="fa fa-lg"></md-icon>
+            </md-button>
         </md-toolbar>
 
         <div layout="row" layout-align="center stretch" flex>
+
+            <md-sidenav
+                    class="md-sidenav-right"
+                    md-component-id="filterMenu"
+                    md-is-locked-open="$mdMedia('gt-md')"
+                    md-whiteframe="4">
+
+                <md-toolbar class="md-theme-indigo">
+                    <h1 class="md-toolbar-tools">Filter</h1>
+                </md-toolbar>
+                <md-content layout-padding >
+                    <div layout="column">
+                        <span>From:</span>
+                        <div layout="column" flex>
+                            <span>Time:</span>
+                            <md-slider-container layout="row"  flex layout-align="start center" >
+                                <md-slider flex min="0" max="24" ng-model="color.red" aria-label="red" id="red-slider">
+                                </md-slider>
+                                <md-input-container  style="width: 40px">
+                                    <input type="number" ng-model="color.red" aria-label="red" aria-controls="red-slider">
+                                </md-input-container>
+                            </md-slider-container>
+
+                        </div>
+                        <div layout="column" flex>
+                            <span>Date:</span>
+                            <md-slider-container layout="row"  flex layout-align="start center" >
+                                <md-slider flex min="0" max="255" ng-model="color.red" aria-label="red" id="red-slider">
+                                </md-slider>
+                                <md-input-container  style="width: 40px">
+                                    <input type="number" ng-model="color.red" aria-label="red" aria-controls="red-slider">
+                                </md-input-container>
+                            </md-slider-container>
+                        </div>
+
+                    </div>
+
+
+                    <div layout="column">
+                        <span>To:</span>
+                        <div layout="column" flex>
+                            <span>Time:</span>
+                            <md-slider-container layout="row"  flex layout-align="start center" >
+                                <md-slider flex min="0" max="24" ng-model="color.red" aria-label="red" id="red-slider">
+                                </md-slider>
+                                <md-input-container  style="width: 40px">
+                                    <input type="number" ng-model="color.red" aria-label="red" aria-controls="red-slider">
+                                </md-input-container>
+                            </md-slider-container>
+
+                        </div>
+                        <div layout="column" flex>
+                            <span>Date:</span>
+                            <md-slider-container layout="row"  flex layout-align="start center" >
+                                <md-slider flex min="0" max="255" ng-model="color.red" aria-label="red" id="red-slider">
+                                </md-slider>
+                                <md-input-container  style="width: 40px">
+                                    <input type="number" ng-model="color.red" aria-label="red" aria-controls="red-slider">
+                                </md-input-container>
+                            </md-slider-container>
+                        </div>
+
+                    </div>
+                    <md-button>apply</md-button>
+
+                </md-content>
+
+            </md-sidenav>
 
             <dbb-map  center="mapCenter"
                       zoom="zoom"
@@ -19,26 +91,6 @@
                       routes="routes"
                       flex></dbb-map>
 
-            <md-fab-speed-dial ng-hide="demo.hidden" md-direction="left" md-open="demo.isOpen"
-                               class="md-scale md-fab-top-right" ng-class="{ 'md-hover-full': demo.hover }"
-                               ng-mouseenter="demo.isOpen=true" ng-mouseleave="demo.isOpen=false">
-                <md-fab-trigger>
-                    <md-button aria-label="menu" class="md-fab md-warn">
-                        <md-tooltip md-direction="top" md-visible="tooltipVisible">Menu</md-tooltip>
-                        <md-icon md-font-icon="fa-filter" class="fa fa-lg"></md-icon>
-                    </md-button>
-                </md-fab-trigger>
-
-                <md-fab-actions>
-                    <div layout>
-                        <div flex="10" layout layout-align="center center">
-                            <span class="md-body-1">default</span>
-                        </div>
-                        <md-slider flex md-discrete ng-model="rating1" step="1" min="1" max="5" aria-label="rating">
-                        </md-slider>
-                    </div>
-                </md-fab-actions>
-            </md-fab-speed-dial>
 
 
         </div>

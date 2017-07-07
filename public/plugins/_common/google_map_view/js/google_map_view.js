@@ -7,8 +7,8 @@
 
 
 angular.module("deebobo").controller('googleMapViewController', [
-    '$scope', 'connectionDataService', 'messages','$http', '$stateParams',
-    function ($scope, connectionDataService, messages, $http, $stateParams) {
+    '$scope', 'connectionDataService', 'messages','$http', '$stateParams', '$mdSidenav',
+    function ($scope, connectionDataService, messages, $http, $stateParams, $mdSidenav) {
 
         var particle = new Particle();
 
@@ -23,14 +23,14 @@ angular.module("deebobo").controller('googleMapViewController', [
         ];
 
         $scope.routes = [
-            {
+           /* {
                 path: [
                     {lat: 37.772, lng: -122.214},
                     {lat: 21.291, lng: -157.821},
                     {lat: -18.142, lng: 178.431},
                     {lat: -27.467, lng: 153.027}
                 ]
-            }
+            }*/
         ];
 
         $scope.devices = {};                         //a dict of routes per device, so we can load the data quickly.
@@ -49,7 +49,8 @@ angular.module("deebobo").controller('googleMapViewController', [
                             for (var i = 0; i < result.body.length; i++) {
                                 particle.getEventStream({
                                     auth: connection.content.token,
-                                    deviceId: result.body[i].id
+                                    deviceId: result.body[i].id,
+                                    name: "G"                                           //get all events with the name 'G' -> comes from default particle tracker  demo
                                 }).then(function (stream) {
                                     stream.on('event', function (data) {
                                         data.device = data.coreid;
@@ -105,14 +106,20 @@ angular.module("deebobo").controller('googleMapViewController', [
         }
 
         function storeRoutePoint(point){
+            var coordinates = point.data.split(',');
+            var data = {lat: parseInt(coordinates[0]), lng: parseInt(coordinates[1])};
             if($scope.devices.hasOwnProperty(point.device)){            //existing device
-                $scope.devices[point.device].path.push(JSON.parse(point.data));
+                $scope.devices[point.device].path.push(data);
             }
             else{
-                var newList = {path:[ JSON.parse(point.data)]};
+                var newList = {path:[ data]};
                 $scope.devices[point.device] = newList;
                 $scope.routes.push(newList);
             }
+        }
+
+        $scope.togglerFilterMenu = function(){
+            $mdSidenav("filterMenu").toggle();
         }
 
     }]);

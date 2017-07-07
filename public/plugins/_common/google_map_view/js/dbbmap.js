@@ -4,8 +4,7 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-deebobo.compileProvider
-    .directive('dbbMap', ['$timeout',
+deebobo.directive('dbbMap', ['$timeout',
         function ($timeout) {
         return {
             template: '<div flex></div>',
@@ -140,3 +139,27 @@ deebobo.compileProvider
             }
         };
     }]);
+
+
+
+deebobo.factory('dbbMapService',
+    ['$q',  function ($q) {
+
+        return ({                                                       // return available functions for use in controllers
+            addPointToRoute: addPointToRoute
+        });
+
+
+        /**
+         * draws a new point on the map for the route
+         * @param value {object} the route
+         * @param point
+         * @returns {Bluebird<R>}
+         */
+        function addPointToRoute(value, point){
+            var path = value.route.getPath();
+            path.push(point);
+            value.route.setPath(path);
+        }
+    }]
+);

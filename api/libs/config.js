@@ -56,6 +56,7 @@ function load(){
                     module.exports.config.db_connection_string = process.env.MONGODB_URI;
                     module.exports.config.secret = process.env.secret;
                     module.exports.config.expires = process.env.expires;
+                    resolve();
                 }
             });
         }

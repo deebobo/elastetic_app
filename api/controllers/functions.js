@@ -74,6 +74,7 @@ module.exports.create = async function(req, res) {
                             newRec = await db.functions.update(rec);
                 }
                 catch(err){
+                    winston.log("error", err);
                     newRec = {data: newRec, warning: err};
                 }
                 res.status(200).json(newRec);
@@ -104,6 +105,7 @@ module.exports.update = async function(req, res) {
                         newRec = await db.functions.update(newRec);
             }
             catch(err){
+                winston.log("error", err);
                 newRec = {data: newRec, warning: err};
             }
             res.status(200).json(newRec);
@@ -131,6 +133,7 @@ module.exports.delete = async function(req, res) {
             catch (err){
                 if(!rec) rec = {};
                 rec.warning = "failed to clean up the function: " + toString(err);
+                winston.log("error", err);
             }
             res.status(200).json(rec);
         }

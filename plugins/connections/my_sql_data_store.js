@@ -173,27 +173,24 @@ class MySqlDataStore {
         return new Promise((resolve, reject) => {
             if(!this.con)
                 reject("connection not opened");
-            if(this.con){
+            if(typeof data.data === "string")
                 var sql = "INSERT INTO " + connectionInfo.content.tableName + " (time, site, source, device, field, data) VALUES ('"
-                                                    + data.time + "', '"
-                                                    + site + "', '"
-                                                    + connectionInfo.name + "', '"
-                                                    + data.device + "', '"
-                                                    + data.field + "', '"
-                                                    + JSON.stringify(data.data) + "')";
-                self.con.query(sql, function (err, result, fields) {
-                    if (err) {
-                        reject(err);
-                        winston.log("error", 'table creation failed', connectionInfo);
-                    }
-                    else {
-                        resolve(result);
-                        winston.log("info", 'table created', connectionInfo);
-                    }
-                });
-            }
-            else
-                reject("connection is not opened")
+                    + data.published_at + "', '"
+                    + site + "', '"
+                    + connectionInfo.name + "', '"
+                    + data.coreid + "', '"
+                    + data.event + "', '"
+                    + JSON.stringify(data.data) + "')";
+            self.con.query(sql, function (err, result, fields) {
+                if (err) {
+                    reject(err);
+                    winston.log("error", 'store historical data failed', err);
+                }
+                else {
+                    resolve(result);
+                    winston.log("info", 'historical data saved', result);
+                }
+            });
         });
     }
 }

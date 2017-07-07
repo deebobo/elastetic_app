@@ -72,15 +72,15 @@ class Transporter {
      * performs the function (transport data from source to dest).
      * @param plugins {Object} a ref to the plugins object, for finding the connection plugins.
      * @param funcDef {Object} the function instance data (defines the connection source and destination)
-     * @param params {Object} the params that were given by the source and that need to be stored in the destination.
+     * @param req {Object} the request object with all the param
      */
-    async call(db, plugins, funcDef, params){
-        let toConnection = await db.connections.find(funcDef.data.to, funcDef.site);
+    async call(plugins, funcDef, req){
+        let toConnection = await plugins.db.connections.find(funcDef.data.to, funcDef.site);
         if(toConnection){
-            let to =  plugins[toConnection.plugin.name].create();
-            to.connect(toConnection);                                       //make certain that we have an open connection
+            let to =  plugins.plugins[toConnection.plugin.name].create();
+            await to.connect(toConnection.content);                                       //make certain that we have an open connection
             try{
-                await to.storeHistory(params, toConnection);
+                await to.storeHistory(req.params.site, req.body, toConnection);
             }
             finally {
                 await to.close();                                           //make certain that the connection is closed again.

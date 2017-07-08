@@ -74,7 +74,7 @@
 
 
                                         <md-chips ng-model="user.groups"
-                                                  md-transform-chip="ctrl.newVeg($chip)"
+                                                  md-transform-chip="checkGroupChip(user, $chip)"
                                                   md-on-add="groupAddedTo(user, $chip)"
                                                   md-on-remove="groupRemovedFrom(user, $chip)"
                                                   delete-button-label="Remove Tag"
@@ -84,6 +84,15 @@
                                               <strong>{{$chip.name}}</strong>
                                             </span>
                                             </md-chip-template>
+
+                                            <md-autocomplete
+                                                    md-selected-item="user.selectedItem"
+                                                    md-search-text="user.searchText"
+                                                    md-items="item in groups"
+                                                    md-item-text="item.name"
+                                                    placeholder="Search for a group">
+                                                <span md-highlight-text="user.searchText">{{item.name}}</span>
+                                            </md-autocomplete>
                                         </md-chips>
 
 

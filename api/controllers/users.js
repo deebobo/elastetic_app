@@ -44,8 +44,8 @@ module.exports.create = async function(req, res) {
         let db = await req.app.get('plugins');
 		db = db.db;
 		let rec = req.body;
-		let res = await db.users.add(rec);
-		res.status(200).json(res);
+		let found = await db.users.add(rec);
+		res.status(200).json(found);
     }
     catch(err){
         winston.log("error", err);
@@ -57,8 +57,8 @@ module.exports.addToGrp = async function(req, res) {
     try{
         let db = await req.app.get('plugins');
 		db = db.db;
-		let res = await db.users.addGroup(req.params.user, req.params.group);
-		res.status(200).json(res);
+		let found = await db.users.addGroup(req.params.user, req.params.group);
+		res.status(200).json(found);
     }
     catch(err){
         winston.log("error", err);
@@ -86,8 +86,8 @@ module.exports.removeFromGrp = async function(req, res) {
     try{
         let db = await req.app.get('plugins');
 		db = db.db;
-		let res = await db.users.removeGroup(req.params.user, req.params.group);
-		res.status(200).json(res);
+		let found = await db.users.removeGroup(req.params.user, req.params.group);
+		res.status(200).json(found);
     }
     catch(err){
         winston.log("error", err);

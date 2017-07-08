@@ -176,7 +176,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             }],
             controllerProvider: ['page','$q', 'pluginService',  function (page, $q, pluginService) {
                 var deferred = $q.defer();
-                pluginService.load(page.plugin.client.scripts)
+                pluginService.load(page.plugin.client)
                     .then(function(){ deferred.resolve(page.controller); });
                 return deferred.promise;
             }],

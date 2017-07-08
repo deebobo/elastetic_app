@@ -1,14 +1,49 @@
 <form >
-    host
-    <input type="text" ng-model="user.host">
-    port
-    <input type="text" ng-model="user.port">
-    secure
-	<input type="checkbox" ng-model="user.secure">
-	user name
-	<input type="text" ng-model="user.name">
-	password
-	<input type="text" ng-model="user.password">
-	from
-	<input type="text" ng-model="user.from">
+	<md-input-container class="md-block">
+		<label for="host" >host</label>
+		<input type="text" id="host" ng-model="user.host">
+		</input>
+		<md-tooltip >host name</md-tooltip>
+	</md-input-container>
+
+    <md-input-container class="md-block">
+        <label for="port" >port</label>
+        <input type="text" id="port" ng-model="user.port">
+        </input>
+        <md-tooltip >host name</md-tooltip>
+    </md-input-container>
+
+
+    <md-input-container class="md-block">
+        <label for="secure" >secure</label>
+        <input type="text" id="secure" ng-model="user.secure">
+        </input>
+        <md-tooltip >host name</md-tooltip>
+    </md-input-container>
+
+
+    <md-input-container class="md-block">
+        <label for="username" >user name</label>
+        <input type="text" id="username" ng-model="user.name">
+        </input>
+        <md-tooltip >host name</md-tooltip>
+    </md-input-container>
+
+
+    <md-input-container class="md-block">
+        <label for="password" >password</label>
+        <input type="text" id="password" ng-model="user.password">
+        </input>
+        <md-tooltip >host name</md-tooltip>
+    </md-input-container>
+
+
+    <md-input-container class="md-block">
+        <label for="from" >from</label>
+        <input type="text" id="from" ng-model="user.from">
+        </input>
+        <md-tooltip >host name</md-tooltip>
+    </md-input-container>
+
+    <input type="submit" value="Submit" />
   </form>

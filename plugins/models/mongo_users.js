@@ -109,7 +109,7 @@ class Users{
 	 * @param group {string}  - id of the group.
 	*/
 	removeGroup(user, group){
-		return this._users.findByIdAndUpdate(user, {$pullAll: {"groups": group}});
+		return this._users.findByIdAndUpdate(user, {$pullAll: {"groups": [group]}});
 	}
 }
 

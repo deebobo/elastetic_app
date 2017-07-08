@@ -148,9 +148,9 @@ deebobo.controller('AdminAuthorizationController',
 			/** called when a group is added to a user
 			*/
 			$scope.groupAddedTo = function(user, chip){
-				$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/user/' + user._id + '/group/' + chip.name})      //get the list of groups that can view
+				$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/user/' + user._id + '/group/' + chip._id})      //get the list of groups that can view
 				.then(function (response) {
-						//user.groups.push(chip);
+						user.groups.push(chip);
 					},
 					function (response) {
 						messages.error(response.data);
@@ -161,7 +161,7 @@ deebobo.controller('AdminAuthorizationController',
 			/** called when a group is added to a user
 			*/
 			$scope.groupRemovedFrom = function(user, chip){
-				$http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/user/' + user._id + '/group/' + chip.name})      //get the list of groups that can view
+				$http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/user/' + user._id + '/group/' + chip._id})      //get the list of groups that can view
 				.then(function (response) {
 					},
 					function (response) {
@@ -180,6 +180,17 @@ deebobo.controller('AdminAuthorizationController',
                             }
                         );
 			}
+
+			$scope.checkGroupChip = function(user, chip){
+			    if(chip){
+			        if(typeof chip === "object")
+			            return chip;
+			        var found = $scope.groups.find((item) =>{return item.name == chip} );
+			        if(found)
+			            return found;
+                }
+                return null;
+            }
         }
     ]
 );

@@ -10,20 +10,25 @@ deebobo.controller('AdminEmailController',
 
 			//helper functions
 			//--------------------------------------------------------------------------------------
-			function loadPluginSettings(pluginName){
+
+            function loadPluginSettings(plugin){
+                if(plugin.config && plugin.config.scripts) {
+                    pluginService.load(plugin.config).then(function () {
+                            $scope.emailConfigPartial = "plugins/" + plugin.config.partials[0];
+                        },
+                        function () {
+                            messages.error("failed to load scripts for plugin: " + plugin.name);
+                        }
+                    );
+                }
+            }
+
+			function loadPluginSettingsForName(pluginName){
 				$scope.plugin = pluginName;
 				if(pluginName){
 					$http({method: 'GET', url: '/api/site/' + $stateParams.site + "/plugin/" + pluginName})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
 					.then(function (response) {
-							if(response.data.config && response.data.config.scripts) {
-                                pluginService.load(response.data.config.scripts).then(function () {
-                                        $scope.emailConfigPartial = "plugins/" + response.data.config.partials[0];
-                                    },
-                                    function () {
-                                        messages.error("failed to load scripts for plugin: " + pluginName);
-                                    }
-                                );
-                            }
+                            loadPluginSettings(response.data);
 						},
 						function (response) {
 							messages.error(response.data);
@@ -39,7 +44,7 @@ deebobo.controller('AdminEmailController',
 			
             //get data from site for scope
 			//--------------------------------------------------------------------------------------
-            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/plugin/mail'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/plugin/mail'})      //get the list of plugins for this site
             .then(function (response) {
 					$scope.emailPlugins = response.data;
                 },
@@ -49,9 +54,9 @@ deebobo.controller('AdminEmailController',
             );
 			
 			
-			$http({method: 'GET', url: '/api/site/' + $stateParams.site })      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+			$http({method: 'GET', url: '/api/site/' + $stateParams.site })
             .then(function (response) {
-                    loadPluginSettings(response.data);
+                    loadPluginSettingsForName(response.data);
                 },
                 function (response) {
                     messages.error(response.data);
@@ -62,7 +67,7 @@ deebobo.controller('AdminEmailController',
 			//html callbacks.
 			//--------------------------------------------------------------------------------------
 			$scope.selectEmailplugin = function(email){
-				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/plugin/mail/default', data: email})      //get the list of groups that can view
+				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/plugin/mail/default', data: {value: email._id}})      //get the list of groups that can view
 				.then(function (response) {
 						loadPluginSettings(email);
 					},
@@ -70,7 +75,7 @@ deebobo.controller('AdminEmailController',
 						messages.error(response.data);
 					}
 				);
-			}
+			};
 
 
             //scope vars

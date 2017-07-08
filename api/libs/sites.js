@@ -83,6 +83,37 @@ async function createGoogleMapView(db, sitename, grps) {
 }
 
 /**
+ * create a page based on the specified definition.
+ * This function will replace plugin and group names with id's.
+ */
+async function createPage(db, sitename, definition){
+    let source = null;
+    if(definition.plugin.hasOwnProperty('global') && definition.plugin.global === true)
+        source = '_common';
+    else
+        source = sitename;
+    let plugin = await db.plugins.find(definition.plugin.name, source);
+
+    if(!plugin)
+        throw Error("unknwon plugin for page: " + definition.name + ", plugin: " + definition.plugin.name);
+    if(plugin.type !== "page")
+        throw Error("plugin is not for pages: " + definition.name + ", plugin: " + definition.plugin.name);
+
+    definition.plugin = plugin._id;
+
+    let grps = [];
+    for(let i=0; i<definition.groups; i++){
+        let grp = await db.groups.find(sitename, definition.groups[i].name);
+        if(!grp)
+            throw Error("unknwon group for page: " + definition.name + ", plugin: " + definition.groups[i].name);
+        grps.push(grp._id);
+    }
+    definition.groups = grps;
+
+    await db.pages.add(definition);
+}
+
+/**
  * create a new site.
  * @param db{object} ref to the db object
  * @param sitename {string} the name of the site
@@ -117,4 +148,41 @@ module.exports.create = async function(db, sitename, adminname, adminemail, pass
 
     await createParticleIODevicesView(db, sitename, allgroups);
     await createGoogleMapView(db, sitename, allgroups);
+};
+
+/**
+ * apply a template to the site. The template will create users, pages, views & load plugins.
+ * @param db {Object} ref to the db.
+ * @param template {Object} template definitions.
+ * @returns {Promise.<void>}
+ */
+module.exports.applyTemplate = async function(db, siteName, template){
+    for(let i=0; i < template.definition.length; i++){
+        let item = template.definition[i];
+        if(item.type === "view"){
+
+        }
+        else if(item.type === "page")
+            createPage(db, siteName, item);
+        else if(item.type === "user"){
+        }
+        else if(item.type === "group"){
+
+        }
+        else if(item.type === "plugin"){
+
+        }
+        else if(item.type === "connection"){
+
+        }
+        else if(item.type === "function"){
+
+        }
+        else if(item.type === "site"){              //details like title, email plugin,..
+
+        }
+        else if(item.type === "temmplate"){
+
+        }
+    }
 };

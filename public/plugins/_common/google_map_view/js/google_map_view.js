@@ -82,11 +82,13 @@ angular.module("deebobo").controller('googleMapViewController', [
         //retrieves all the routes from the server async and renders the data.
         function loadRoutes(connection){
             function loadRouteSection(page){
-                connectionDataService.get(connection._id, {page:0, pagesize:50}).then(
+                connectionDataService.get(connection._id, {page:page, pagesize:50}).then(
                     function(data) {
                         storeRoutePoints(data);
                         if(data.length === 50)                                   //as long as we have a full record set, try to get a next set.
                             loadRouteSection(page + 1);
+                        else
+                            fit_map_to_devices();                               //make everything fit nice.
                         },
                     function(err){messages.error(err);}
                 )
@@ -118,6 +120,18 @@ angular.module("deebobo").controller('googleMapViewController', [
                 $scope.routes.push(newList);
             }
         }
+
+
+        function fit_map_to_devices() {
+            // make sure all the markers are visible on the map
+            var bounds = new google.maps.LatLngBounds();
+            for (var route in $scope.routes) {
+                if(route.route)
+                    bounds.union(route.route.getBounds());
+            }
+            map.fitBounds(bounds);
+        }
+
 
         $scope.togglerFilterMenu = function(){
             $mdSidenav("filterMenu").toggle();

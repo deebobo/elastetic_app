@@ -13,7 +13,7 @@ module.exports.list = async function(req, res)
         let db = await req.app.get('plugins');
         db = db.db;
         let grps = await db.users.list(req.params.site);
-        res.status(200).res.json(grps);
+        res.status(200).json(grps);
 		winston.log("warning", "add check to see if user has admin rights");
     }
     catch(err){
@@ -98,8 +98,8 @@ module.exports.removeFromGrp = async function(req, res) {
 module.exports.invite = async function(req, res){
 	try{
         let plugins = await req.app.get('plugins');
-		let db = db.db;
-		let mailer = plugins.getMailHandlerFor(req.params.site);
+		let db = plugins.db;
+		let mailer = await plugins.getMailHandlerFor(req.params.site);
 		if(mailer){
 			let template = await db.emailTemplates.find("invite", req.params.site);
 			if(template)
@@ -107,6 +107,8 @@ module.exports.invite = async function(req, res){
 			else
 				mailer.send(req.params.site, req.body.email, "invitation", "you have been invited to join the deebobo community.");
 		}
+		else
+		    res.status(400).json({message: "email handler plugin not set up correctly"});
     }
     catch(err){
         winston.log("error", err);

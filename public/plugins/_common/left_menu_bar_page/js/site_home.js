@@ -6,12 +6,12 @@
 
 
 
-angular.module("deebobo").controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', 'siteDetails',
+angular.module("deebobo").controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', 'siteDetails', 'page',
 //deebobo.controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', '$rootScope', 'page',
     function ($scope, $location, menu, $stateParams, $state,  $mdSidenav, siteDetails, page) {
 
 
-        var page = {name: "home"};                                                          //the data for the page that is shown at the site home.
+        //var page = {name: "home"};                                                          //the data for the page that is shown at the site home.
 
         $scope.status = {
             isFirstOpen: true,
@@ -56,6 +56,7 @@ angular.module("deebobo").controller('siteHomeController', ['$scope', '$location
         //when the state has changed, make certain that the menu closes again.
         menu.onselect = function(){$mdSidenav('left').close();};
 
+        menu.sections = page.data.menu;
 
     }]);
 

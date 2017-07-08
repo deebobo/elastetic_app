@@ -60,6 +60,15 @@ class Users{
 		return this._users.findOneAndUpdate({"_id": id}, {accountState: value}).exec();
 	}
 
+    /** Returns all the users of a particular site.
+     * @param {string} `site` The name of the site to list the groups for.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the list of groups
+     */
+    list(site){
+        let query = this._users.find({site: site}).populate('groups');
+        return query.exec();
+    }
+
     /**
      * finds a single record by id
      * populates the groups list, so it can easily be searched for (editor levels and such, for authorisation)

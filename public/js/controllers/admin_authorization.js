@@ -13,6 +13,7 @@ deebobo.controller('AdminAuthorizationController',
 
             $scope.groups = [];
 			$scope.users = [];
+
 		
             //get data from site for scope
 			//--------------------------------------------------------------------------------------
@@ -63,8 +64,8 @@ deebobo.controller('AdminAuthorizationController',
 				var confirm = $mdDialog.prompt()
 				  .title('Add new user')
 				  .textContent('What is the email address of the user that you want to invite?')
-				  .placeholder('name')
-				  .ariaLabel('name')
+				  .placeholder('email')
+				  .ariaLabel('email')
 				  .initialValue('')
 				  .targetEvent(ev)
 				  .ok('ok')
@@ -109,9 +110,9 @@ deebobo.controller('AdminAuthorizationController',
 
 				$mdDialog.show(confirm).then(function(result) {
 					var newGroup = {name: result};
-					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/group', newGroup})      //get the list of groups that can view
+					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/group', data: newGroup})      //get the list of groups that can view
 					.then(function (response) {
-							$scope.groups.push(newGroup);
+							$scope.groups.push(response.data);
 						},
 						function (response) {
 							messages.error(response.data);

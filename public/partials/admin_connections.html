@@ -16,7 +16,7 @@
         </md-toolbar>
 
         <md-list ng-cloak  layout="column">
-            <md-list-item class="secondary-button-padding" ng-repeat="connection in connections" layout-align="center stretch" layout-fill layout="column">
+            <md-list-item ng-repeat="connection in connections" layout-align="center stretch" layout-fill layout="column">
 
 
                 <form ng-submit="save(connection)" layout-align="center stretch" layout-fill layout="column" layout-padding="10%">
@@ -26,11 +26,10 @@
                         <div ng-if="connection.isOpen == true" flex="95">
 
                             <md-input-container flex layout-fill>
-                                <label for="name-{{connection.name}}" >name </label>
+                                <label for="name-{{connection.name}}" >name</label>
                                 <input id="name-{{connection.name}}" type="text" ng-model="connection.name" class="form-control" ng-change="connection.needsSave = true" ng-click="$event.stopPropagation()" />
-                                <md-tooltip >The name of the connection</md-tooltip>
                             </md-input-container>
-
+                            <md-tooltip md-z-index="10">The name of the connection</md-tooltip>
                         </div>
 
                         <md-button class="md-button-toggle"
@@ -68,7 +67,8 @@
 
                         <div layout="row" layout-align="end center">
                             <md-button class="md-primary"
-                                       ng-click="delete(connection, $event)">delete</md-button>
+                                       ng-click="delete(connection, $event)">delete
+                                <md-tooltip >delete the connection</md-tooltip></md-button>
 
                             <input type="submit" value="save"
                                    ng-if="connection.needsSave === true"/>

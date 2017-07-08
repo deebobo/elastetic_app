@@ -64,7 +64,7 @@ class EmailTemplates{
      * was found
      */
     find(name, site){
-        return this._templates.findOne( { name: value, site: site } ).exec();
+        return this._templates.findOne( { name: name, site: site } ).exec();
     }
 }
 

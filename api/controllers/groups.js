@@ -3,7 +3,7 @@
  * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
-//const auth = require.main.require('../api/libs/auth');
+const auth = require.main.require('../api/libs/auth');
 const winston = require('winston');
 
 /* GET groups listing. */
@@ -76,8 +76,11 @@ module.exports.create = async function(req, res) {
             let db = await req.app.get('plugins');
             db = db.db;
             let rec = req.body;
-            let res = await db.groups.add(rec);
-            res.status(200).json(res);
+            if(!rec.level)                                      //geve a default  level value if there is none.
+                rec.level = 'view';
+            rec.site = req.params.site;
+            let data = await db.groups.add(rec);
+            res.status(200).json(data);
         }
     }
     catch(err){

@@ -47,7 +47,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                         var res = siteService.get($stateParams);
                         return res;
                     }],
-                homepage: ['pageService', 'siteDetails', "menu",
+                page: ['pageService', 'siteDetails', "menu",
                     function (pageService, siteDetails, menu) {
                         var temp = pageService.get(siteDetails._id, siteDetails.homepage);
                         menu.homepage = siteDetails.homepage;                       //let the menu know the name of the homepage, so it can use this while changing states (go to different webpage), so it can use the homepage name if no other page is currently loaded.
@@ -55,9 +55,9 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     }]
             },
             url: '/{site}',
-            templateProvider: ['homepage', '$q', '$http', function (homepage, $q, $http) {
+            templateProvider: ['page', '$q', '$http', function (page, $q, $http) {
                 var deferred = $q.defer();
-                $http.get("plugins/" + homepage.plugin.client.partials[homepage.partial]).then(function(data) {
+                $http.get("plugins/" + page.plugin.client.partials[page.partial]).then(function(data) {
                     deferred.resolve(data.data);
                 });
                 return deferred.promise;
@@ -65,10 +65,10 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
 
 
 
-            controllerProvider: ['homepage','$q', 'pluginService',  function (homepage, $q, pluginService) {
+            controllerProvider: ['page','$q', 'pluginService',  function (page, $q, pluginService) {
                 var deferred = $q.defer();
-                pluginService.loadSingle(homepage.plugin.client.scripts[0])
-                   .then(function(){ deferred.resolve(homepage.controller); });
+                pluginService.loadSingle(page.plugin.client.scripts[0])
+                   .then(function(){ deferred.resolve(page.controller); });
                 return deferred.promise;
             }],
             //templateUrl: "plugins/_common/left_menu_bar_page/partials/site_home.html",

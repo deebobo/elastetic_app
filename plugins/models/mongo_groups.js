@@ -39,7 +39,7 @@ class Groups{
      * was added
      */
     update(group){
-        return this._users.findOneAndUpdate({"_id": group._id}, group).exec();
+        return this._groups.findOneAndUpdate({"_id": group._id}, group).exec();
     }
 
 	/** Returns all the groups for a particular site.

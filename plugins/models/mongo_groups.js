@@ -9,10 +9,26 @@ class Groups{
 
     /**
      * @constructor
-     * @param collection {object} a reference to the mongo collection that represents the groups
+     * creates the collection that stores the group (authorisation) information
+     * required fields:
+     *  - name: the name of the group
+     * 	- site: the site to which this group applies
+     *  - level: the level of access that this group has. Can be one of the following values:
+     *  	- admin: full access
+     *		- edit: can edit views
+     *		- view: can see views
+     *		- public: items authorized with this view are publicly accessible.
+     * 	- keys:
+     *		- (unique) name - site
      */
     constructor(collection){
-        this._groups = collection;
+        let groupsSchema = new mongoose.Schema({
+            name: {type: String },
+            site: String,
+            level: {type: String, enum: ['admin', 'edit', 'view', 'public']}
+        });
+        groupsSchema.index({ name: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
+        this._groups = mongoose.model('groups', groupsSchema);
     }
 
 	/**

@@ -17,7 +17,7 @@ module.exports.create = async function(req, res){
     try{
         let db = await req.app.get('plugins');
         db = db.db;
-        await sitesLib.create(db, req.body.site, req.body.name, req.body.email, req.body.password);
+        await sitesLib.create(db, req.body);   //.site, req.body.name, req.body.email, req.body.password);
         res.status(200).json({message: 'ok'});
     }
     catch (err){

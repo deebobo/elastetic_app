@@ -7,25 +7,26 @@
 const mongoose = require('mongoose');
 
 /**
- * @class represents the collection of email templates
+ * @class represents the collection of site templates
  */
-class EmailTemplates{
+class SiteTemplates{
 
     /**
      * @constructor
-     * creates a collection or table that allows a plugin to store data at the level of a site (each site gets 1 record per plugin).
-     * example: this can be used by an emailer plugin to store configurations that relate to the site that wants to use the plugin.
+     * creates a collection or table that allows a plugin to store site template definitions
      */
     constructor(){
-        let emailTemplatesSchema = new mongoose.Schema({
+        let siteTemplatesSchema = new mongoose.Schema({
             name: String,															//name of the template
-            site: String,
-            subject: String,
-            body: String,
+            description: String,
+            author: String,
+            version: String,
+            icon: String,
+            definition: Object,
             createdOn:{type: Date, default: Date.now()}
         });
-        emailTemplatesSchema.index({ name: 1, site: 1}, {unique: true});        //fast access at name & site level
-        this._templates = mongoose.model('emailTemplates', emailTemplatesSchema);
+        siteTemplatesSchema.index({ name: 1}, {unique: true});        //fast access at name & site level
+        this._templates = mongoose.model('siteTemplates', siteTemplatesSchema);
     }
 
     /**
@@ -33,10 +34,10 @@ class EmailTemplates{
      *
      * @name .add()
      * @param {Object} `template` details about the user. The object should contain the following fields:
-	 *	- name: the name of the template. 
-	 * 	- site: the site on which the email template was created
-	 *	- subject: subject line
-	 * 	- subject: html body
+     *	- name: the name of the template.
+     * 	- site: the site on which the email template was created
+     *	- subject: subject line
+     * 	- subject: html body
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
      * was added
      */
@@ -46,7 +47,7 @@ class EmailTemplates{
     }
 
     /**
-     * updates an email template
+     * updates an site template
      *
      * @name .update()
      * @param {Object} `template` details about the email template. See add for more info
@@ -57,26 +58,26 @@ class EmailTemplates{
         return this._templates.findOneAndUpdate({"_id": template._id}, template).exec();
     }
 
-	/** Get a list of all the available templates for a site.
-	* @return {Promise}] a promise to perform async operations with. The result of the promise is the list of plugins
-	*/
-    list(site){
-        let query = this._templates.find({site: site});
+    /** Get a list of all the available templates for a site.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the list of plugins
+     */
+    list(){
+        let query = this._templates.find();
         return query.exec();
     }
 
-	/**
-     * finds a user by name or email for a specific site.
+    /**
+     * finds a template
      *
      * @name .find()
      * @param value {string}  - name or email of the user.
-	 * @param site {string}  - name of the site.
+     * @param site {string}  - name of the site.
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
      * was found
      */
-    find(name, site){
+    find(name){
         return this._templates.findOne( { name: name, site: site } ).exec();
     }
 }
 
-module.exports = EmailTemplates;
+module.exports = SiteTemplates;

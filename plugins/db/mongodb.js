@@ -79,7 +79,7 @@ class MongoDb{
 		this.connections = new connectionsModel();
         this.functions = new functionsModel();
 		this.views = new viewsModel();
-        this.siteTemplatesModel = new siteTemplatesModel();
+        this.siteTemplates = new siteTemplatesModel();
     }
 
 

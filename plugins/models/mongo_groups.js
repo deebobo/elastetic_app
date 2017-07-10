@@ -4,6 +4,8 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+const mongoose = require('mongoose');
+
 
 class Groups{
 

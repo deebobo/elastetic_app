@@ -17,13 +17,26 @@ module.exports.create = async function(req, res){
     try{
         let db = await req.app.get('plugins');
         db = db.db;
-        await sitesLib.create(db, req.body);   //.site, req.body.name, req.body.email, req.body.password);
+        await sitesLib.create(db, req.body);
         res.status(200).json({message: 'ok'});
     }
     catch (err){
         winston.log("error", err);
         if(err.id == 'siteExists')
             res.status(401).json({message:err.message});
+        res.status(500).json({message:err.message});
+    }
+};
+
+module.exports.listTemplates = async  function(req, res){
+    try{
+        let db = await req.app.get('plugins');
+        db = db.db;
+        sites = await db.siteTemplates.list();
+        res.json(sites);
+    }
+    catch (err){
+        winston.log("error", err);
         res.status(500).json({message:err.message});
     }
 };

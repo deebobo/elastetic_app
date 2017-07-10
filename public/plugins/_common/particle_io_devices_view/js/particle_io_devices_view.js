@@ -14,6 +14,7 @@ angular.module("deebobo").controller('particlIODevicesViewController',
 
         $scope.selected = [];                       //the selected devices.
 
+
         var particle = new Particle();
 
         $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection?' + viewData.plugin._id})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
@@ -22,7 +23,7 @@ angular.module("deebobo").controller('particlIODevicesViewController',
                         particle.listDevices({ auth: response.data[i].content.token }).then(
                             function(result){
                                 if(result.statusCode == 200)
-                                    $scope.devices.push.apply($scope.devices, result.body);
+                                    $scope.gridDef.data = result.body;
                             },
                             function(err){
                                 messages.error(err);
@@ -35,7 +36,22 @@ angular.module("deebobo").controller('particlIODevicesViewController',
                 }
             );
 
-
+		$scope.gridDef = {
+			enableSorting: true,
+			columnDefs: [
+			  { field: 'name' },
+			  { field: 'status' },
+			  { field: 'connected' },
+			  { field: 'last_heard' },
+			  { field: 'cellular' },
+			  { field: 'current_build_target' },
+			  { field: 'last_ip_address' },
+			  { field: 'product_id' },
+			],
+			onRegisterApi: function( gridApi ) {
+			  $scope.gridApi = gridApi;					//need this reference if we want to do something with the api on this grid from javascript.
+			}
+		  };
 
     }]);
 

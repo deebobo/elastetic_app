@@ -16,26 +16,44 @@ deebobo.controller('sitesController', ['$scope', '$location', 'siteService', '$h
                 }
                 );
 
-        $scope.createsite = function () {
-            // initial values
-            $scope.error = false;
-            $scope.disabled = true;
+        $http({method: 'GET', url: '/api/site/templates'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+            .then(function (response) {
+                    $scope.templates = response.data
+                },
+                function (response) {
+                    messages.error(response.data);
+                }
+            );
 
-            // call login from service
-            siteService.create($scope.createForm.sitename, $scope.createForm.username, $scope.createForm.email, $scope.createForm.password)
-            // handle success
-                .then(function () {
-                    $location.path('/' + $scope.createForm.sitename);
-                    $scope.disabled = false;
-                    $scope.createForm = {};
-                })
-                // handle error
-                .catch(function (err) {
-                    $scope.error = true;
-                    $scope.errorMessage = err;
-                    $scope.disabled = false;
-                    $scope.createForm = {};
-                });
+        $scope.createsite = function () {
+
+            if($scope.createForm.password != $scope.createForm.password2){
+                $scope.error = false;
+                $scope.disabled = true;
+                $scope.errorMessage = "passwords don't match";
+            }
+            else{
+                // initial values
+                $scope.error = false;
+                $scope.disabled = true;
+
+                // call login from service
+                siteService.create($scope.createForm.sitename, $scope.createForm.username, $scope.createForm.email, $scope.createForm.password, $scope.createForm.template)
+                // handle success
+                    .then(function () {
+                        $location.path('/' + $scope.createForm.sitename);
+                        $scope.disabled = false;
+                        $scope.createForm = {};
+                    })
+                    // handle error
+                    .catch(function (err) {
+                        $scope.error = true;
+                        $scope.errorMessage = err;
+                        $scope.disabled = false;
+                        $scope.createForm = {};
+                    });
+            }
+
         };
 
     }]

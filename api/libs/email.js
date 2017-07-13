@@ -5,6 +5,7 @@
 */
 
 const url = require('url');
+const winston = require('winston');
  
  
 /** replaces any parameters that were specified in the email template.
@@ -36,6 +37,8 @@ function replaceParams(template, user){
 			mailhandler.send(site.name, user.email, subject, body);
 		} 
 	}
+	else
+        winston.log("error", "failed to find template:", "registration confirmation");
 };
 
 
@@ -50,4 +53,6 @@ module.exports.sendMail = async function (site, user, pluginMan, templateName){
 			mailhandler.send(site.name, user.email, subject, body);
 		} 
 	}
+    else
+        winston.log("error", "failed to find template:", templateName);
 }

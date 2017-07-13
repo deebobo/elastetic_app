@@ -24,11 +24,11 @@ deebobo.controller('loginController', ['$scope', '$location', '$stateParams', 'A
 			return;												//get out of hte function, don't try to log in.
 		}
 		else
-			$scope.loginForm.selectedSite = !$stateParams.site;
+			$scope.loginForm.selectedSite = $stateParams.site;
 	  }
 
       // call login from service
-      let site = $scope.loginForm.selectedSite._id;
+      let site = $scope.loginForm.selectedSite;
       AuthService.login(site, $scope.loginForm.username, $scope.loginForm.password)
         // handle success
         .then(function () {

@@ -3,6 +3,8 @@
  * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
+ 
+/**@ignore */ 
 const mongoose = require('mongoose');
 
 class Pages{

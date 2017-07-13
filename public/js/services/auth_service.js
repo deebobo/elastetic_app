@@ -58,7 +58,7 @@ deebobo.factory('AuthService',
 
         function register(site, username, email, password) {
             var deferred = $q.defer();
-            $http.post('/api/' + site + '/register', {name: username, password: password, email: email})
+            $http.post('/api/site/' + site + '/register', {name: username, password: password, email: email})
                 .then(function (data) {                                      // handle success
                     if(data && data.status === 200){
                         deferred.resolve();

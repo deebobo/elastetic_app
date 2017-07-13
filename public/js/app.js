@@ -22,24 +22,6 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             templateUrl: 'partials/home.html',
             access: {restricted: false}
         });
-        $stateProvider.state('login', {
-            url: '/login',
-            templateUrl: 'partials/login.html',
-            controller: 'loginController',
-            access: {restricted: false}
-        });
-        $stateProvider.state('register', {
-            url: '/register',
-            templateUrl: 'partials/register.html',
-            controller: 'registerController',
-            access: {restricted: false}
-        });
-        $stateProvider.state('create', {
-            url: '/create',
-            templateUrl: 'partials/new_site_register.html',
-            controller: 'sitesController',
-            access: {restricted: false}
-        });
         $stateProvider.state('site', {
             resolve: {                                   //need to load
                 siteDetails: ['siteService', '$stateParams',
@@ -77,19 +59,40 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             //controller: 'siteHomeController',
             access: {restricted: true}
         });
-        $stateProvider.state('site.register', {
+
+        $stateProvider.state('login', {
+            url: '/login',
+            templateUrl: 'partials/login.html',
+            controller: 'loginController',
+            access: {restricted: false}
+        });
+        $stateProvider.state('register', {
             url: '/register',
+            templateUrl: 'partials/register.html',
+            controller: 'registerController',
+            access: {restricted: false}
+        });
+        $stateProvider.state('create', {
+            url: '/create',
+            templateUrl: 'partials/new_site_register.html',
+            controller: 'sitesController',
+            access: {restricted: false}
+        });
+
+        $stateProvider.state('sitelogin', {
+            url: '/{site}/login',
+            templateUrl: 'partials/site_login.html',
+            controller: 'loginController',
+            access: {restricted: false}
+        });
+
+        $stateProvider.state('siteregister', {
+            url: '/{site}/register',
             templateUrl: 'partials/site_register.html',
             controller: 'registerController',
             access: {restricted: false}
         });
 
-        $stateProvider.state('site.login', {
-            url: '/login',
-            templateUrl: 'partials/site_login.html',
-            controller: 'loginController',
-            access: {restricted: false}
-        });
 
         $stateProvider.state('site.general', {
             url: '/administration/general',

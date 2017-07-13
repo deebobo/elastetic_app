@@ -4,6 +4,7 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+/**@ignore */ 
 const mongoose = require('mongoose');
 
 class Sites{

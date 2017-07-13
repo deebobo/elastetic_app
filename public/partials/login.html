@@ -1,22 +1,24 @@
-<div class="col-md-4">
+<div ng-cloak class="home" layout="column" layout-fill layout-align="start center">
     <h1>Login</h1>
     <div ng-show="error" class="alert alert-danger">{{errorMessage}}</div>
-    <form class="form" ng-submit="login()">
+    <form  ng-submit="login()" layout="column" style="width: 300px; height: 250px">
 
-        <div class="form-group">
-            <label>Username or email</label>
-            <input type="text" class="form-control" name="username" ng-model="loginForm.username" required>
-        </div>
+        <md-input-container flex>
+            <label for="username">Username or email</label>
+            <input type="text"  id="username" ng-model="loginForm.username" required>
+        </md-input-container>
 
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" class="form-control" name="password" ng-model="loginForm.password" required>
-        </div>
+        <md-input-container flex>
+            <label for="password">Password</label>
+            <input type="password"  id="password" ng-model="loginForm.password" required>
+        </md-input-container>
 
-        <div class="form-group">
-            <label>Site</label>
-            <select class="form-control"  ng-model="loginForm.selectedSite" ng-options="x._id for x in sites" required></select>
-        </div>
+        <md-input-container flex>
+            <label for="site">Site</label>
+            <md-select id="site"   ng-model="loginForm.selectedSite" flex required>
+                <md-option ng-value="x._id " ng-repeat="x in sites">{{x._id}}</md-option>
+            </md-select>
+        </md-input-container>
 
         <div>
             <button type="submit" class="btn btn-default" ng-disabled="disabled">Login</button>

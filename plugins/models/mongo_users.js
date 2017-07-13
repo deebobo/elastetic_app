@@ -4,9 +4,12 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+ 
+/**@ignore */ 
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const config = require.main.require('../api/libs/config');
 
 /**
  * @class represents the users collection

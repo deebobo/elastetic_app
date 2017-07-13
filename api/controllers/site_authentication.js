@@ -41,12 +41,12 @@ module.exports.register = async function(req, res) {
                 if( ! user ) {
                     let user = { name: req.body.name, email: req.body.email, password: req.body.password, site: req.params.site, groups: [site.viewGroup]};
 					if(site.requestEmailConfirmation == true)
-						email.sendEmailConfirmation(site, user, pluginMan, url.resolve(req.protocol + '://' + req.get('host'), "site", req.params.site));
+						await email.sendEmailConfirmation(site, user, pluginMan, url.resolve(req.protocol + '://' + req.get('host'), "site", req.params.site));
 					else
 						user.accountState = 'verified';
 					db.users.add(user);
 					if(site.sendHelloEmail)
-						email.sendHello(site, user,  pluginMan, "welcome");
+						email.sendMail(site, user,  pluginMan, "welcome");
                     res.status(200).json({message: "ok"});
                 }
                 else if (user.name === name) {

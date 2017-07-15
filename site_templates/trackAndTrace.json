@@ -1,0 +1,105 @@
+{
+  "name": "track and trace",
+  "description": "track your stuff",
+  "author": "deebobo",
+  "version": "1.0.0",
+  "icon": "",
+  "definition":[
+    {"type": "group",  "value": {"name": "admins", "level": "admin"} },
+    {"type": "group",  "value": {"name": "editors", "level": "edit"} },
+    {"type": "group",  "value": {"name": "viewers", "level": "view"} },
+
+    {"type": "site", "value": {"viewGroup": "viewers", "homepage": "home"}},
+
+    {"type": "user",  "value": {"name": "admin", "level": "view", "groups": ["admins"], "accountState": "verified"} }
+
+
+    {"type": "page", "value":
+      { "name": "home",
+        "plugin":{"name": "left-menu-bar homepage", "global": true},
+        "groups": ["admins", "editors", "viewers"],
+        "partial": 0,
+        "controller": "siteHomeController",
+        "data": {"menu":[
+          {
+            "name": "Administration",
+            "type": "toggle",
+            "pages": [{
+              "name": "General",
+              "type": "link",
+              "url": "site.general",
+              //"url": "site.page",
+              "icon": "fa fa-wrench"
+            }, {
+              "name": "Email",
+              "type": "link",
+              "url": "site.email",
+              "icon": "fa fa-envelope"
+            }, {
+              "name": "Authorization",
+              "type": "link",
+              "url": "site.authorization",
+              "icon": "fa fa-user-circle"
+            }, {
+              "name": "connections",
+              "url": "site.connections",
+              "type": "link",
+              "icon": "fa fa-cloud"
+            }, {
+              "name": "functions",
+              "url": "site.functions",
+              "type": "link",
+              "icon": "fa fa-connectdevelop"
+            }/*, {
+                      "name": "Plugins",
+                      "url": "site.plugins",
+                      "type": "link",
+                      "icon": "fa fa-plug"
+                  }*/]
+          },
+          {
+            "name": "particle io devices",
+            "type": "link",
+            "view": "particle io devices",
+            "icon": "fa fa-list"
+          },
+          {
+            "name": "map",
+            "type": "link",
+            "view": "map",
+            "icon": "fa fa-globe"
+          }
+        ]}}
+    },
+
+    {"type": "view", "value":
+      { "name": "particle io devices",
+        "plugin":{"name": "particle_io_devices_view", "global": true},
+        "groups": ["admins", "editors", "viewers"],
+        "partial": 0,
+        "controller": "particlIODevicesViewController" }
+    },
+
+    {"type": "view", "value":
+      { "name": "map", "plugin":{"name": "google_map_view", "global": true},
+        "groups": ["admins", "editors", "viewers"],
+        "partial": 0,
+        "controller": "googleMapViewController"
+      }
+    },
+
+    {"type": "emailtemplate", "value":
+      { "name": "welcome", "subject": "welcome to {{site}}",
+	    "body": "Hi there,\n\nWelcome to {{site}}.  Hope you have lots of fun.\n\nThe  {{site}} team."
+      }
+    },
+
+    {"type": "emailtemplate", "value":
+      { "name": "registration confirmation", "subject": "please validate your account",
+	    "body": "Hi there,\n\nWelcome to {{site}}. Before you can get started, you still need to validate your email address. You can do this by clicking on this link:\n\n{{activationlink}}\n\nThanks, from the {{site}} team."
+      }
+    }
+
+
+  ]
+}

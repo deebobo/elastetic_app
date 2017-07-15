@@ -4,16 +4,27 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+/**@ignore */ 
+const mongoose = require('mongoose');
+
 /** a collection that stores data for a plugin at the level of a site.
 */
 class SiteDataCollection{
 
     /**
      * @constructor
-     * @param collection {object} a reference to the mongo collection that represents the groups
+     * creates a collection or table that allows a plugin to store data at the level of a site (each site gets 1 record per plugin).
+     * example: this can be used by an emailer plugin to store configurations that relate to the site that wants to use the plugin.
      */
-    constructor(collection){
-        this._collection = collection;
+    constructor(){
+        let pluginSiteDataSchema = new mongoose.Schema({
+            site: String,
+            plugin: String,
+            data: Object,											//the data for the site.
+            createdOn:{type: Date, default: Date.now()}
+        });
+        pluginSiteDataSchema.index({ name: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
+        this._collection = mongoose.model('pluginSiteData', pluginSiteDataSchema);
     }
 
 	/**

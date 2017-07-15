@@ -4,6 +4,7 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+/**@ignore */
 const mongoose = require('mongoose');
 
 class Plugins{
@@ -24,7 +25,7 @@ class Plugins{
      *      - scripts: all the scripts that need to be loaded for this plugin
      *      - css: all the css scripts that need to be loade
      *  - installedOn: date of record creation
-     *  - type: "mail', 'page', 'view'
+     *  - type: "mail', 'page', 'view', 'connection', 'function', 'db'
      *  - version: the version of the plugin that is installed.
      *  - author: the creator of the plugin
      * @private

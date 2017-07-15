@@ -19,11 +19,13 @@ const winston = require('winston');
 module.exports.login = async function(res, plugins, site, name, pwd){
 	
 	try{
-		db = plugins.db;
+		let db = plugins.db;
 
 		let siteRec = await db.sites.find(site);
-		if(! siteRec)
-			res.status(404).json({message:"unknown site, can't login"});
+		if(! siteRec) {
+            res.status(404).json({message: "unknown site, can't login"});
+            return;
+        }
 
 		let user = await db.users.findByNameOrEmail(name, site);
 		if( ! user )

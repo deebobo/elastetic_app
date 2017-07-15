@@ -1,7 +1,10 @@
 <div layout="row" layout-align="center center" >
 
+
+
+
+
     <div flex="80" layout="column" layout-align="center stretch">
-        <h1></h1>
 
         <md-toolbar class="md-table-toolbar md-default" layout="row">
             <div class="md-toolbar-tools">
@@ -30,7 +33,7 @@
                             <form ng-submit="saveUser(user)" layout-align="center stretch" layout-fill layout="column" layout-padding="10%">
 
                                 <div layout="row" layout-align="start center">
-                                    <div ng-if="user.isOpen == true" flex="95">
+                                    <div ng-if="user.isOpen == true" flex="90">
 
                                         <md-input-container flex layout-fill>
                                             <label for="name-{{user.name}}" >name </label>
@@ -49,11 +52,12 @@
                                         <div flex layout="row"
                                              layout-align="end center" >
 
-                                            <div flex="95">
+                                            <div flex="90"
+                                                 ng-if="user.isOpen != true">
                                                 {{user.name}}
                                             </div>
                                             <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
-                                                  ng-class="{'toggled' : user.isOpen}" ></span>
+                                                  ng-class="{'toggled' : user.isOpen}"></span>
                                         </div>
                                     </md-button>
                                 </div>
@@ -61,19 +65,40 @@
                                 <div ng-show="user.isOpen == true" layout="column">
 
                                     <md-input-container flex >
-                                        <label for="email-{{user.name}}" >email </label>
-                                        <input id="email-{{user.name}}" type="text" ng-model="user.name" class="form-control" ng-change="user.needsSave = true"  />
+                                        <label for="email-{{user.email}}" >email </label>
+                                        <input id="email-{{user.email}}" type="text" ng-model="user.email" class="form-control" ng-change="user.needsSave = true"  />
                                         <md-tooltip >The email address of the user</md-tooltip>
                                     </md-input-container>
 
-                                    <md-chips placeholder="Enter a tag"
-                                              ng-model="groups"
-                                              delete-button-label="Remove Tag"
-                                              delete-hint="Press delete to remove tag"
-                                              secondary-placeholder="+Tag"
-                                              md-on-add="groupAddedTo(user, $chip)"
-                                              md-on-remove="groupRemovedFrom(user, $chip)">
-                                    </md-chips>
+
+
+
+                                        <md-chips ng-model="user.groups"
+                                                  md-transform-chip="checkGroupChip(user, $chip)"
+                                                  md-on-add="groupAddedTo(user, $chip)"
+                                                  md-on-remove="groupRemovedFrom(user, $chip)"
+                                                  delete-button-label="Remove Tag"
+                                                  delete-hint="Press delete to remove tag">
+                                            <md-chip-template>
+                                            <span>
+                                              <strong>{{$chip.name}}</strong>
+                                            </span>
+                                            </md-chip-template>
+
+                                            <md-autocomplete
+                                                    md-selected-item="user.selectedItem"
+                                                    md-search-text="user.searchText"
+                                                    md-items="item in groups"
+                                                    md-item-text="item.name"
+                                                    placeholder="Search for a group">
+                                                <span md-highlight-text="user.searchText">{{item.name}}</span>
+                                            </md-autocomplete>
+                                        </md-chips>
+
+
+
+
+
 
                                     <div layout="row" layout-align="end center">
                                         <md-button class="md-primary"
@@ -105,27 +130,27 @@
                     <md-button class="md-primary"
                                ng-click="addGroup($ev)">Add group</md-button>
 
-                    <md-list ng-cloak>
-                        <md-list-item class="secondary-button-padding" ng-repeat="group in groups" >
+                    <md-list ng-cloak layout="column">
+                        <md-list-item  ng-repeat="group in groups" layout-align="center stretch" layout-fill layout="column">
 
-                            <form ng-submit="saveGroup(group)">
+                            <form ng-submit="saveGroup(group)" >
 
-                                <div layout="row" >
-                                    <md-input-container flex="100" >
+                                <div layout="row"  layout-align="center start" >
+                                    <md-input-container flex="60" >
                                         <label for="name-{{group._id}}" >name</label>
                                         <input type="text" id="name-{{group._id}}" ng-model="group.name" ng-change="group.needsSave = true">
                                         </input>
                                         <md-tooltip >The name of the group</md-tooltip>
                                     </md-input-container>
 
-                                    <md-input-container flex >
-                                        <label for="viewGroup" >view group</label> <br /><br />
-                                        <select id="viewGroup" ng-model="group.level" ng-change="group.needsSave = true">
-                                            <option value="admin">admin</option>
-                                            <option value="edit">edit</option>
-                                            <option value="view">view</option>
-                                            <option value="public">public</option>
-                                        </select>
+                                    <md-input-container flex="40" >
+                                        <label for="viewGroup-{{group._id}}" >view group</label>
+                                        <md-select id="viewGroup-{{group._id}}" ng-model="group.level" ng-change="group.needsSave = true">
+                                            <md-option value="admin">admin</md-option>
+                                            <md-option value="edit">edit</md-option>
+                                            <md-option value="view">view</md-option>
+                                            <md-option value="public">public</md-option>
+                                        </md-select>
                                         <md-tooltip >Select the group that newly registered users will be assigned to.</md-tooltip>
                                     </md-input-container>
 

@@ -5,6 +5,7 @@
 */
 
 const url = require('url');
+const winston = require('winston');
  
  
 /** replaces any parameters that were specified in the email template.
@@ -13,7 +14,7 @@ const url = require('url');
  */
 function replaceParams(template, user){
 	let result = template.replace(/{{username}}/g, user.name);
-	result = result.replace(/{{useremail}}/g, user.email);
+	result = result.replace(/{{site}}/g, user.site);
 	return result;
 }
  
@@ -25,17 +26,19 @@ function replaceParams(template, user){
  * @param {string} 'url' the url (without activation token)
  * @returns {Promise.<void>}
  */
- module.exports.sendEmailConfirmation = async function (site, user, pluginMan, uri) {
+ module.exports.sendEmailWithLink = async function (site, user, pluginMan, uri, templateName) {
 	db = pluginMan.db;
-	let template = await db.emailTemplates.find("registration confirmation", site.name);
+	let template = await db.emailTemplates.find(templateName, site.name);
 	if(template){
 		let mailhandler = await pluginMan.getMailHandlerFor(site.name);
 		if(mailhandler){
-			let body = replaceParams(template.body).replace(/{{activationlink}}/g, url.resolve(uri, "activate", user.generateJwt()));
+			let body = replaceParams(template.body).replace(/{{activationlink}}/g, url.resolve(uri, user.generateJwt()));
 			let subject = replaceParams(template.subject);
 			mailhandler.send(site.name, user.email, subject, body);
 		} 
 	}
+	else
+        winston.log("error", "failed to find template:", "registration confirmation");
 };
 
 
@@ -50,4 +53,6 @@ module.exports.sendMail = async function (site, user, pluginMan, templateName){
 			mailhandler.send(site.name, user.email, subject, body);
 		} 
 	}
+    else
+        winston.log("error", "failed to find template:", templateName);
 }

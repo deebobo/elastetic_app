@@ -4,6 +4,9 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+/**@ignore */ 
+const mongoose = require('mongoose');
+
 /**
  * @class represents the collection of email templates
  */
@@ -11,10 +14,19 @@ class EmailTemplates{
 
     /**
      * @constructor
-     * @param collection {object} a reference to the mongo collection that represents the users
+     * creates a collection or table that allows a plugin to store data at the level of a site (each site gets 1 record per plugin).
+     * example: this can be used by an emailer plugin to store configurations that relate to the site that wants to use the plugin.
      */
-    constructor(collection){
-        this._templates = collection;
+    constructor(){
+        let emailTemplatesSchema = new mongoose.Schema({
+            name: String,															//name of the template
+            site: String,
+            subject: String,
+            body: String,
+            createdOn:{type: Date, default: Date.now()}
+        });
+        emailTemplatesSchema.index({ name: 1, site: 1}, {unique: true});        //fast access at name & site level
+        this._templates = mongoose.model('emailTemplates', emailTemplatesSchema);
     }
 
     /**
@@ -64,7 +76,7 @@ class EmailTemplates{
      * was found
      */
     find(name, site){
-        return this._templates.findOne( { name: value, site: site } ).exec();
+        return this._templates.findOne( { name: name, site: site } ).exec();
     }
 }
 

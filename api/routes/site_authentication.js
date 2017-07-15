@@ -22,4 +22,7 @@ router.post('/register', ctrlAuth.register);
 router.post('/login', ctrlAuth.login);
 router.get('/activate/:activationKey', ctrlAuth.activate);
 
+router.post('/resetpwd', ctrlAuth.startResetPwd);
+router.post('/changepwd', ctrlAuth.finishResetPwd);
+
 module.exports = router;

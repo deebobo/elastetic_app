@@ -24,12 +24,19 @@ deebobo.controller('registerController', ['$scope', '$location', '$stateParams',
                     return;												//get out of hte function, don't try to log in.
                 }
                 else {
-                    $scope.registerForm.selectedSite = !$stateParams.site;
+                    $scope.registerForm.selectedSite = $stateParams.site;
                 }
             }
 
+            if($scope.registerForm.password != $scope.registerForm.password2){
+                $scope.error = true;
+                $scope.errorMessage = "passwords don't match";
+                $scope.disabled = false;
+                return;
+            }
+
             // call login from service
-            let site = $scope.registerForm.selectedSite._id;
+            let site = $scope.registerForm.selectedSite;
             AuthService.register(site, $scope.registerForm.username, $scope.registerForm.email, $scope.registerForm.password)
             // handle success
                 .then(function () {
@@ -44,7 +51,7 @@ deebobo.controller('registerController', ['$scope', '$location', '$stateParams',
                         else
                             $scope.errorMessage = err;
                         $scope.disabled = false;
-                        $scope.registerForm = {};
+                        //$scope.registerForm = {};
                     });
         };
 

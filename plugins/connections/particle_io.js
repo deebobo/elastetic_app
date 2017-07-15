@@ -11,8 +11,9 @@ const winston = require('winston');
 let particle = new Particle();
 
 /**
- * a plugin that provides access to a mysql data store for storing and retrieving time series, historical data of
- * devices from different connection sources.
+ * a plugin that allows the backend to work with the particle.io platform.
+ * currently supports:
+ * - callbacks
  */
 class ParticleIoConnection {
 

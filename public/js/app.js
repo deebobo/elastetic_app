@@ -11,7 +11,7 @@ angular.module('common.services', []);
 angular.module('deebobo.controllers', ['common.directives']);
 angular.module('common.directives', ['common.services']);
 
-var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap', 'md.data.table']);  //'ngMdIcons',
+var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap']);  //,'ui.grid', 'ui.grid.resizeColumns', 'ui-grid-move-columns'
 
 deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider', '$filterProvider',
     function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider, $filterProvider) {
@@ -22,6 +22,44 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             templateUrl: 'partials/home.html',
             access: {restricted: false}
         });
+        $stateProvider.state('site', {
+            resolve: {                                   //need to load
+                siteDetails: ['siteService', '$stateParams',
+                    function (siteService, $stateParams) {
+                        var res = siteService.get($stateParams);
+                        return res;
+                    }],
+                page: ['pageService', 'siteDetails', "menu",
+                    function (pageService, siteDetails, menu) {
+                        var temp = pageService.get(siteDetails._id, siteDetails.homepage);
+                        menu.homepage = siteDetails.homepage;                       //let the menu know the name of the homepage, so it can use this while changing states (go to different webpage), so it can use the homepage name if no other page is currently loaded.
+                        return temp;
+                    }]
+            },
+            url: '/{site}',
+            templateProvider: ['page', '$q', '$http', function (page, $q, $http) {
+                var deferred = $q.defer();
+                $http.get("plugins/" + page.plugin.client.partials[page.partial]).then(function(data) {
+                    deferred.resolve(data.data);
+                });
+                return deferred.promise;
+            }],
+
+
+
+            controllerProvider: ['page','$q', 'pluginService',  function (page, $q, pluginService) {
+                var deferred = $q.defer();
+                pluginService.loadSingle(page.plugin.client.scripts[0])
+                   .then(function(){ deferred.resolve(page.controller); });
+                return deferred.promise;
+            }],
+            //templateUrl: "plugins/_common/left_menu_bar_page/partials/site_home.html",
+            //Controller: "siteHomeController",
+            //templateUrl: 'partials/login.html',
+            //controller: 'siteHomeController',
+            access: {restricted: true}
+        });
+
         $stateProvider.state('login', {
             url: '/login',
             templateUrl: 'partials/login.html',
@@ -40,56 +78,28 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             controller: 'sitesController',
             access: {restricted: false}
         });
-        $stateProvider.state('site', {
-            resolve: {                                   //need to load
-                siteDetails: ['siteService', '$stateParams',
-                    function (siteService, $stateParams) {
-                        var res = siteService.get($stateParams);
-                        return res;
-                    }],
-                homepage: ['pageService', 'siteDetails', "menu",
-                    function (pageService, siteDetails, menu) {
-                        var temp = pageService.get(siteDetails._id, siteDetails.homepage);
-                        menu.homepage = siteDetails.homepage;                       //let the menu know the name of the homepage, so it can use this while changing states (go to different webpage), so it can use the homepage name if no other page is currently loaded.
-                        return temp;
-                    }]
-            },
-            url: '/{site}',
-            templateProvider: ['homepage', '$q', '$http', function (homepage, $q, $http) {
-                var deferred = $q.defer();
-                $http.get("plugins/" + homepage.plugin.client.partials[homepage.partial]).then(function(data) {
-                    deferred.resolve(data.data);
-                });
-                return deferred.promise;
-            }],
 
-
-
-            controllerProvider: ['homepage','$q', 'pluginService',  function (homepage, $q, pluginService) {
-                var deferred = $q.defer();
-                pluginService.loadSingle(homepage.plugin.client.scripts[0])
-                   .then(function(){ deferred.resolve(homepage.controller); });
-                return deferred.promise;
-            }],
-            //templateUrl: "plugins/_common/left_menu_bar_page/partials/site_home.html",
-            //Controller: "siteHomeController",
-            //templateUrl: 'partials/login.html',
-            //controller: 'siteHomeController',
-            access: {restricted: true}
+        $stateProvider.state('sitelogin', {
+            url: '/{site}/login',
+            templateUrl: 'partials/site_login.html',
+            controller: 'loginController',
+            access: {restricted: false}
         });
-        $stateProvider.state('site.register', {
-            url: '/register',
+
+        $stateProvider.state('siteregister', {
+            url: '/{site}/register',
             templateUrl: 'partials/site_register.html',
             controller: 'registerController',
             access: {restricted: false}
         });
 
-        $stateProvider.state('site.login', {
-            url: '/login',
-            templateUrl: 'partials/site_login.html',
-            controller: 'loginController',
+        $stateProvider.state('sitePwdReset', {
+            url: '/{site}/resetpwd/{token}',
+            templateUrl: 'partials/change_pwd.html',
+            controller: 'resetPwdController',
             access: {restricted: false}
         });
+
 
         $stateProvider.state('site.general', {
             url: '/administration/general',
@@ -176,7 +186,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             }],
             controllerProvider: ['page','$q', 'pluginService',  function (page, $q, pluginService) {
                 var deferred = $q.defer();
-                pluginService.load(page.plugin.client.scripts)
+                pluginService.load(page.plugin.client)
                     .then(function(){ deferred.resolve(page.controller); });
                 return deferred.promise;
             }],

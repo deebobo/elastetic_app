@@ -10,48 +10,7 @@ deebobo.factory('menu', [
     '$location', '$state','$stateParams',
     function ($location, $state, $stateParams) {
 
-        var sections = [{
-            name: 'Getting Started',
-            view: 'gettingstarted',
-            type: 'link'
-        }];
-
-        sections.push({
-            name: 'Administration',
-            type: 'toggle',
-            pages: [{
-                name: 'General',
-                type: 'link',
-                url: 'site.general',
-                //url: 'site.page',
-                icon: 'fa fa-wrench'
-            }, {
-                name: 'Email',
-                type: 'link',
-                url: 'site.email',
-                icon: 'fa fa-envelope'
-            }, {
-                name: 'Authorization',
-                type: 'link',
-                url: 'site.authorization',
-                icon: 'fa fa-user-circle'
-            }, {
-                name: 'connections',
-                url: 'site.connections',
-                type: 'link',
-                icon: 'fa fa-cloud'
-            }, {
-                name: 'functions',
-                url: 'site.functions',
-                type: 'link',
-                icon: 'fa fa-connectdevelop'
-            }, {
-                name: 'Plugins',
-                url: 'site.plugins',
-                type: 'link',
-                icon: 'fa fa-plug'
-            }]
-        });
+        var sections = [];
 
 
         sections.push({

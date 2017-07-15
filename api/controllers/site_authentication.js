@@ -41,12 +41,12 @@ module.exports.register = async function(req, res) {
                 if( ! user ) {
                     let user = { name: req.body.name, email: req.body.email, password: req.body.password, site: req.params.site, groups: [site.viewGroup]};
 					if(site.requestEmailConfirmation == true)
-						email.sendEmailConfirmation(site, user, pluginMan, url.resolve(req.protocol + '://' + req.get('host'), "site", req.params.site));
+						await email.sendEmailWithLink(site, user, pluginMan, url.resolve(req.protocol + '://' + req.get('host'), "site", req.params.site), "registration confirmation");
 					else
 						user.accountState = 'verified';
 					db.users.add(user);
 					if(site.sendHelloEmail)
-						email.sendHello(site, user,  pluginMan, "welcome");
+						email.sendMail(site, user,  pluginMan, "welcome");
                     res.status(200).json({message: "ok"});
                 }
                 else if (user.name === name) {
@@ -74,7 +74,7 @@ module.exports.login = async function(req, res){
     if(req.body.name && req.body.password){
 		let name = req.body.name;
 		let password = req.body.password;
-		
+
 		auth.login(res, await req.app.get('plugins'), req.params.site, name, password);
 	}
 	else
@@ -113,4 +113,62 @@ module.exports.activate = async function(req, res){
 		res.status(400).json({message:err});
 	}
     //activationKey
+};
+
+//sets the account of the user into a pwd reset state and sends an email to the user with a link that contains a new activation key.
+module.exports.startResetPwd = async function(req, res){
+	if(req.body.name){
+		let name = req.body.name;
+		let site = req.params.site;
+		
+		let pluginMan = await req.app.get('plugins');
+		let db = pluginMan.db;
+		let user = await db.users.findByNameOrEmail(name, site);
+		if(user){
+			await db.users.updateAccountState(decoded.id, "pwdReset");
+			await email.sendEmailWithLink(site, user, pluginMan, url.resolve(req.protocol + '://' + req.get('host'), "site", req.params.site, "resetpwd"), "password reset");
+			res.status(200).json({message:"ok"});
+		}
+		else
+			res.status(400).json({message:"unknown user name or email."});
+	}
+	else
+		res.status(400).json({message:"missing username or email"});
+};
+
+module.exports.finishResetPwd = async function(req, res){
+
+    req.checkBody('password', 'No valid password is given').notEmpty();
+    req.checkBody('token', 'No valid pwd reset token found').notEmpty();
+
+    let errors = req.validationErrors();
+    if (errors)
+        res.send(errors, 400);
+    else{
+        let pluginMan = await req.app.get('plugins');
+        let db = pluginMan.db;
+
+        try {
+            let decoded = jwt.verify(req.body.token, config.security.secret);
+
+            if(decoded.site !== site){
+                res.status(400).json({message: "invalid site"});
+                return;
+            }
+            let siteRec = await db.sites.find(site);
+            if(! siteRec) {
+                res.status(404).json({message: "unknown site, can't login"});
+                return;
+            }
+            let user = await db.users.findById(decoded.id);
+            user.password = req.body.password;
+            user.accountState = 'verified';
+            await db.users.update(user);
+        }
+        catch(err) {
+            res.status(400).json({message: err});
+        }
+
+    }
+
 };

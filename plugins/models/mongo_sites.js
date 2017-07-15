@@ -4,15 +4,40 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+/**@ignore */ 
+const mongoose = require('mongoose');
 
 class Sites{
 
     /**
      * @constructor
-     * @param collection {object} a reference to the mongo collection that represents the sites
+     * creates the collection that stores the site information
+     * required fields:
+     *  - id: the name of the group
+     *  - mailhandler: name of the plugin that handles sending email
+     *  - contactEmail: the email address of the person that created the site (admin)
+     * 	- allowRegistration: determines if users can register on this site or only through invitation.
+     * 	- viewGroup: provides quick reference to the default 'view' group for registering new users. This values is assigned
+     *    to newly created users as their initial group.
+     *  - createdOn: date of record creation
      */
-    constructor(collection){
-        this._sites = collection;
+    constructor(){
+        let sitesSchema = new mongoose.Schema({
+            _id: {type: String},
+            title: String,												//titelf for the site
+            contactEmail: String,                                       //the email address of the person that created the site (admin)
+            allowRegistration: {type: Boolean, default: true},          //determines if users can register on this site or only through invitation.
+            mailHandler: {type: String},
+            requestEmailConfirmation: {type: Boolean, default: true},	//when true, newly registered users have to confirm their email address by clicking on a link found in a mail (if the email template exists).
+            sendHelloEmail: {type: Boolean, default: true},				//when true, a hello email is sent to newly registered users (if the email template exists)
+            viewGroup: {type: mongoose.Schema.Types.ObjectId, ref: 'groups'},                   //provides quick reference to the default 'view' group for registering new users.
+            homepage:  String,                                                                  //the name of the page to use as homepage. Don't need an object id, cause that is usually not yet created if the site is not yet there. But site + page name is uniuqe, so can easiliy search on this.
+            createdOn:{type: Date, default: Date.now()}
+        });
+        sitesSchema.virtual('name').get(function() {                                            //convenience function, so we also have the field 'name
+            return this._id;
+        });
+        this._sites = mongoose.model('sites', sitesSchema);
     }
 
 	/**

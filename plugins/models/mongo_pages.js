@@ -3,16 +3,37 @@
  * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
-
+ 
+/**@ignore */ 
+const mongoose = require('mongoose');
 
 class Pages{
 
     /**
      * @constructor
-     * @param collection {object} a reference to the mongo collection that represents the pages
+     * creates the collection that stores all the pages for each site.
+     * required fields:
+     *  - name: the name of the page
+     * 	- site: the site to which this group applies
+     *  - content: the content of the page
+     *  - groups: the groups that have access to this page.
+     *  - partial: the index nr of the partial from the plugin that is the main entry point.
+     *  - controller: name of a controller to be used by this page. Can be defined in the plugin or a globaly available controller.
+     *  - createdOn: date of record creation
      */
-    constructor(collection){
-        this._pages = collection;
+    constructor(){
+        let pagesSchema = new mongoose.Schema({
+            name: String,                                        		//the email address of the person that created the site (admin)
+            site: String,
+            plugin:  {type: mongoose.Schema.Types.ObjectId, ref: 'plugins'},
+            controller: String,                                         //name of a controller to be used by this page. Can be defined in the plugin or a globaly available controller.
+            partial: Number,                                            //the index nr of the partial from the plugin that is the main entry point.
+            data: Object,                                               //data for the plugin.
+            groups: [{type: mongoose.Schema.Types.ObjectId, ref: 'groups'}],
+            createdOn:{type: Date, default: Date.now()}
+        });
+        pagesSchema.index({ name: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
+        this._pages = mongoose.model('pages', pagesSchema);
     }
 
 	/**

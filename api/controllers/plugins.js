@@ -15,7 +15,7 @@ module.exports.get = async function (req, res, next) {
         let db = await req.app.get('plugins');
         db = db.db;
         let recs = await db.plugins.list(req.params.site);
-        res.json(recs);
+        res.status(200).json(recs);
     }
     catch (err) {
         winston.log("error", err);
@@ -31,7 +31,7 @@ module.exports.getForType = async function (req, res, next) {
         let db = await req.app.get('plugins');
         db = db.db;
         plugins = await db.plugins.listForType(req.params.site, req.params.type, true);
-        res.json(plugins);
+        res.status(200).json(plugins);
     }
     catch (err) {
         winston.log("error", err);
@@ -41,10 +41,10 @@ module.exports.getForType = async function (req, res, next) {
 
 module.exports.getDefaultforType = async function (req, res){
 	try {
-		if(req.params.type == 'mail'){
+		if(req.params.type === 'mail'){
 			let plugins = await req.app.get('plugins');
 			let plugin = await plugins.getMailHandlerFor(req.params.site);
-			res.json(plugin);
+			res.status(200).json(plugin);
 		}
 		else{
 			res.status(400).json({message: 'plugin has no known default'});
@@ -58,11 +58,11 @@ module.exports.getDefaultforType = async function (req, res){
 
 module.exports.setDefaultforType = async function (req, res){
 	try {
-		if(req.params.type == 'mail'){
+		if(req.params.type === 'mail'){
 			let plugins = await req.app.get('plugins');
 			let db = plugins.db;
-			await db.sites.updatemailHandler(req.params.site, req.body);
-			res.json(plugins);
+			await db.sites.updatemailHandler(req.params.site, req.body.value);
+			res.status(200).json({message: "ok"});
 		}
 		else{
 			res.status(400).json({message: 'plugin has no known default'});
@@ -79,13 +79,13 @@ module.exports.post = async function (req, res, next) {
     try {
         let pluginRec = null;
         if (req.files.hasOwnProperty(plugin)) {
-            if(req.body.hasOwnProperty('global') && req.body.global == true)
+            if(req.body.hasOwnProperty('global') && req.body.global === true)
                 pluginRec = pluginLib.install(req.files.plugin);			            //no site -> global installation; req.files.plugin -> plugin is the fieldname of the form
             else
                 pluginRec = pluginLib.install(req.files.plugin, req.params.site);		//installs for specific site only.
         }
         else if (req.files.hasOwnProperty(serverplugin)) {
-            if (req.params.site == "main")
+            if (req.params.site === "main")
                 pluginRec = pluginLib.serverInstall(req.files.serverplugin, req.params.site);     //install as a server  plugin, only allowed from server.
             else
                 res.status(401).json({message: "not allowed from this site"});
@@ -109,7 +109,7 @@ module.exports.post = async function (req, res, next) {
 /* upgrade or change a plugin. */
 module.exports.put = async function (req, res, next) {
     winston.log("info", "to be implemented");
-}
+};
 
 
 /* uninstall a plugin. */
@@ -126,5 +126,5 @@ module.exports.delete = async function (req, res) {
         winston.log("error", err);
         res.status(400).json({message: err});
     }
-}
+};
  

@@ -1,28 +1,45 @@
-<div class="col-md-4">
+<div ng-cloak class="home" layout="column" layout-fill layout-align="start center"><!--class="col-md-4"-->
     <h1>Create your site</h1>
     <div ng-show="error" class="alert alert-danger">{{errorMessage}}</div>
-    <form class="form" ng-submit="createsite()">
+    <form  ng-submit="createsite()"  layout="column" style="width: 300px; height: 400px" >
 
-        <div class="form-group">
-            <label>Admin name</label>
-            <input type="text" class="form-control" name="username" ng-model="createForm.username" required>
-        </div>
-		
-		<div class="form-group">
-            <label>Admin email</label>
-            <input type="email" class="form-control" name="email" ng-model="createForm.email" required>
-        </div>
 
-        <div class="form-group">
-            <label>Admin password</label>
-            <input type="password" class="form-control" name="password" ng-model="createForm.password" required>
-        </div>
-		
-		<div class="form-group">
-            <label>Site name</label>
-            <input type="text" class="form-control" name="sitename"   ng-model="createForm.sitename" required>
-        </div>
-		
+        <md-input-container flex >
+            <label for="name" >Admin name</label>
+            <input id="name" type="text" ng-model="createForm.username" class="form-control" required />
+        </md-input-container>
+
+
+        <md-input-container flex >
+            <label for="email" >Admin email</label>
+            <input id="email" type="text" ng-model="createForm.email" class="form-control" required/>
+        </md-input-container>
+
+        <md-input-container flex>
+            <label for="pwd" >Admin password</label>
+            <input id="pwd" type="password" ng-model="createForm.password" class="form-control" required/>
+        </md-input-container>
+
+        <md-input-container flex>
+            <label for="pwd2" >re-enter password</label>
+            <input id="pwd2" type="password" ng-model="createForm.password2" class="form-control" required/>
+        </md-input-container>
+
+
+        <md-input-container flex >
+            <label for="sitename" >Site name</label>
+            <input id="sitename" type="text" ng-model="createForm.sitename" class="form-control" required/>
+        </md-input-container>
+
+
+        <md-input-container flex >
+            <label for="siteTemplate" >template</label>
+            <md-select id="siteTemplate" ng-model="createForm.template" flex>
+                <md-option ng-value="x.name" ng-repeat="x in templates">{{ x.name }} </md-option>
+            </md-select>
+        </md-input-container>
+
+
         <div>
             <button type="submit" class="btn btn-default" ng-disabled="disabled">Create</button>
         </div>

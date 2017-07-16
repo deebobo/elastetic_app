@@ -41,16 +41,14 @@ deebobo.controller('sitesController', ['$scope', '$location', 'siteService', '$h
                 siteService.create($scope.createForm.sitename, $scope.createForm.username, $scope.createForm.email, $scope.createForm.password, $scope.createForm.template)
                 // handle success
                     .then(function () {
-                        $location.path('/' + $scope.createForm.sitename);
+                        $location.path('/' + $scope.createForm.sitename + "/login");
                         $scope.disabled = false;
-                        $scope.createForm = {};
                     })
                     // handle error
                     .catch(function (err) {
                         $scope.error = true;
                         $scope.errorMessage = err;
                         $scope.disabled = false;
-                        $scope.createForm = {};
                     });
             }
 

@@ -77,7 +77,7 @@ class SiteTemplates{
      * was found
      */
     find(name){
-        return this._templates.findOne( { name: name, site: site } ).exec();
+        return this._templates.findOne( { name: name } ).exec();
     }
 }
 

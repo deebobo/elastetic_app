@@ -78,6 +78,18 @@ class EmailTemplates{
     find(name, site){
         return this._templates.findOne( { name: name, site: site } ).exec();
     }
+
+    /**
+     * removes a template from a specific site.
+     *
+     * @name .delete()
+     * @param id {String}  - the id of the object that needs to be deleted.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was found
+     */
+    delete(id){
+        return this._templates.findOneAndRemove( { _id: id } ).exec();
+    }
 }
 
 module.exports = EmailTemplates;

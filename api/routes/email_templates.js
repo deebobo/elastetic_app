@@ -13,6 +13,6 @@ router.post('/', ctrlEmailTemplates.post);
 router.put('/:template', ctrlEmailTemplates.put);
 
 /* remove a template. */
-router.delete('/', ctrlEmailTemplates.delete);
+router.delete('/:template', ctrlEmailTemplates.delete);
 
 module.exports = router;

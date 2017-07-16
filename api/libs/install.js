@@ -22,6 +22,16 @@ async function installPlugins(db)
     await sitesLib.installPlugin(db, 'transporter', '_common', '../public/plugins/_common/transporter/pluginconfig.json');
 }
 
+/**
+ * installs all the available templates.
+ * @param db
+ * @returns {Promise.<void>}
+ */
+async function installTemplates(db)
+{
+    await sitesLib.installTemplate(db, "track and trace", '../site_templates/trackAndTrace.json');
+}
+
 async function install(plugins, result)
 {
     config.config.db = result.db;
@@ -42,12 +52,14 @@ async function install(plugins, result)
         try {
             db.createDb();
             await installPlugins(db);
+            await installTemplates(db);
         }
         catch (err) {
             winston.log('error', 'failed to create db or install plugins:', err);
         }
         try {
-            await sitesLib.create(db, 'main', result.name, result.email, result.password);
+            result.site = "main";
+            await sitesLib.create(db,  result);
             await config.save();
             winston.log('info', 'done');
         }

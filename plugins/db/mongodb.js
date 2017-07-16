@@ -42,7 +42,7 @@ class MongoDb{
 		this.connections = null;
 		this.views = null;
 		this.functions = null;
-		this.siteTemplatesModel = null;
+		this.siteTemplates = null;
         mongoose.Promise = global.Promise;
     }
 

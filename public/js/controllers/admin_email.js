@@ -127,7 +127,7 @@ deebobo.controller('AdminEmailController',
                 }
             }
 
-            $scope.delete = function(connection, ev) {
+            $scope.delete = function(template, ev) {
 
                 // Appending dialog to document.body to cover sidenav in docs app
                 var confirm = $mdDialog.confirm()
@@ -139,10 +139,10 @@ deebobo.controller('AdminEmailController',
                     .cancel('no');
 
                 $mdDialog.show(confirm).then(function () {
-                    if (!connection.isNew) {                                                  //its a real record, needs to be deleted from the server.
-                        $http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/templates/' + template._id})      //get the list of groups that can view
+                    if (!template.isNew) {                                                  //its a real record, needs to be deleted from the server.
+                        $http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/templates/email/' + template._id})      //get the list of groups that can view
                             .then(function (response) {
-                                    $scope.templates.splice($scope.connections.indexOf(template), 1);
+                                    $scope.templates.splice($scope.templates.indexOf(template), 1);
                                 },
                                 function (response) {
                                     messages.error(response.data);
@@ -150,7 +150,7 @@ deebobo.controller('AdminEmailController',
                             );
                     }
                     else
-                        $scope.connections.splice($scope.connections.indexOf(connection), 1);
+                        $scope.templates.splice($scope.templates.indexOf(template), 1);
 
                 }, function () {
                     //$scope.status = 'You decided to keep your debt.';

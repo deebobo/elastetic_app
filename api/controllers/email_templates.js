@@ -66,8 +66,8 @@ module.exports.delete = async function (req, res) {
     try {
         let db = await req.app.get('plugins');
 		db = db.db;
-		await db.emailTemplates.delete(req.body.name, req.params.site);
-		res.status(200).json(pluginRec);
+		await db.emailTemplates.delete(req.body.template, req.params.site);
+		res.status(200).json({message: "ok"});
     }
     catch (err) {
         winston.log("error", err);

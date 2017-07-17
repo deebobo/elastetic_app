@@ -67,7 +67,7 @@ deebobo.controller('AdminEmailController',
 			//html callbacks.
 			//--------------------------------------------------------------------------------------
 			$scope.selectEmailplugin = function(email){
-				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/plugin/mail/default', data: {value: email._id}})      //get the list of groups that can view
+				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/plugin/mail/default', data: {value: email._id}})      
 				.then(function (response) {
 						loadPluginSettings(email);
 					},
@@ -77,6 +77,8 @@ deebobo.controller('AdminEmailController',
 				);
 			};
 
+			$scope.saveEmailConfig = function(config){
+			}
 
             //scope vars
             //--------------------------------------------------------------------------------------
@@ -153,7 +155,6 @@ deebobo.controller('AdminEmailController',
                         $scope.templates.splice($scope.templates.indexOf(template), 1);
 
                 }, function () {
-                    //$scope.status = 'You decided to keep your debt.';
                 });
             }
 

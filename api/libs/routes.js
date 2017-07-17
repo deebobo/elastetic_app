@@ -17,8 +17,9 @@ const views =    require('../routes/views');
 const index =    require('../routes/index');
 const connections =    require('../routes/connections');
 const historicalData = require('../routes/historicalData');
-const emailTemplates =    require('../routes/email_templates');
-const verifiedsite =  require('../routes/verifiedsite');
+const emailTemplates =  require('../routes/email_templates');
+const verifiedsite = require('../routes/verifiedsite');
+const siteData  = require('../routes/siteData');
 const devices =  require('../routes/devices');
 const functions =  require('../routes/functions');
 const express =  require('express');
@@ -34,6 +35,7 @@ function initPaths(app, passport) {
     app.use(router.use('/api/site/:site', auth));
 
     app.use(router.use('/api/site/:site', passport.authenticate('jwt', { session: false }), verifiedsite));
+    app.use(router.use('/api/site/:site/data', passport.authenticate('jwt', { session: false }), siteData));
     app.use(router.use('/api/site/:site/user', passport.authenticate('jwt', { session: false }), users));
     app.use(router.use('/api/site/:site/group', passport.authenticate('jwt', { session: false }), groups));
 	app.use(router.use('/api/site/:site/plugin', passport.authenticate('jwt', { session: false }), plugins));

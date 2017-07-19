@@ -10,7 +10,7 @@ let router = express.Router({mergeParams: true});
 const ctrlSiteData = require.main.require('../api/controllers/siteData');
 
 router.get('/:plugin',ctrlSiteData.get);
-router.post('/:plugin',ctrlSiteData.get);
+router.post('/:plugin',ctrlSiteData.post);
 router.put('/:plugin', ctrlSiteData.put);
 
 

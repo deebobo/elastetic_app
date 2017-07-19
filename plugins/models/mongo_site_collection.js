@@ -46,7 +46,7 @@ class SiteDataCollection{
 	* @param {string} `plugin` The name of the plugin retrive data for.
 	* @return {Promise}] a promise to perform async operations with. The result of the promise is the data record
 	*/
-	get(plugin, site){
+	get(site, plugin){
 		return this._users.findOne({site: site, plugin: plugin}).exec();
 	}
 

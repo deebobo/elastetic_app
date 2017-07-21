@@ -7,7 +7,7 @@
 const winston = require('winston');
 const auth = require.main.require('../api/libs/auth');
 
-module.export.get = async function(req, res)
+module.exports.get = async function(req, res)
 {
 	try{
         let db = await req.app.get('plugins');
@@ -41,7 +41,7 @@ module.exports.post = async function(req, res) {
 };
 
 /* update a conneciton. */
-module.exports.update = async function(req, res) {
+module.exports.put = async function(req, res) {
     try{
         if(auth.canWrite(req.user.groups, res)){                //auth will set the error message in res if there is a problem.
             let plugins = await req.app.get('plugins');

@@ -253,7 +253,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
 
     }]);
 
-deebobo.run(function ($rootScope, $location, $state, AuthService) {
+deebobo.run(function ($rootScope, $location, $state, AuthService, $mdToast) {
     $rootScope.$on('$stateChangeStart',
         function (event, next, current) {
             if ((!next.access || next.access.restricted) && !AuthService.isLoggedIn()) {
@@ -271,8 +271,20 @@ deebobo.run(function ($rootScope, $location, $state, AuthService) {
         })
 
     $rootScope.addError = function(message){
-        //todo: add error message to list
-        console.log("todo: add error message to list");
+        console.log(message);
+		var toast = $mdToast.simple()
+		  .textContent(message)
+		  .action('ok')
+		  .highlightAction(true)
+		  .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+		  .position({top: true, right: true, bottom: false, left: false});
+
+		$mdToast.show(toast).then(function(response) {
+		  if ( response == 'ok' ) {
+			//alert('You clicked the \'UNDO\' action.');
+		  }
+		});
+		
     }
 });
 

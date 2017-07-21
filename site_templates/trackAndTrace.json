@@ -162,6 +162,56 @@
         "subject": "please validate your account",
         "body": "Hi there,\n\nWelcome to {{site}}. Before you can get started, you still need to validate your email address. You can do this by clicking on this link:\n\n{{activationlink}}\n\nThanks, from the {{site}} team."
       }
-    }
+    },
+	
+	{"type": "connection",
+	 "value": { 
+			"name" : "mysql", 
+			"plugin" : {
+			  "name": "my_sql_data_store",
+			  "global": true
+			}, 
+			"content" : {
+				"createTable" : true, 
+				"tableName" : "history", 
+				"dbName" : "dxzrmuebsnuvqne7", 
+				"url" : "wftuqljwesiffol6.cbetxkdyhwsb.us-east-1.rds.amazonaws.com", 
+				"password" : "a998bup704wxu0up", 
+				"username" : "fffqv53jl3m38a9g"
+			}
+		}
+	},
+	
+	{"type": "connection",
+	 "value": { 
+			"name" : "mysql", 
+			"plugin" : {
+			  "name": "particle_io",
+			  "global": true
+			}, 
+			"content" : {
+				"token" : "9bd30ced211e85ad12cab44439d037534d504bb1"
+			}
+		}
+	},
+	
+	{"type": "function",
+	 "value": {
+		"name" : "transport", 
+		"data" : {
+			"extra" : {
+				"fields" : ["G"]
+			}, 
+			"to" : "mysql", 
+			"from" : "particle_io"
+		}, 
+		"source" : {
+			  "name": "transporter",
+			  "global": true
+			}
+	 }
+	}
+	
+	
   ]
 }

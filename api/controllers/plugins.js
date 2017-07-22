@@ -7,8 +7,7 @@
 const pluginLib = require.main.require('../api/libs/plugins');
 const winston = require('winston');
 
-/* GET all plugins for current site. 
- for file upload: https://howtonode.org/really-simple-file-uploads
+/* GET all plugins for the specified site
  */
 module.exports.get = async function (req, res, next) {
     try {

@@ -70,7 +70,8 @@ deebobo.controller('adminConnectionsController',
                 $scope.connections.push({name: "new connection", plugin: null, isOpen: true, needsSave: true, isNew: true});
             };
 
-            $scope.pluginChanged = function(connection){
+            /* now done by pluginConfigurator directive
+           $scope.pluginChanged = function(connection){
                 if(connection.plugin.config){
                     pluginService.load(connection.plugin.config)
                         .then(function(){
@@ -79,7 +80,7 @@ deebobo.controller('adminConnectionsController',
 
                         });
                 }
-            };
+            };*/
 
             $scope.save = function(connection){
                 if(connection.isNew === true){

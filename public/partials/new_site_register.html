@@ -1,43 +1,88 @@
-<div ng-cloak class="home" layout="column" layout-fill layout-align="start center"><!--class="col-md-4"-->
-    <h1>Create your site</h1>
+<div ng-cloak class="home" layout="column"  layout-align="start center" flex="none" layout-fill style="overflow-y: auto;"><!--class="col-md-4"-->
     <div ng-show="error" class="alert alert-danger">{{errorMessage}}</div>
-    <form  ng-submit="createsite()"  layout="column" style="width: 300px; height: 400px" >
+    <form  ng-submit="createsite()"  layout="column" layout-align="center stretch" flex="none">
+
+        <md-card flex="none">
+            <md-card-header flex>
+                <md-card-header-text>
+                    <span class="md-title">Create your site</span>
+                </md-card-header-text>
+            </md-card-header>
+            <md-card-title flex>
+                <md-card-title-text flex>
+                    <span class="md-headline">General information</span>
+                </md-card-title-text>
+            </md-card-title>
+            <md-card-content flex layout="column">
+                <md-input-container flex >
+                    <label for="name" >Admin name</label>
+                    <input id="name" type="text" ng-model="createForm.username" class="form-control" required />
+                </md-input-container>
 
 
-        <md-input-container flex >
-            <label for="name" >Admin name</label>
-            <input id="name" type="text" ng-model="createForm.username" class="form-control" required />
-        </md-input-container>
+                <md-input-container flex >
+                    <label for="email" >Admin email</label>
+                    <input id="email" type="text" ng-model="createForm.email" class="form-control" required/>
+                </md-input-container>
+
+                <md-input-container flex>
+                    <label for="pwd" >Admin password</label>
+                    <input id="pwd" type="password" ng-model="createForm.password" class="form-control" required/>
+                </md-input-container>
+
+                <md-input-container flex>
+                    <label for="pwd2" >re-enter password</label>
+                    <input id="pwd2" type="password" ng-model="createForm.password2" class="form-control" required/>
+                </md-input-container>
 
 
-        <md-input-container flex >
-            <label for="email" >Admin email</label>
-            <input id="email" type="text" ng-model="createForm.email" class="form-control" required/>
-        </md-input-container>
-
-        <md-input-container flex>
-            <label for="pwd" >Admin password</label>
-            <input id="pwd" type="password" ng-model="createForm.password" class="form-control" required/>
-        </md-input-container>
-
-        <md-input-container flex>
-            <label for="pwd2" >re-enter password</label>
-            <input id="pwd2" type="password" ng-model="createForm.password2" class="form-control" required/>
-        </md-input-container>
+                <md-input-container flex >
+                    <label for="sitename" >Site name</label>
+                    <input id="sitename" type="text" ng-model="createForm.sitename" class="form-control" required/>
+                </md-input-container>
 
 
-        <md-input-container flex >
-            <label for="sitename" >Site name</label>
-            <input id="sitename" type="text" ng-model="createForm.sitename" class="form-control" required/>
-        </md-input-container>
+                <md-input-container flex >
+                    <label for="siteTemplate" >template</label>
+                    <md-select id="siteTemplate"
+                               ng-model="createForm.template"
+                               ng-change="templateChanged()"
+                               flex>
+                        <md-option ng-value="x" ng-repeat="x in templates">{{ x.name }} </md-option>
+                    </md-select>
+                </md-input-container>
+
+            </md-card-content>
+        </md-card>
 
 
-        <md-input-container flex >
-            <label for="siteTemplate" >template</label>
-            <md-select id="siteTemplate" ng-model="createForm.template" flex>
-                <md-option ng-value="x.name" ng-repeat="x in templates">{{ x.name }} </md-option>
-            </md-select>
-        </md-input-container>
+
+
+        <div layout="column" flex="none">
+
+            <md-card ng-repeat="x in toConfigure">
+                <md-card-header flex>
+                    <md-card-header-text>
+                        <span class="md-title">{{x.item.type}}</span>
+                    </md-card-header-text>
+                </md-card-header>
+                <md-card-title flex>
+                    <md-card-title-text flex>
+                        <span class="md-headline">{{x.item.value.name}}</span>
+                    </md-card-title-text>
+                </md-card-title>
+                <md-card-content flex>
+                    <p>{{x.item.description}}</p>
+
+                    <select class="form-control"  ng-model="x.plugin" ng-options="y.name + '(' + y.description + ')' for y in x.plugins" required ></select>
+
+                    <pluginconfigurator plugin="x.plugin" value="x"/>
+
+                </md-card-content>
+            </md-card>
+
+
+        </div>
 
 
         <div>

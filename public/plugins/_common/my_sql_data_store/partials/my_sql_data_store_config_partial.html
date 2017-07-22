@@ -1,40 +1,40 @@
 <div flex layout="column"><!--ng-controller="extAdminConnectionsController"-->
     <md-input-container class="md-block"><!--style="margin-top: 20px;"-->
         <label for="url" >url </label>
-        <input type="text" id="url" ng-model="connection.content.url" ng-change="connection.needsSave = true" flex></input>
+        <input type="text" id="url" ng-model="value.content.url" ng-change="value.needsSave = true" flex></input>
         <md-tooltip >The url to the mysql database.</md-tooltip>
     </md-input-container>
 
 
     <md-input-container class="md-block">
         <label for="username" >username </label>
-        <input type="text" id="username" ng-model="connection.content.username" ng-change="connection.needsSave = true" flex></input>
+        <input type="text" id="username" ng-model="value.content.username" ng-change="value.needsSave = true" flex></input>
         <md-tooltip >The username for the mysql database.</md-tooltip>
     </md-input-container>
 
     <md-input-container class="md-block">
         <label for="password" >password </label>
-        <input type="password" id="password" ng-model="connection.content.password" ng-change="connection.needsSave = true" flex></input>
+        <input type="password" id="password" ng-model="value.content.password" ng-change="value.needsSave = true" flex></input>
         <md-tooltip >The password for the mysql database.</md-tooltip>
     </md-input-container>
 
 
     <md-input-container class="md-block">
         <label for="dbname" >database name</label>
-        <input type="text" id="dbname" ng-model="connection.content.dbName" ng-change="connection.needsSave = true" flex></input>
+        <input type="text" id="dbname" ng-model="value.content.dbName" ng-change="value.needsSave = true" flex></input>
         <md-tooltip >The name of the database that will be used to store the historical data.</md-tooltip>
     </md-input-container>
 
 
     <md-input-container class="md-block">
         <label for="tblname" >table name</label>
-        <input type="text" id="tblname" ng-model="connection.content.tableName" ng-change="connection.needsSave = true" flex></input>
+        <input type="text" id="tblname" ng-model="value.content.tableName" ng-change="value.needsSave = true" flex></input>
         <md-tooltip >The name of the table that will be used to store the historical data.</md-tooltip>
     </md-input-container>
 
     <md-input-container  class="md-block">
-        <md-checkbox ng-model="connection.content.createTable" id="allowRegistration"
-                     ng-change="connection.needsSave = true">
+        <md-checkbox ng-model="value.content.createTable" id="allowRegistration"
+                     ng-change="value.needsSave = true">
             create table
             <md-tooltip >When checked, the system will try to create the table after saving.</md-tooltip>
         </md-checkbox>

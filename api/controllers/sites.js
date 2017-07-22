@@ -42,6 +42,26 @@ module.exports.listTemplates = async  function(req, res){
 };
 
 /**
+ * get the plugins that need to be configured for the specified template
+ * for now, simply return all global plugins. The client will do further filtering.
+ * @param req
+ * @param res
+ * @returns {Promise.<void>}
+ */
+module.exports.getTemplateParams = async function(req, res){
+    try {
+        let db = await req.app.get('plugins');
+        db = db.db;
+        let recs = await db.plugins.list("_common");
+        res.status(200).json(recs);
+    }
+    catch (err) {
+        winston.log("error", err);
+        res.status(400).json({message: err});
+    }
+};
+
+/**
  * get a list of sites registerd at this domain.
  * @param req the input record
  * @param res The result record.

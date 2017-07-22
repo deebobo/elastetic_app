@@ -11,6 +11,7 @@ const ctrlSites = require.main.require('../api/controllers/sites');
 
 router.get('/', ctrlSites.list);
 router.get('/templates', ctrlSites.listTemplates);
+router.get('/templates/:template', ctrlSites.getTemplateParams);
 router.post('/', ctrlSites.create);
 
 module.exports = router;

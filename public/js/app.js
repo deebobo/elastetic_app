@@ -237,7 +237,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
 			return function(exception, cause){
 				var $rootScope = $injector.get("$rootScope");
 				if($rootScope && typeof $rootScope.addError === "function")
-				    $rootScope.addError({message:"Exception", reason:exception});
+				    $rootScope.addError({message:exception.message, cause: cause});
 				$delegate(exception, cause);
 			};
     });
@@ -272,18 +272,21 @@ deebobo.run(function ($rootScope, $location, $state, AuthService, $mdToast) {
 
     $rootScope.addError = function(message){
         console.log(message);
-		var toast = $mdToast.simple()
+        $mdToast.show($mdToast.simple()
 		  .textContent(message)
 		  .action('ok')
 		  .highlightAction(true)
 		  .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
-		  .position({top: true, right: true, bottom: false, left: false});
+		    .position('top right')
+            //.hideDelay(5000)
+         );
 
-		$mdToast.show(toast).then(function(response) {
+
+            /*.then(function(response) {
 		  if ( response == 'ok' ) {
 			//alert('You clicked the \'UNDO\' action.');
 		  }
-		});
+		});*/
 		
     }
 });

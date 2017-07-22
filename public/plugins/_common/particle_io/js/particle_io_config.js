@@ -8,7 +8,7 @@
 angular.module("deebobo").controller('extAdminConnectionsController',
     ['$scope', '$controller', 'messages', '$mdDialog',
     function($scope, $controller, messages, $mdDialog) {
-    angular.extend(this, $controller('adminConnectionsController', {$scope: $scope}));
+    //angular.extend(this, $controller('adminConnectionsController', {$scope: $scope})); -> no longer needed, configs are now rapped inside pluginConfigurator directive.
 
     var _currentPluginPath = null;
 

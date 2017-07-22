@@ -24,16 +24,16 @@ class ParticleIoConnection {
     /**
      * registers a function that will be called when a data event arrives on this connection.
      * @param definition
-     * * @param req {Object} the request object that triggered this operation (used for building urls, getting user info and such.
+     * * @param url {String} the url to register the callback to.
      */
-    async registerCallback(connection, definition, req){
+    async registerCallback(connection, definition, url){
         definition.data.webhookIds = [];
         for(let i=0; i< definition.data.extra.fields.length; i++){
             let id = await particle.createWebhook({
                 name: definition.data.extra.fields[i],
-                url: req.protocol + '://' + req.get('host') + req.originalUrl + "/call",
+                url: url,
                 requestType: "POST",
-                headers: {jwt: req.cookies.jwt},
+                headers: {jwt: definition.data.token},
                 auth: connection.content.token
             });
             definition.data.webhookIds.push(id);                                                //store the id so we can delete it later on again.

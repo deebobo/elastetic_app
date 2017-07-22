@@ -15,9 +15,8 @@ const winston = require('winston');
  */
 module.exports.create = async function(req, res){
     try{
-        let db = await req.app.get('plugins');
-        db = db.db;
-        await sitesLib.create(db, req.body);
+        let plugins = await req.app.get('plugins');
+        await sitesLib.create(plugins, req.body, req.protocol + '://' + req.get('host'));
         res.status(200).json({message: 'ok'});
     }
     catch (err){

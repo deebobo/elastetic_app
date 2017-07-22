@@ -25,7 +25,7 @@ router.post('/', async function(req, res, next) {
         let pluginMan = await req.app.get('plugins');
         db = pluginMan.db;
         if(db == null) {                            //only install if not yet installed.
-            installer.install(pluginMan, req.body);
+            installer.install(pluginMan, req.body, req.protocol + '://' + req.get('host'));
         }
         res.redirect("/");                          //always redirect to home when isntallation is done.
     }

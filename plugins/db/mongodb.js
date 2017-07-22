@@ -21,6 +21,7 @@ const pluginsModel = require.main.require('../plugins/models/mongo_plugins');
 const connectionsModel = require.main.require('../plugins/models/mongo_connections');
 const functionsModel = require.main.require('../plugins/models/mongo_functions');
 const siteTemplatesModel = require.main.require('../plugins/models/mongo_site_templates');
+const tokensModel = require.main.require('../plugins/models/mongo_tokens');
 
 
 /** provides a db connection with a mongo database  
@@ -43,6 +44,7 @@ class MongoDb{
 		this.views = null;
 		this.functions = null;
 		this.siteTemplates = null;
+		this.tokens = null;
         mongoose.Promise = global.Promise;
     }
 
@@ -80,6 +82,7 @@ class MongoDb{
         this.functions = new functionsModel();
 		this.views = new viewsModel();
         this.siteTemplates = new siteTemplatesModel();
+        this.tokens = new tokensModel();
     }
 
 

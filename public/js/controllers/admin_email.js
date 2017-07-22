@@ -5,13 +5,13 @@
  */
 
 deebobo.controller('AdminEmailController',
-    ['$scope', 'messages', 'pluginService', '$http', '$stateParams', '$mdDialog',
-        function ($scope, messages, pluginService, $http, $stateParams, $mdDialog) {
+    ['$scope', 'messages', '$http', '$stateParams', '$mdDialog',
+        function ($scope, messages, $http, $stateParams, $mdDialog) {
 
 			//helper functions
 			//--------------------------------------------------------------------------------------
 
-            function loadPluginSettings(plugin){
+            /*function loadPluginSettings(plugin){
                 if(plugin.config && plugin.config.scripts) {
                     pluginService.load(plugin.config).then(function () {
                             $scope.emailConfigPartial = "plugins/" + plugin.config.partials[0];
@@ -21,14 +21,13 @@ deebobo.controller('AdminEmailController',
                         }
                     );
                 }
-            }
+            }*/
 
 			function loadPluginSettingsForName(pluginName){
-				$scope.plugin = pluginName;
 				if(pluginName){
 					$http({method: 'GET', url: '/api/site/' + $stateParams.site + "/plugin/" + pluginName})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
 					.then(function (response) {
-                            loadPluginSettings(response.data);
+                            $scope.plugin = response.data;
 						},
 						function (response) {
 							messages.error(response.data);

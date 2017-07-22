@@ -1,15 +1,15 @@
 <div ng-controller="privateMailerConfigController">
-	<form ng-submit="saveEmailConfig(mailConfig)">
+	<form ng-submit="saveEmailConfig(value)">
 		<md-input-container class="md-block">
 			<label for="host" >host</label>
-			<input type="text" id="host" ng-model="mailConfig.host">
+			<input type="text" id="host" ng-model="value.host">
 			</input>
 			<md-tooltip >host name</md-tooltip>
 		</md-input-container>
 
 		<md-input-container class="md-block">
 			<label for="port" >port</label>
-			<input type="text" id="port" ng-model="mailConfig.port">
+			<input type="text" id="port" ng-model="value.port">
 			</input>
 			<md-tooltip >port number</md-tooltip>
 		</md-input-container>
@@ -17,15 +17,15 @@
 
 		<md-input-container class="md-block">
 			<label for="secure" >secure</label>
-			<input type="checkbox" id="secure" ng-model="mailConfig.secure">
+			<input type="checkbox" id="secure" ng-model="value.secure">
 			</input>
 			<md-tooltip ></md-tooltip>
 		</md-input-container>
 
 
 		<md-input-container class="md-block">
-			<label for="mailConfigname" >user name</label>
-			<input type="text" id="username" ng-model="mailConfig.name">
+			<label for="username" >user name</label>
+			<input type="text" id="username" ng-model="value.name">
 			</input>
 			<md-tooltip >user name</md-tooltip>
 		</md-input-container>
@@ -33,7 +33,7 @@
 
 		<md-input-container class="md-block">
 			<label for="password" >password</label>
-			<input type="password" id="password" ng-model="mailConfig.password">
+			<input type="password" id="password" ng-model="value.password">
 			</input>
 			<md-tooltip >password</md-tooltip>
 		</md-input-container>
@@ -41,7 +41,7 @@
 
 		<md-input-container class="md-block">
 			<label for="from" >from</label>
-			<input type="text" id="from" ng-model="mailConfig.from">
+			<input type="text" id="from" ng-model="value.from">
 			</input>
 			<md-tooltip >from address in email</md-tooltip>
 		</md-input-container>

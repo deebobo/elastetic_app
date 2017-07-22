@@ -26,7 +26,7 @@
                     <label for="emailPlugin" >email processor plugin: </label><br />
                     <select id="emailPlugin"
                             ng-model="plugin"
-                            ng-options="x.name for x in emailPlugins"
+                            ng-options="x.name for x in emailPlugins track by x.name"
                             ng-change="pluginNeedsSave = true">
                         <md-tooltip >The plugin used for sending out emails.</md-tooltip>
                     </select>
@@ -35,7 +35,8 @@
                     <input type="submit" value="Save"
                            ng-if="pluginNeedsSave === true"/>
                   </form>
-                  <ng-include src="emailConfigPartial" flex></ng-include>
+                  <pluginconfigurator plugin="" value="mailConfig"/>
+                  <ng-include src="plugin" flex></ng-include>
                 </md-content>
             </md-tab>
 

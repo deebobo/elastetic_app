@@ -267,8 +267,8 @@ deebobo.run(function ($rootScope, $location, $state, AuthService, $mdToast) {
         });
     $rootScope.$on('$stateChangeError',
         function(event, toState, toParams, fromState, fromParams, error){
-        console.log(error);
-        })
+            $rootScope.addError(error);
+        });
 
     $rootScope.addError = function(message){
         console.log(message);
@@ -289,8 +289,4 @@ deebobo.run(function ($rootScope, $location, $state, AuthService, $mdToast) {
 		});*/
 		
     }
-});
-
-deebobo.run(function ($rootScope) {
-    $rootScope.$on("$stateChangeError", console.log.bind(console));
 });

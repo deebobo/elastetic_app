@@ -70,16 +70,6 @@ deebobo.controller('adminFunctionsController',
                 $scope.functions.push({name: "new function", plugin: null, isOpen: true, needsSave: true, isNew: true});
             };
 
-            $scope.pluginChanged = function(func){
-                if(func.source.config){
-                    pluginService.load(func.source.config)
-                        .then(function(){
-                            func.needsSave = true;
-                            func.template = "plugins/" + func.source.config.partials[0];
-
-                        });
-                }
-            };
 
             $scope.save = function(func){
                 if(func.isNew === true){

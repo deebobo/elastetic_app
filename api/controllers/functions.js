@@ -5,6 +5,7 @@
  */
 
 const auth = require.main.require('../api/libs/auth');
+const funcLib = require.main.require('../api/libs/functions');
 const winston = require('winston');
 
 /**
@@ -64,23 +65,14 @@ module.exports.create = async function(req, res) {
             let plugins = await req.app.get('plugins');
             let db = plugins.db;
             let pluginName = cleanPluginRef(db, req.body);
-            if(pluginName in plugins.plugins) {
-                let rec = {data: req.body.data, site: req.params.site, source: req.body.source, name: req.body.name};
-                let newRec = await db.functions.add(rec);
-                let plugin = plugins.plugins[pluginName].create();
-                try {
-                    if (plugin.create)             //try to create the function after storing the def, cause the plugin might need the id of the newly ceated record. also: if the create fails, it is still stored for the user
-                        if (await plugin.create(plugins, newRec, req))    //the plugin has changed the record, so it needs to be saved again.
-                            newRec = await db.functions.update(rec);
-                }
-                catch(err){
-                    winston.log("warning", err);
-                    newRec = {data: newRec, warning: err};
-                }
-                res.status(200).json(newRec);
+            let rec = {data: req.body.data, site: req.params.site, source: req.body.source, name: req.body.name};
+            try {
+                rec = await funcLib.create(plugins, pluginName, rec, req.protocol + '://' + req.get('host'));
+                res.status(200).json(rec);
             }
-            else
-                res.status(403).json({message:"unknown function name: " + req.body.source});
+            catch(err){
+                res.status(403).json({message:err.message});
+            }
         }
     }
     catch(err){
@@ -97,18 +89,14 @@ module.exports.update = async function(req, res) {
             let db = plugins.db;
             let rec = req.body;
             let pluginName = cleanPluginRef(db, rec);
-            let newRec = await db.functions.update(req.params.funcInstance, rec);
-            let plugin = plugins.plugins[pluginName].create();
-            try{
-                if(plugin.update)             //try to create the function after storing the def, this way, if the create fails, it is still stored for the user
-                    if(await plugin.update(plugins, rec, newRec, req))
-                        newRec = await db.functions.update(newRec);
+            try {
+                rec = await funcLib.update(plugins, pluginName, rec);
+                res.status(200).json(rec);
             }
             catch(err){
-                winston.log("warning", err);
-                newRec = {data: newRec, warning: err};
+                res.status(403).json({message:err.message});
             }
-            res.status(200).json(newRec);
+            res.status(200).json(rec);
         }
     }
     catch(err){

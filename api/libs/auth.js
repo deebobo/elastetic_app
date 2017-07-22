@@ -62,10 +62,11 @@ module.exports.login = async function(res, plugins, site, name, pwd){
  */
 module.exports.allowed = function(resource, groups, res){
     try{
-        for(let item in groups){
-            if( groups[item].level == 'admin')
+    	for(let i = 0; i < groups.length; i++){
+        let item = groups[i];											//need to use counter  into array, cause otherwise we iterate over every property of the array as wel, which we don't want.
+            if( item.level == 'admin')
                 return true;
-        	if (resource.indexOf(groups[item]._id) !== -1)
+        	if (resource.find((el) => el._id == item._id) !== -1)
         		return true;
 		}
 		if(res)

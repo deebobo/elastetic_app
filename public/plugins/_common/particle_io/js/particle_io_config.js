@@ -20,6 +20,7 @@ angular.module("deebobo").controller('extAdminConnectionsController',
             for(i = 0; i < scripts.length; i++){
                 if(scripts[i].src.endsWith("/particle_io_config.js")){
                     scriptSrc =  scripts[i].src;
+                    break;
                 }
             }
             if(scriptSrc) {
@@ -32,11 +33,11 @@ angular.module("deebobo").controller('extAdminConnectionsController',
     };
 
     $scope.get_particle_io_access_token = function(connection, ev){
-
+        var parent = angular.element(document.body);
         $mdDialog.show({
             controller: DialogController,
             templateUrl: currentPluginPath() + '/partials/particle_io_login.html',
-            parent: angular.element(document.body),
+            parent: parent,
             targetEvent: ev,
             clickOutsideToClose:true,
             fullscreen: false // Only for -xs, -sm breakpoints.
@@ -56,7 +57,6 @@ angular.module("deebobo").controller('extAdminConnectionsController',
                     }
                 );
             }, function() {
-
             });
     };
 

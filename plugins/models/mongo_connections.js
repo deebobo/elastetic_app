@@ -23,6 +23,7 @@ class Connections{
             site: String,
             plugin: {type: mongoose.Schema.Types.ObjectId, ref: 'plugins'},
             content: Object,
+            warning: String,                                                    //any warning that was rendered while creating the connection.
             createdOn:{type: Date, default: Date.now()}
         });
         connectionSchema.index({ name: 1, site: 1}, {unique: true});        //fast access at name & site level

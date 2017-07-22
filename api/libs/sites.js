@@ -6,6 +6,8 @@
 
 //const config = require.main.require('../api/libs/config').config;
 const winston = require('winston');
+const funcLib = require.main.require('../api/libs/functions');
+const connectionsLib = require.main.require('../api/libs/connections');
 
 /**
  * create a record for the home page that points to a homepage plugin.
@@ -169,7 +171,7 @@ async function createGroup(db, sitename, definition) {
     await db.groups.add(definition);
 }
 
-async function createConnection(db, sitename, definition, parameters) {
+async function createConnection(plugins, db, sitename, definition, parameters) {
     definition.site = sitename;
     if(parameters){
         definition.content = parameters.data;
@@ -179,10 +181,10 @@ async function createConnection(db, sitename, definition, parameters) {
     let plugin = await getPlugin(db, sitename, definition, "connection");
     definition.plugin = plugin._id.toString();
 
-    await db.connections.add(definition);
+    await connectionsLib.create(plugins, definition, plugin.name);              //some connections need to be initialized (db's that need to be created)...
 }
 
-async function createFunction(db, sitename, definition, parameters) {
+async function createFunction(plugins, db, sitename, definition, parameters, host) {
     definition.site = sitename;
     if(parameters){
         definition.data = parameters.data;
@@ -193,7 +195,7 @@ async function createFunction(db, sitename, definition, parameters) {
     delete definition.plugin;                                               //stupid name change, need to change source to plugin, make it more generic.
     definition.source = plugin._id;
 
-    await db.functions.add(definition);
+    await funcLib.create(plugins, plugin.name, definition, host);                 //creates the function, also calls the plugin if there is a callback function
 }
 
 async function createSite(db, siteDetails, definition) {
@@ -210,11 +212,14 @@ async function createSite(db, siteDetails, definition) {
 
 /**
  * apply a template to the site. The template will create users, pages, views & load plugins.
- * @param db {Object} ref to the db.
+ * @param plugins {Object} ref to the plugins manager, includes db.
+ * @param definition
  * @param template {Object} template definitions.
+ * @param host {String} protocol and host part of the URL, so functions/connections can register callbacks (create the url to call)
  * @returns {Promise.<void>}
  */
-async function applyTemplate(db, definition, template){
+async function applyTemplate(plugins, definition, template, host){
+    let db = plugins.db;
     for(let i=0; i < template.definition.length; i++){
         let item = template.definition[i];
         let templateParam = await definition.parameters.filter((rec) =>{ return rec.item == item.value.name } );
@@ -243,9 +248,9 @@ async function applyTemplate(db, definition, template){
         else if(item.type === "plugin")
             await module.exports.installPlugin(db, item.value.name, def.site. item.value.source);
         else if(item.type === "connection")
-            await createConnection(db, definition.site, item.value, templateParam);
+            await createConnection(plugins, db, definition.site, item.value, templateParam);
         else if(item.type === "function")
-            await createFunction(db, definition.site, item.value, templateParam);
+            await createFunction(plugins, db, definition.site, item.value, templateParam, host);
         else if(item.type === "site")             //details like title, email plugin,..
             await createSite(db, definition, item.value);
         else if(item.type === "emailtemplate"){          //like email templates and such.
@@ -316,13 +321,15 @@ module.exports.installTemplate = async function (db, name, filename)
 
 /**
  * create a new site.
- * @param db{object} ref to the db object
+ * @param plugins{object} ref to the plugins object (includes db
  * @param definition {Object} the definition describing the site that has to be created.
  * @param asAdmin {bool} when false, no 'admin' will be created in the account, just aa viewer (useful for sub accounts?) Default is true.
+ * @param host {String} protocol and host part of the URL, so functions/connections can register callbacks (create the url to call)
  * @returns {Promise.<boolean>}
  */
-module.exports.create = async function(db, definition, asAdmin = true){
+module.exports.create = async function(plugins, definition, host, asAdmin = true){
 
+    let db = plugins.db;
     let site = await db.sites.find(definition.site);
     if(site && site.length > 0)
         throw Error("The site name is already taken", 'siteExists');
@@ -331,7 +338,7 @@ module.exports.create = async function(db, definition, asAdmin = true){
         let templateDef = await db.siteTemplates.find(definition.template);
         if(!templateDef)
             throw Error("unknown template: " + definition.template);
-        await applyTemplate(db, definition, templateDef);
+        await applyTemplate(plugins, definition, templateDef, host);
     }
     else {
         let admins = {name: "admins", site: definition.site, level: "admin"};

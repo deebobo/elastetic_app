@@ -11,7 +11,7 @@ angular.module('common.services', []);
 angular.module('deebobo.controllers', ['common.directives']);
 angular.module('common.directives', ['common.services']);
 
-var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap']);  //,'ui.grid', 'ui.grid.resizeColumns', 'ui-grid-move-columns'
+var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap','ui.grid']);  //, 'ui-grid-move-columns', 'ui.grid.resizeColumns'
 
 deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider', '$filterProvider',
     function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider, $filterProvider) {

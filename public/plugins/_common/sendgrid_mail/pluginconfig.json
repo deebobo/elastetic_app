@@ -1,0 +1,13 @@
+{
+  "comment": "description for the client side of the sendrid_mail plugin",
+  "name": "sendgrid_mail",
+  "description": "Send email using SendGrid"",
+  "version": "0.0.1",
+  "author": "Deebobo",
+  "type": "mail",
+  "config": {
+      "partials": [
+        "partials/sendgrid_config_partial.html"
+      ]
+    }
+}

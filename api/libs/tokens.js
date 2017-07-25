@@ -17,11 +17,10 @@ const config = require.main.require('../api/libs/config');
  */
 module.exports.createToken = async function(db, resourceType, resourceId, site){
 
-    let token = jwt.sign({ isUserToken: false, resourceType: resourceType,  resourceId: resourceId, site: site}, config.config.security.secret);
-    let rec = {resourceType: resourceType, resourceId: resourceId, site: site, token: token};
+    let token = await jwt.sign({ isUserToken: false, resourceType: resourceType,  resourceId: resourceId, site: site}, config.config.security.secret);
+    let rec = {resourceType: resourceType, resourceId: resourceId.toString(), site: site, token: token};
 
-    let data = await db.tokens.add(rec);
-    return data;
+    return db.tokens.add(rec);
 };
 
 

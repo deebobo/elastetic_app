@@ -89,6 +89,8 @@ class MySqlDataStore {
                             }
                         });
                     }
+                    else
+                        resolve(null);
                 }
                 catch (err){
                     reject(err);

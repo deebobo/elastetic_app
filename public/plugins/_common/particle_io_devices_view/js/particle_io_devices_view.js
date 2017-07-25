@@ -20,15 +20,23 @@ angular.module("deebobo").controller('particlIODevicesViewController',
         $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection?' + viewData.plugin._id})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
                     for(i=0; i < response.data.length; i++){
-                        particle.listDevices({ auth: response.data[i].content.token }).then(
-                            function(result){
-                                if(result.statusCode == 200)
-                                    $scope.gridDef.data = result.body;
-                            },
-                            function(err){
-                                messages.error(err);
+                        if(response.data[i].plugin.name === "particle_io"){
+                            if( "content" in response.data[i] && "token" in response.data[i].content){
+                                particle.listDevices({ auth: response.data[i].content.token }).then(
+                                    function(result){
+                                        if(result.statusCode == 200){
+                                            $scope.gridDef.data = result.body;
+                                        }
+                                    },
+                                    function(err){
+                                        messages.error(err);
+                                    }
+                                );
                             }
-                        );
+                            else{
+                                messages.error("invalid particle.io connection definition found in: " + response.data[i].name);
+                            }
+                        }
                     }
                 },
                 function (response) {

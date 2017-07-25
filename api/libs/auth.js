@@ -91,7 +91,7 @@ module.exports.allowed = function(resource, groups, res){
 module.exports.canWrite = function(groups){
     try{
         //todo: implement this.
-        winston.log('error', "to be implemnted");
+        winston.log('error', "auth.canWrite: to be implemnted");
         return true;
     }
     catch(err){

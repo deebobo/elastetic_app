@@ -8,33 +8,3 @@
 <div id="devicesGrid" ui-grid="gridDef" ui-grid-resize-columns></div>
 
 <!-- exact table from live demo -->
-<md-table-container>
-    <table md-table > <!--md-row-select multiple ng-model="selected" md-progress="promise"-->
-        <thead md-head ><!--md-order="query.order" md-on-reorder="getDesserts"-->
-        <tr md-row>
-            <th md-column md-order-by="nameToLower" ><span>name</span></th>
-            <th md-column md-order-by="status">status</th>
-            <th md-column md-order-by="connected">connected</th>
-            <th md-column md-order-by="last_heard">last heard</th>
-            <th md-column md-order-by="cellular">cellular</th>
-            <th md-column md-order-by="current_build_target">firmware version</th>
-            <th md-column md-order-by="last_ip_address">last ip address</th>
-            <th md-column md-numeric md-order-by="product_id">product id</th>
-        </tr>
-        </thead>
-        <tbody md-body>
-        <tr md-row md-auto-select ng-repeat="device in devices"><!-- md-select="dessert" md-select-id="name"-->
-            <td md-cell>{{ device.name }}</td>
-            <td md-cell>{{device.status}}</td>
-            <td md-cell>{{device.connected}}</td>
-            <td md-cell>{{device.last_heard}}</td>
-            <td md-cell>{{device.cellular}}</td>
-            <td md-cell>{{device.current_build_target}}</td>
-            <td md-cell>{{device.last_ip_address}}</td>
-            <td md-cell>{{device.product_id}}</td>
-        </tr>
-        </tbody>
-    </table>
-</md-table-container>
-
-<md-table-pagination md-limit="query.limit" md-limit-options="[5, 10, 15]" md-page="query.page" md-total="{{devices.count}}" md-on-paginate="geDevices" md-page-select></md-table-pagination>

@@ -29,8 +29,9 @@ class Transporter {
             if(fromConnection.plugin.name in plugins.plugins){
                 let plugin = plugins.plugins[fromConnection.plugin.name].create();
                 if (plugin.registerCallback){
-                    funcDef.data.token = tokens.createToken(plugins.db, "function", funcDef._id, funcDef.site)._id;
-                    let url = host + "/api/site" + funcDef.site + "/function/" + funcDef._id + "/call";
+                    funcDef.data.token = await tokens.createToken(plugins.db, "function", funcDef._id, funcDef.site)
+                    funcDef.data.token = funcDef.data.token._id.toString();
+                    let url = host + "/api/site/" + funcDef.site + "/function/" + funcDef._id + "/call";
                     await plugin.registerCallback(fromConnection, funcDef, url);
                 }
                 return true;

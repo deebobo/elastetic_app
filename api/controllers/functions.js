@@ -96,7 +96,6 @@ module.exports.update = async function(req, res) {
             catch(err){
                 res.status(403).json({message:err.message});
             }
-            res.status(200).json(rec);
         }
     }
     catch(err){

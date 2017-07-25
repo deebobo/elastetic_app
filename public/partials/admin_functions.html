@@ -78,7 +78,7 @@
 
                         <div layout="row" layout-align="end center">
                             <md-button class="md-primary"
-                                       ng-click="delete(func, $event)">delete</md-button>
+                                       ng-click="delete($index, func, $event)">delete</md-button>
 
                             <input type="submit" value="save"
                                    ng-if="func.needsSave === true"/>

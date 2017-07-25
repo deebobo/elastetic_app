@@ -14,11 +14,12 @@ async function preparePlugin(pluginName, rec, plugins){
         await plugin.create(rec.content);                                //make certain that everything is set up correctly for the plugin.
         await plugin.close();                                   //close it again, don't want to keep 1000+ connections open at the same time.
     }
-}
+};
 
 
 /* create a connection */
 module.exports.create = async function(plugins, rec, pluginName) {
+    let db = plugins.db;
     let newRec = await db.connections.add(rec);
     try {
         await preparePlugin(pluginName, rec, plugins);                    //do after add, so that a failure will only cause a warning.
@@ -32,6 +33,7 @@ module.exports.create = async function(plugins, rec, pluginName) {
 };
 
 module.exports.update = async function(plugins, rec, pluginName){
+    let db = plugins.db;
     rec.warning = "";                                                       //reset any warnings before saving
     let newRec = await db.connections.update(rec);
     try {
@@ -43,4 +45,4 @@ module.exports.update = async function(plugins, rec, pluginName){
         newRec = await db.connections.update(newRec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
     }
     return newRec;
-}
+};

@@ -99,7 +99,7 @@ module.exports.invite = async function(req, res){
 	try{
         let plugins = await req.app.get('plugins');
 		let db = plugins.db;
-		let mailer = await plugins.getMailHandlerFor(req.params.site);
+		let mailer = await plugins.getMailHandlerDefFor(req.params.site);
 		if(mailer){
 			let template = await db.emailTemplates.find("invite", req.params.site);
 			if(template)

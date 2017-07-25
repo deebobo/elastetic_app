@@ -46,10 +46,14 @@ deebobo.controller('registerController', ['$scope', '$location', '$stateParams',
                 },
                     function (err) {
                         $scope.error = true;
-                        if(err.hasOwnProperty('data'))
-                            $scope.errorMessage = err.data;
-                        else
-                            $scope.errorMessage = err;
+                        if(err){
+                            if(err.hasOwnProperty('data'))
+                                $scope.errorMessage = err.data;
+                            else
+                                $scope.errorMessage = err;
+                        }else{
+                            $scope.errorMessage = "unknown error";
+                        }
                         $scope.disabled = false;
                         //$scope.registerForm = {};
                     });

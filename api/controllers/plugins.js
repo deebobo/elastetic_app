@@ -42,7 +42,7 @@ module.exports.getDefaultforType = async function (req, res){
 	try {
 		if(req.params.type === 'mail'){
 			let plugins = await req.app.get('plugins');
-			let plugin = await plugins.getMailHandlerFor(req.params.site);
+			let plugin = await plugins.getMailHandlerDefFor(req.params.site);
 			res.status(200).json(plugin);
 		}
 		else{

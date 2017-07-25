@@ -1,0 +1,47 @@
+//connections
+{ 
+    "_id" : ObjectId("595faa91f5362500111e6852"), 
+    "name" : "mysql", 
+    "plugin" : ObjectId("595fa985f5362500111e6839"), 
+    "content" : {
+        "createTable" : true, 
+        "tableName" : "history", 
+        "dbName" : "dxzrmuebsnuvqne7", 
+        "url" : "wftuqljwesiffol6.cbetxkdyhwsb.us-east-1.rds.amazonaws.com", 
+        "password" : "a998bup704wxu0up", 
+        "username" : "fffqv53jl3m38a9g"
+    }, 
+    "site" : "main", 
+    "createdOn" : ISODate("2017-07-07T15:32:21.361+0000"), 
+    "__v" : NumberInt(0)
+}
+{ 
+    "_id" : ObjectId("595fab1df5362500111e6859"), 
+    "name" : "particle_io", 
+    "plugin" : ObjectId("595fa986f5362500111e683d"), 
+    "content" : {
+        "token" : "9bd30ced211e85ad12cab44439d037534d504bb1"
+    }, 
+    "site" : "main", 
+    "createdOn" : ISODate("2017-07-07T15:32:21.361+0000"), 
+    "__v" : NumberInt(0)
+}
+
+//functions
+{ 
+    "_id" : ObjectId("595fab9bf5362500111e685e"), 
+    "data" : {
+        "extra" : {
+            "fields" : [
+                "G"
+            ]
+        }, 
+        "to" : "mysql", 
+        "from" : "particle_io"
+    }, 
+    "site" : "main", 
+    "source" : ObjectId("595fa986f5362500111e6843"), 
+    "name" : "transport", 
+    "createdOn" : ISODate("2017-07-07T15:32:21.361+0000"), 
+    "__v" : NumberInt(0)
+}

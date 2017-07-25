@@ -23,7 +23,7 @@ angular.module("deebobo").controller('extAdminFunctionsController',
                     }
                 );
 
-            if($scope.value.data.token){                    //if there is a token id, get the actual token value.
+            if($scope.value.data && $scope.value.data.token){                    //if there is a token id, get the actual token value.
                 $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/token/' + $scope.value.data.token})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                     .then(function (response) {
                             $scope.token = response.data.token;

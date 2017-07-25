@@ -6,15 +6,16 @@
 
 const url = require('url');
 const winston = require('winston');
+const urljoin = require('url-join');
  
  
 /** replaces any parameters that were specified in the email template.
   * parameters can be:
   * {{username}}: name of the user
  */
-function replaceParams(template, user){
+function replaceParams(template, user, site){
 	let result = template.replace(/{{username}}/g, user.name);
-	result = result.replace(/{{site}}/g, user.site);
+	result = result.replace(/{{site}}/g, site.name);
 	return result;
 }
  
@@ -32,9 +33,9 @@ function replaceParams(template, user){
 	if(template){
 		let mailhandler = await pluginMan.getMailHandlerFor(site.name);
 		if(mailhandler){
-			let body = replaceParams(template.body).replace(/{{activationlink}}/g, url.resolve(uri, user.generateJwt()));
-			let subject = replaceParams(template.subject);
-			mailhandler.send(site.name, user.email, subject, body);
+			let body = replaceParams(template.body, user, site).replace(/{{activationlink}}/g, urljoin(uri, user.generateJwt()));
+			let subject = replaceParams(template.subject, user, site);
+			return mailhandler.send(site.name, user.email, subject, body);
 		} 
 	}
 	else
@@ -48,11 +49,11 @@ module.exports.sendMail = async function (site, user, pluginMan, templateName){
 	if(template){
 		let mailhandler = await pluginMan.getMailHandlerFor(site.name);
 		if(mailhandler){
-			let body = replaceParams(template.body);
-			let subject = replaceParams(template.subject);
+			let body = replaceParams(template.body, user, site);
+			let subject = replaceParams(template.subject, user, site);
 			mailhandler.send(site.name, user.email, subject, body);
 		} 
 	}
     else
         winston.log("error", "failed to find template:", templateName);
-}
+};

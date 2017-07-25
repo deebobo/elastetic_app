@@ -120,7 +120,8 @@ class Plugins{
      * was found
      */
     find(name, site){
-        return this._plugins.findOne( { name: name, site: site } ).exec();
+        let query = this._plugins.findOne( { name: name, site: site } );
+        return query.exec();
     }
 }
 

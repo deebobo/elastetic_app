@@ -37,19 +37,20 @@ module.exports.register = async function(req, res) {
             else if(site.allowRegistration === false)
                 res.status(403).json({message:"This is a private site, registration is only allowed upon invitation"});
             else{
-                let user = await db.users.findByNameOrEmail(req.body.name, req.params.site);
-                if( ! user ) {
+                let userName = await db.users.findByNameOrEmail(req.body.name, req.params.site);
+                let userEmail = await db.users.findByNameOrEmail(req.body.email, req.params.site);
+                if( ! userName && !userEmail ) {
                     let user = { name: req.body.name, email: req.body.email, password: req.body.password, site: req.params.site, groups: [site.viewGroup]};
+                    user = await db.users.add(user);
 					if(site.requestEmailConfirmation == true)
-						await email.sendEmailWithLink(site, user, pluginMan, url.resolve(req.protocol + '://' + req.get('host'), "site", req.params.site), "registration confirmation");
+						await email.sendEmailWithLink(site, user, pluginMan, url.resolve(req.protocol + '://' + req.get('host'), "api/site/" + req.params.site + '/activate'), "registration confirmation");
 					else
 						user.accountState = 'verified';
-					db.users.add(user);
 					if(site.sendHelloEmail)
 						email.sendMail(site, user,  pluginMan, "welcome");
-                    res.status(200).json({message: "ok"});
+                    res.status(204);
                 }
-                else if (user.name === name) {
+                else if (userName) {
                     res.status(403).json({message:"name is already used"});
                 }
                 else
@@ -81,27 +82,23 @@ module.exports.login = async function(req, res){
 		res.status(400).json({message:"missing username or password"});
 };
 
-async function _internalActivate(activationKey, site){
-	return new Promise((resolve, reject) => {
-		jwt.verify(req.params.activationKey, config.security.secret, async function(err, decoded){
-			if(err)
-				reject(err);
-			else if(decoded.site != site)
-				reject('invalid activation key');
-			else{
-				let pluginMan = await req.app.get('plugins');
-				db = pluginMan.db;
-				await db.users.updateAccountState(decoded.id, "verified");
-				resolve(true);
-			}
-		});
-	});
+function _internalActivate(activationKey, site){
+    let decoded = jwt.verify(activationKey, config.config.security.secret);
+    if(decoded.site != site)
+        return null;
+    else{
+        return decoded.id;
+    }
+
 }
 
 module.exports.activate = async function(req, res){
 	try{
-		let result = await _internalActivate(req.params.activationKey, req.params.site);
-		if(result === true){
+		let result = _internalActivate(req.params.activationKey, req.params.site);
+		if(result){
+            let pluginMan = await req.app.get('plugins');
+            let db = pluginMan.db;
+            await db.users.updateAccountState(result, "verified");
 			res.status(200).json({message:"ok"});
 		}
 		else

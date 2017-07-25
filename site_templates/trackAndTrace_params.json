@@ -165,6 +165,7 @@
     },
 	
 	{"type": "connection",
+   "description": "the database that will store your data",
 	 "value": { 
 			"name" : "data store", 
 			"plugin" : {
@@ -175,6 +176,7 @@
 	},
 	
 	{"type": "connection",
+   "description": "the connection to your particle.io account",
 	 "value": { 
 			"name" : "particle.io", 
 			"plugin" : {

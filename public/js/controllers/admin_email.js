@@ -11,35 +11,11 @@ deebobo.controller('AdminEmailController',
 			//helper functions
 			//--------------------------------------------------------------------------------------
 
-            /*function loadPluginSettings(plugin){
-                if(plugin.config && plugin.config.scripts) {
-                    pluginService.load(plugin.config).then(function () {
-                            $scope.emailConfigPartial = "plugins/" + plugin.config.partials[0];
-                        },
-                        function () {
-                            messages.error("failed to load scripts for plugin: " + plugin.name);
-                        }
-                    );
-                }
-            }*/
 
-			function loadPluginSettingsForName(pluginName){
-				if(pluginName){
-					$http({method: 'GET', url: '/api/site/' + $stateParams.site + "/plugin/" + pluginName})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
-					.then(function (response) {
-                            $scope.plugin = response.data;
-						},
-						function (response) {
-							messages.error(response.data);
-						}
-					);
-				}
-				else{
-					$scope.emailConfigPartial = "";
-				}
-				
-			}
-		
+
+            $scope.mailConfig = {};
+
+
 			
             //get data from site for scope
 			//--------------------------------------------------------------------------------------
@@ -51,11 +27,37 @@ deebobo.controller('AdminEmailController',
                     messages.error(response.data);
                 }
             );
-			
-			
-			$http({method: 'GET', url: '/api/site/' + $stateParams.site })
-            .then(function (response) {
-                    loadPluginSettingsForName(response.data);
+
+            //loads the data for the email plugin from the server.
+            function loadPluginData(plugin){
+                if(plugin) {
+                    $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/data/' + plugin.name})      //get the list of plugins for this site
+                        .then(function (response) {
+                                if (response.data) {
+                                    $scope.mailConfig = response.data;
+                                    $scope.mailConfig.isNew = false;			//so we know if it is a new record or not.
+                                    $scope.mailConfig.needsSave = false;
+                                }
+                                else {
+                                    $scope.mailConfig = {isNew: true, needsSave: true};
+                                }
+                            },
+                            function (response) {
+                                messages.error(response.data);
+                            }
+                        );
+                }
+                else
+                    $scope.mailConfig = {isNew: true, needsSave: true};
+            }
+
+            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/plugin/mail/default' })
+            .then(
+                function (response) {
+                    if(response.data) {
+                        $scope.plugin = response.data;
+                        loadPluginData(response.data);
+                    }
                 },
                 function (response) {
                     messages.error(response.data);
@@ -65,19 +67,43 @@ deebobo.controller('AdminEmailController',
 			
 			//html callbacks.
 			//--------------------------------------------------------------------------------------
-			$scope.selectEmailplugin = function(email){
-				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/plugin/mail/default', data: {value: email._id}})      
-				.then(function (response) {
-						loadPluginSettings(email);
-					},
-					function (response) {
-						messages.error(response.data);
-					}
-				);
-			};
 
-			$scope.saveEmailConfig = function(config){
-			}
+            $scope.pluginChanged = function(plugin){
+                $http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/plugin/mail/default', data: {value: plugin.name}})
+                    .then(function (response) {
+                            loadPluginData(plugin);
+                        },
+                        function (response) {
+                            messages.error(response.data);
+                        }
+                    );
+            };
+
+
+
+            $scope.saveEmailConfig = function(toSave){
+                if(toSave.isNew === true){
+                    $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/data/' + $scope.plugin.name, data: toSave})      //get the list of groups that can view
+                        .then(function (response) {
+                                toSave.needsSave = false;
+                                toSave.isNew = false;
+                            },
+                            function (response) {
+                                messages.error(response.data);
+                            }
+                        );
+                }
+                else {
+                    $http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/data/' + $scope.plugin.name, data: toSave})      //get the list of groups that can view
+                        .then(function (response) {
+                                toSave.needsSave = false;
+                            },
+                            function (response) {
+                                messages.error(response.data);
+                            }
+                        );
+                }
+            }
 
             //scope vars
             //--------------------------------------------------------------------------------------

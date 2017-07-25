@@ -11,6 +11,7 @@ angular.module("deebobo").controller('extAdminConnectionsController',
     //angular.extend(this, $controller('adminConnectionsController', {$scope: $scope})); -> no longer needed, configs are now rapped inside pluginConfigurator directive.
 
     var _currentPluginPath = null;
+        $scope.isLoading = false;
 
     var currentPluginPath = function () {
 
@@ -43,16 +44,19 @@ angular.module("deebobo").controller('extAdminConnectionsController',
             fullscreen: false // Only for -xs, -sm breakpoints.
         })
             .then(function(answer) {
+                $scope.isLoading = true;
                 var particle = new Particle();
 
                 particle.login({username: answer.username, password: answer.pwd}).then(
                     function(data) {
+                        $scope.isLoading = false;
                         if(connection.content)                                      //could be that there was no value set yet, in which case this is empty.
                             connection.content.token = data.body.access_token;
                         else
                             connection.content = {token: data.body.access_token};
                     },
                     function (err) {
+                        $scope.isLoading = false;
                         messages.error('Could not log in: ' + err);
                     }
                 );

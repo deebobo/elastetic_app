@@ -34,18 +34,18 @@ class Tokens{
 
 
     add(token){
-        let rec = new this._tokens(group);
+        let rec = new this._tokens(token);
         return rec.save();
     }
 
 
     update(token){
-        return this._groups.findOneAndUpdate({"_id": token._id}, token).exec();
+        return this._tokens.findOneAndUpdate({"_id": token._id}, token).exec();
     }
 
 
     list(site){
-        let query = this._groups.find({site: site});
+        let query = this._tokens.find({site: site});
         return query.exec();
     }
 

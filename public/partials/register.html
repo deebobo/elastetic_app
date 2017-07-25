@@ -24,8 +24,10 @@
         </md-input-container>
 
         <md-input-container flex >
-            <label>Site</label>
-            <select name="site" class="form-control"  ng-model="registerForm.selectedSite" ng-options="x._id for x in sites" required></select>
+            <label for="site">Site</label>
+            <md-select id="site" class="form-control"  ng-model="registerForm.selectedSite"  required>
+                <md-option ng-value="x._id" ng-repeat="x in sites">{{ x._id }}</md-option>
+            </md-select>
         </md-input-container>
 
         <div>

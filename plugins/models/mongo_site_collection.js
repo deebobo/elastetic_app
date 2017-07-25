@@ -37,8 +37,19 @@ class SiteDataCollection{
      * was added
      */
     add(record){
-        let rec = new this._collection(record);
-        return rec.save();
+        let result = new this._collection(record);
+        return result.save();
+    }
+
+    /**
+     * updates the record in the db
+     *
+     * @name .update()
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was added
+     */
+    update(record){
+        return this._collection.findOneAndUpdate({"site": record.site, "plugin": record.plugin}, record).exec();
     }
 	
 	/** Returns the plugin data for a particular site and plugin.
@@ -47,7 +58,7 @@ class SiteDataCollection{
 	* @return {Promise}] a promise to perform async operations with. The result of the promise is the data record
 	*/
 	get(site, plugin){
-		return this._users.findOne({site: site, plugin: plugin}).exec();
+		return this._collection.findOne({site: site, plugin: plugin}).exec();
 	}
 
 	/** Returns all the plugin data for a particular site.

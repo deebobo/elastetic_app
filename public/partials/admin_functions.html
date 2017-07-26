@@ -65,21 +65,20 @@
 
                         <md-input-container  class="md-block">
                             <label for="plugin-{{data.to}}" >plugin</label>
-                            <md-select   ng-model="func.source" required ng-change="pluginChanged(func)">
+                            <md-select   ng-model="func.source" required ng-change="func.needsSave = true">
                                 <md-option ng-value="x" ng-repeat="x in functionPlugins">{{ x.name }} ({{x.description}}) </md-option>
                             </md-select>
                             <md-tooltip >Select the function plugin.</md-tooltip>
                         </md-input-container>
 
 
+                        <pluginconfigurator plugin="func.source" value="func"/>
 
-
-                        <ng-include src="func.template" flex></ng-include>
 
 
                         <div layout="row" layout-align="end center">
                             <md-button class="md-primary"
-                                       ng-click="delete(func, $event)">delete</md-button>
+                                       ng-click="delete($index, func, $event)">delete</md-button>
 
                             <input type="submit" value="save"
                                    ng-if="func.needsSave === true"/>

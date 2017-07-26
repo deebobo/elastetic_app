@@ -38,9 +38,9 @@ deebobo.controller('loginController', ['$scope', '$location', '$stateParams', 'A
       AuthService.login(site, $scope.loginForm.username, $scope.loginForm.password)
         // handle success
         .then(function () {
-          $location.path('/' + site);
-          $scope.disabled = false;
-          $scope.loginForm = {};
+            $location.path('/' + site);
+            $scope.disabled = false;
+            $scope.loginForm = {};
         })
         // handle error
         .catch(function (err) {

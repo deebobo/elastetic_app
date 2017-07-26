@@ -1,51 +1,58 @@
-<div ng-controller="privateMailerConfigController">
-	<form ng-submit="saveEmailConfig(mailConfig)">
-		<md-input-container class="md-block">
-			<label for="host" >host</label>
-			<input type="text" id="host" ng-model="mailConfig.host">
-			</input>
-			<md-tooltip >host name</md-tooltip>
-		</md-input-container>
+<md-input-container class="md-block">
+	<label for="host" >host</label>
+	<input type="text" id="host"
+           ng-model="value.host"
+           ng-change="value.needsSave = true">
+	</input>
+	<md-tooltip >host name</md-tooltip>
+</md-input-container>
 
-		<md-input-container class="md-block">
-			<label for="port" >port</label>
-			<input type="text" id="port" ng-model="mailConfig.port">
-			</input>
-			<md-tooltip >port number</md-tooltip>
-		</md-input-container>
-
-
-		<md-input-container class="md-block">
-			<label for="secure" >secure</label>
-			<input type="checkbox" id="secure" ng-model="mailConfig.secure">
-			</input>
-			<md-tooltip ></md-tooltip>
-		</md-input-container>
+<md-input-container class="md-block">
+	<label for="port" >port</label>
+	<input type="number" id="port"
+           ng-model="value.port"
+           ng-change="value.needsSave = true">
+	</input>
+	<md-tooltip >port number</md-tooltip>
+</md-input-container>
 
 
-		<md-input-container class="md-block">
-			<label for="mailConfigname" >user name</label>
-			<input type="text" id="username" ng-model="mailConfig.name">
-			</input>
-			<md-tooltip >user name</md-tooltip>
-		</md-input-container>
+<md-input-container class="md-block">
+	<label for="secure" >secure</label>
+	<input type="checkbox" id="secure"
+           ng-model="value.secure"
+           ng-change="value.needsSave = true">
+	</input>
+	<md-tooltip ></md-tooltip>
+</md-input-container>
 
 
-		<md-input-container class="md-block">
-			<label for="password" >password</label>
-			<input type="password" id="password" ng-model="mailConfig.password">
-			</input>
-			<md-tooltip >password</md-tooltip>
-		</md-input-container>
+<md-input-container class="md-block">
+	<label for="username" >user name</label>
+	<input type="text" id="username"
+           ng-model="value.name"
+           ng-change="value.needsSave = true">
+	</input>
+	<md-tooltip >user name</md-tooltip>
+</md-input-container>
 
 
-		<md-input-container class="md-block">
-			<label for="from" >from</label>
-			<input type="text" id="from" ng-model="mailConfig.from">
-			</input>
-			<md-tooltip >from address in email</md-tooltip>
-		</md-input-container>
+<md-input-container class="md-block">
+	<label for="password" >password</label>
+	<input type="password" id="password"
+           ng-model="value.password"
+           ng-change="value.needsSave = true">
+	</input>
+	<md-tooltip >password</md-tooltip>
+</md-input-container>
 
-		<input type="submit" value="Submit" />
-	</form>
-</div>
+
+<md-input-container class="md-block">
+	<label for="from" >from</label>
+	<input type="text" id="from"
+           ng-model="value.from"
+           ng-change="value.needsSave = true">
+	</input>
+	<md-tooltip >from address in email</md-tooltip>
+</md-input-container>
+

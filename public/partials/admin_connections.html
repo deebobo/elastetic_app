@@ -4,18 +4,20 @@
 
     <div flex="80" layout="column" layout-align="center stretch">
 
-        <md-toolbar class="md-table-toolbar md-default" layout="row">
-            <div class="md-toolbar-tools">
-                <span>Connections</span>
-            </div>
-            <div flex></div>
-            <md-button class="md-primary"
-                       ng-click="addConnection()">
-                <md-icon md-font-icon="fa-plus-circle" class="fa fa-lg"></md-icon>
-            </md-button>
-        </md-toolbar>
+        <header>
+            <md-toolbar class="md-table-toolbar md-default" layout="row">
+                <div class="md-toolbar-tools">
+                    <span>Connections</span>
+                </div>
+                <div flex></div>
+                <md-button class="md-primary"
+                           ng-click="addConnection()">
+                    <md-icon md-font-icon="fa-plus-circle" class="fa fa-lg"></md-icon>
+                </md-button>
+            </md-toolbar>
+        </header>
 
-        <md-list ng-cloak  layout="column">
+        <md-list ng-cloak  layout="column" >
             <md-list-item ng-repeat="connection in connections" layout-align="center stretch" layout-fill layout="column">
 
 
@@ -60,9 +62,9 @@
 
                         <span ng-if="connection.warning">connection.warning</span>
 
-                        <select class="form-control"  ng-model="connection.plugin" ng-options="x.name + '(' + x.description + ')' for x in connectionPlugins" required ng-change="pluginChanged(connection)"></select>
+                        <select class="form-control"  ng-model="connection.plugin" ng-options="x.name + '(' + x.description + ')' for x in connectionPlugins track by x._id" required ng-change="connection.needsSave = true"></select>
 
-                        <ng-include src="connection.template" flex></ng-include>
+                        <pluginconfigurator plugin="connection.plugin" value="connection"/>
 
 
                         <div layout="row" layout-align="end center">

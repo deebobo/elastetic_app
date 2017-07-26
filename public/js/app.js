@@ -11,7 +11,7 @@ angular.module('common.services', []);
 angular.module('deebobo.controllers', ['common.directives']);
 angular.module('common.directives', ['common.services']);
 
-var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap']);  //,'ui.grid', 'ui.grid.resizeColumns', 'ui-grid-move-columns'
+var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap','ui.grid']);  //, 'ui-grid-move-columns', 'ui.grid.resizeColumns'
 
 deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider', '$filterProvider',
     function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider, $filterProvider) {
@@ -237,7 +237,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
 			return function(exception, cause){
 				var $rootScope = $injector.get("$rootScope");
 				if($rootScope && typeof $rootScope.addError === "function")
-				    $rootScope.addError({message:"Exception", reason:exception});
+				    $rootScope.addError({message:exception.message, cause: cause});
 				$delegate(exception, cause);
 			};
     });
@@ -267,27 +267,26 @@ deebobo.run(function ($rootScope, $location, $state, AuthService, $mdToast) {
         });
     $rootScope.$on('$stateChangeError',
         function(event, toState, toParams, fromState, fromParams, error){
-        console.log(error);
-        })
+            $rootScope.addError(error);
+        });
 
     $rootScope.addError = function(message){
         console.log(message);
-		var toast = $mdToast.simple()
+        $mdToast.show($mdToast.simple()
 		  .textContent(message)
 		  .action('ok')
 		  .highlightAction(true)
 		  .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
-		  .position({top: true, right: true, bottom: false, left: false});
+		    .position('top right')
+            //.hideDelay(5000)
+         );
 
-		$mdToast.show(toast).then(function(response) {
+
+            /*.then(function(response) {
 		  if ( response == 'ok' ) {
 			//alert('You clicked the \'UNDO\' action.');
 		  }
-		});
+		});*/
 		
     }
-});
-
-deebobo.run(function ($rootScope) {
-    $rootScope.$on("$stateChangeError", console.log.bind(console));
 });

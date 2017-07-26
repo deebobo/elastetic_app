@@ -1,4 +1,4 @@
-<div layout="row" layout-align="center center" >
+<div layout="row" layout-align="center center">
 
     <div flex="80" layout="column" layout-align="center stretch">
 
@@ -21,44 +21,47 @@
             <md-tab label="configuration"
                     md-on-select="templatesSelected = false">
                 <md-content class="md-padding">
-                  <form ng-submit="selectEmailplugin(plugin)">
+                    <form ng-submit="saveEmailConfig (mailConfig)">
 
-                    <label for="emailPlugin" >email processor plugin: </label><br />
-                    <select id="emailPlugin"
-                            ng-model="plugin"
-                            ng-options="x.name for x in emailPlugins"
-                            ng-change="pluginNeedsSave = true">
-                        <md-tooltip >The plugin used for sending out emails.</md-tooltip>
-                    </select>
-                    <br />
+                        <label for="emailPlugin">email processor plugin: </label><br/>
+                        <select id="emailPlugin"
+                                ng-model="plugin"
+                                ng-options="x.name for x in emailPlugins track by x.name"
+                                ng-change="pluginChanged(plugin)">
+                            <md-tooltip>The plugin used for sending out emails.</md-tooltip>
+                        </select>
+                        <br/>
+                        <pluginconfigurator plugin="plugin" value="mailConfig"/>
 
-                    <input type="submit" value="Save"
-                           ng-if="pluginNeedsSave === true"/>
-                  </form>
-                  <ng-include src="emailConfigPartial" flex></ng-include>
+                        <input type="submit" value="Save"
+                               ng-if="mailConfig.needsSave === true"/>
+                    </form>
+
                 </md-content>
             </md-tab>
 
 
             <md-tab label="templates"
                     md-on-select="templatesSelected = true">
-                <md-content class="md-padding" >
+                <md-content class="md-padding">
 
 
                     <md-list ng-cloak layout="column">
-                        <md-list-item class="secondary-button-padding" ng-repeat="template in templates" layout-align="center stretch" layout-fill layout="column">
+                        <md-list-item class="secondary-button-padding" ng-repeat="template in templates"
+                                      layout-align="center stretch" layout-fill layout="column">
 
                             <div layout="row" layout-align="start center">
                                 <div ng-if="template.isOpen == true" flex="95">
 
                                     <md-input-container flex layout-fill>
-                                        <label for="name-{{template.name}}" >name </label>
-                                        <input id="name-{{template.name}}" type="text" ng-model="template.name" class="form-control" ng-change="template.needsSave = true" ng-click="$event.stopPropagation()" />
-                                        <md-tooltip >The name of the email template</md-tooltip>
+                                        <label for="name-{{template.name}}">name </label>
+                                        <input id="name-{{template.name}}" type="text" ng-model="template.name"
+                                               class="form-control" ng-change="template.needsSave = true"
+                                               ng-click="$event.stopPropagation()"/>
+                                        <md-tooltip>The name of the email template</md-tooltip>
                                     </md-input-container>
 
                                 </div>
-
 
 
                                 <md-button class="md-button-toggle"
@@ -70,12 +73,12 @@
 
                                     <div flex layout="row"
                                          layout-align="end center">
-                                        <div ng-if="!template.isOpen" flex="95" >
+                                        <div ng-if="!template.isOpen" flex="95">
                                             {{template.name}}
                                         </div>
 
                                         <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
-                                              ng-class="{'toggled' : template.isOpen}" ></span>
+                                              ng-class="{'toggled' : template.isOpen}"></span>
                                     </div>
 
                                 </md-button>
@@ -87,9 +90,11 @@
                                 <form ng-submit="saveTemplate(template)">
 
                                     <md-input-container flex layout-fill>
-                                        <label for="subject-{{template.name}}" >subject </label>
-                                        <input id="subject-{{template.name}}" type="text" ng-model="template.subject" class="form-control" ng-change="template.needsSave = true" ng-click="$event.stopPropagation()" />
-                                        <md-tooltip >The subject line of the email template</md-tooltip>
+                                        <label for="subject-{{template.name}}">subject </label>
+                                        <input id="subject-{{template.name}}" type="text" ng-model="template.subject"
+                                               class="form-control" ng-change="template.needsSave = true"
+                                               ng-click="$event.stopPropagation()"/>
+                                        <md-tooltip>The subject line of the email template</md-tooltip>
                                     </md-input-container>
 
 
@@ -100,12 +105,13 @@
                                                       ng-model="template.body"
                                                       ng-change="template.needsSave = true"
                                                       flex></textarea>
-                                        <md-tooltip >The template body</md-tooltip>
+                                        <md-tooltip>The template body</md-tooltip>
                                     </md-input-container>
 
                                     <div layout="row" layout-align="end center">
                                         <md-button class="md-primary"
-                                                   ng-click="delete(template, $event)">delete</md-button>
+                                                   ng-click="delete(template, $event)">delete
+                                        </md-button>
 
                                         <input type="submit" value="save"
                                                ng-if="template.needsSave === true"/>

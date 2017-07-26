@@ -40,10 +40,12 @@ class PrivateMailer{
 	* send an email on behalf of the specified site, to the specified recepiant.
 	@param to {string} list of receivers ex: 'bar@blurdybloop.com, baz@blurdybloop.com'
 	*/
-	send(site, to, subject, html){
+	async send(site, to, subject, html){
 		
-		let mailerconf = db.pluginSiteData.get('privateMailer', site);		//get the data record for the plugin config.
-		
+		let mailerconf = await db.pluginSiteData.get(site, 'private mail');		//get the data record for the plugin config.
+
+        mailerconf.data.auth = {user: mailerconf.data.name, pass: mailerconf.data.password};        //need to set the authorisation correct, is stored diffrently in db.
+        delete mailerconf.data.name;                                                                //delete this, it can confuse nodemailer (uses it in the HELLO message, which we do't want)
 		let transporter = nodemailer.createTransport(mailerconf.data);		// create reusable transporter object using the default SMTP transport
 		let mailOptions = {													// setup email data with unicode symbols
 			from: mailerconf.data.from,
@@ -72,12 +74,17 @@ let getPluginConfig = function (){
         version: "0.0.1",
         icon: "/images/plugin_images/MongoDB_Gray_Logo_FullColor_RGB-01.jpg",
         license: "GPL-3.0",
-		config:{
-			partial: "private_mailer_config_partial.html",
-			code: ["private_mailer_config_controller.js"]
+        type: "mail",
+        config: {
+            partials: [
+                "partials/private_mailer_config_partial.html"
+            ]
+        },
+		dependencies:{
+			"nodemailer": "^4.0.1"
 		},
         create: function(){ return new PrivateMailer();}
     };
-}
+};
 
 module.exports = {getPluginConfig: getPluginConfig};

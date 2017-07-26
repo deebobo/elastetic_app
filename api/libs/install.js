@@ -32,7 +32,14 @@ async function installTemplates(db)
     await sitesLib.installTemplate(db, "track and trace", '../site_templates/trackAndTrace.json');
 }
 
-async function install(plugins, result)
+/**
+ * installs the application
+ * @param plugins {Object} plugin manager
+ * @param result {Object} definition of the main site to install
+ * @param host {String} protocol and host part of the URL, so functions/connections can register callbacks (create the url to call)
+ * @returns {Promise.<void>}
+ */
+async function install(plugins, result, host)
 {
     config.config.db = result.db;
     plugins.load();                                 //after assigning the db type, need to load the db in the plugin.
@@ -59,7 +66,7 @@ async function install(plugins, result)
         }
         try {
             result.site = "main";
-            await sitesLib.create(db,  result);
+            await sitesLib.create(plugins,  result, host);
             await config.save();
             winston.log('info', 'done');
         }

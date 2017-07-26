@@ -23,4 +23,23 @@ angular.module("deebobo").controller('extAdminFunctionsController',
                     }
                 );
 
+            if($scope.value.data && $scope.value.data.token){                    //if there is a token id, get the actual token value.
+                $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/token/' + $scope.value.data.token})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+                    .then(function (response) {
+                            $scope.token = response.data.token;
+                        },
+                        function (response) {
+                            messages.error(response.data);
+                        }
+                    );
+            }
+
+            /**
+             * refreshes the token for the plugin. Only available if the record had already been saved.
+             * @param value
+             */
+            $scope.refresh_token = function(value){
+
+            }
+
         }]);

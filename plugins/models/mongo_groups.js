@@ -24,7 +24,7 @@ class Groups{
      * 	- keys:
      *		- (unique) name - site
      */
-    constructor(collection){
+    constructor(){
         let groupsSchema = new mongoose.Schema({
             name: {type: String },
             site: String,

@@ -8,9 +8,10 @@
 angular.module("deebobo").controller('extAdminConnectionsController',
     ['$scope', '$controller', 'messages', '$mdDialog',
     function($scope, $controller, messages, $mdDialog) {
-    angular.extend(this, $controller('adminConnectionsController', {$scope: $scope}));
+    //angular.extend(this, $controller('adminConnectionsController', {$scope: $scope})); -> no longer needed, configs are now rapped inside pluginConfigurator directive.
 
     var _currentPluginPath = null;
+        $scope.isLoading = false;
 
     var currentPluginPath = function () {
 
@@ -20,6 +21,7 @@ angular.module("deebobo").controller('extAdminConnectionsController',
             for(i = 0; i < scripts.length; i++){
                 if(scripts[i].src.endsWith("/particle_io_config.js")){
                     scriptSrc =  scripts[i].src;
+                    break;
                 }
             }
             if(scriptSrc) {
@@ -32,31 +34,33 @@ angular.module("deebobo").controller('extAdminConnectionsController',
     };
 
     $scope.get_particle_io_access_token = function(connection, ev){
-
+        var parent = angular.element(document.body);
         $mdDialog.show({
             controller: DialogController,
             templateUrl: currentPluginPath() + '/partials/particle_io_login.html',
-            parent: angular.element(document.body),
+            parent: parent,
             targetEvent: ev,
             clickOutsideToClose:true,
             fullscreen: false // Only for -xs, -sm breakpoints.
         })
             .then(function(answer) {
+                $scope.isLoading = true;
                 var particle = new Particle();
 
                 particle.login({username: answer.username, password: answer.pwd}).then(
                     function(data) {
+                        $scope.isLoading = false;
                         if(connection.content)                                      //could be that there was no value set yet, in which case this is empty.
                             connection.content.token = data.body.access_token;
                         else
                             connection.content = {token: data.body.access_token};
                     },
                     function (err) {
+                        $scope.isLoading = false;
                         messages.error('Could not log in: ' + err);
                     }
                 );
             }, function() {
-
             });
     };
 

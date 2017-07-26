@@ -27,7 +27,7 @@ class Sites{
             title: String,												//titelf for the site
             contactEmail: String,                                       //the email address of the person that created the site (admin)
             allowRegistration: {type: Boolean, default: true},          //determines if users can register on this site or only through invitation.
-            mailHandler: {type: String},
+            mailHandler: {type: String},                                //id of plugin that will handle email
             requestEmailConfirmation: {type: Boolean, default: true},	//when true, newly registered users have to confirm their email address by clicking on a link found in a mail (if the email template exists).
             sendHelloEmail: {type: Boolean, default: true},				//when true, a hello email is sent to newly registered users (if the email template exists)
             viewGroup: {type: mongoose.Schema.Types.ObjectId, ref: 'groups'},                   //provides quick reference to the default 'view' group for registering new users.
@@ -89,7 +89,8 @@ class Sites{
      * was found
      */
     find(name){
-        return this._sites.findOne({_id: name}).exec();
+        let query = this._sites.findOne({_id: name});
+        return query.exec();
     }
 
 	/** Get a list of all the available lists (that can be listed).

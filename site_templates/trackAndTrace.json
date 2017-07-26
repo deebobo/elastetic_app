@@ -30,7 +30,10 @@
       "type": "site",
       "value": {
         "viewGroup": "viewers",
-        "homepage": "home"
+        "homepage": "home",
+        "sendHelloEmail": true,
+        "requestEmailConfirmation": true,
+        "allowRegistration": true
       }
     },
     {
@@ -165,32 +168,25 @@
     },
 	
 	{"type": "connection",
+   "description": "the database that will store your data",
 	 "value": { 
-			"name" : "mysql", 
+			"name" : "data store", 
 			"plugin" : {
-			  "name": "my_sql_data_store",
-			  "global": true
-			}, 
-			"content" : {
-				"createTable" : true, 
-				"tableName" : "history", 
-				"dbName" : "dxzrmuebsnuvqne7", 
-				"url" : "wftuqljwesiffol6.cbetxkdyhwsb.us-east-1.rds.amazonaws.com", 
-				"password" : "a998bup704wxu0up", 
-				"username" : "fffqv53jl3m38a9g"
+			  "comment": "a connection that allows the user to select the plugin and configure it",
+			  "showConfig": true
 			}
 		}
 	},
 	
 	{"type": "connection",
+   "description": "the connection to your particle.io account",
 	 "value": { 
-			"name" : "mysql", 
+			"name" : "particle.io", 
 			"plugin" : {
+			  "comment": "a connection that specifies the plugin to use, but allows the plugin to be configured",
 			  "name": "particle_io",
-			  "global": true
-			}, 
-			"content" : {
-				"token" : "9bd30ced211e85ad12cab44439d037534d504bb1"
+			  "global": true,
+			  "showConfig": true
 			}
 		}
 	},
@@ -202,10 +198,10 @@
 			"extra" : {
 				"fields" : ["G"]
 			}, 
-			"to" : "mysql", 
-			"from" : "particle_io"
+			"to" : "data store", 
+			"from" : "particle.io"
 		}, 
-		"source" : {
+		"plugin" : {
 			  "name": "transporter",
 			  "global": true
 			}

@@ -8,13 +8,13 @@
 
 
 deebobo.factory('pluginService',
-    ['$q',  function ($q) {
+    ['$q', '$http',  function ($q, $http) {
 
         var plugins = {};                                               //stores all the already loaded js scripts.
 
         return ({                                                       // return available functions for use in controllers
             load: load,
-            loadSingle: loadSingle
+            loadSingle: loadSingle,
         });
 
         /**
@@ -86,5 +86,6 @@ deebobo.factory('pluginService',
             return deferred.promise;
 
         }
+
     }]
 );

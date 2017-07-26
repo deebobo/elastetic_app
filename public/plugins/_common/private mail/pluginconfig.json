@@ -6,9 +6,6 @@
   "author": "Deebobo",
   "type": "mail",
   "config": {
-      "scripts": [
-        "js/private_mailer_config_controllers.js"
-      ],
       "partials": [
         "partials/private_mailer_config_partial.html"
       ]

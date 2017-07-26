@@ -2,11 +2,14 @@
     ng-controller="extAdminConnectionsController">
     <md-input-container flex  style="margin-top: 20px;">
         <label for="particleToken" >particle.io token </label>
-            <input type="text" id="particleToken" ng-model="connection.content.token" ng-change="connection.needsSave = true" flex></input>
+            <input type="text" id="particleToken" ng-model="value.content.token" ng-change="value.needsSave = true" flex></input>
         <md-tooltip >The access token for particle.io cloud</md-tooltip>
     </md-input-container>
+
+    <md-progress-circular md-mode="indeterminate" ng-if="isLoading"></md-progress-circular>
+
     <md-button class="md-primary"
-               ng-click="get_particle_io_access_token(connection, $ev)">
+               ng-click="get_particle_io_access_token(value, $event)">
         get token
     </md-button>
 </div>

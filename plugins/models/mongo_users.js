@@ -71,6 +71,7 @@ class Users{
             try {
                 return jwt.sign({
                     id: this._id,
+                    isUserToken: true,                                  //so we can see the difference between tokens for userlogin and callbacks for functions/connections...
                     email: this.email,
                     name: this.name,
                     site: this.site,

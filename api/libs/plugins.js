@@ -26,7 +26,7 @@ function loadConfig(filename) {
  * @param {string} zipFile the path to a zip file.
  */
 async function extractConfigFile(zipFile) {
-    return new Promise((resolve, resject) => {
+    return new Promise((resolve, reject) => {
         let tmpObj = tmp.filename();
         fs.createReadStream('path/to/archive.zip')
             .pipe(unzipper.Parse())

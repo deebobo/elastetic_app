@@ -16,9 +16,9 @@ deebobo.factory('siteService',
         });
 
 
-        function create(sitename, adminname, adminEmail, password, template){
+        function create(sitename, adminname, adminEmail, password, template, templateParams){
             var deferred = $q.defer();                                                  // create a new instance of deferred
-            $http.post('/api/site', {site: sitename, name: adminname, password: password, email: adminEmail, template: template})
+            $http.post('/api/site', {site: sitename, name: adminname, password: password, email: adminEmail, template: template, parameters: templateParams})
                 .then(function (data) {                                      // handle success
                     if(data && data.status == 200){
                         deferred.resolve();

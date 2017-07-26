@@ -22,6 +22,7 @@ class Functions{
             site: String,
             source: {type: mongoose.Schema.Types.ObjectId, ref: 'plugins'},
             data: Object,
+            warnng: String,                                                     //stores errors/warnings that were generated while creating the function. These didn't cause a failure in the creation (function can be stored), but the setup went wrong, user should correct and retry
             createdOn:{type: Date, default: Date.now()}
         });
         functionSchema.index({ source: 1, site: 1});        //fast access at name & site level

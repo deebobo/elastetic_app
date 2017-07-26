@@ -70,16 +70,6 @@ deebobo.controller('adminFunctionsController',
                 $scope.functions.push({name: "new function", plugin: null, isOpen: true, needsSave: true, isNew: true});
             };
 
-            $scope.pluginChanged = function(func){
-                if(func.source.config){
-                    pluginService.load(func.source.config)
-                        .then(function(){
-                            func.needsSave = true;
-                            func.template = "plugins/" + func.source.config.partials[0];
-
-                        });
-                }
-            };
 
             $scope.save = function(func){
                 if(func.isNew === true){
@@ -105,7 +95,7 @@ deebobo.controller('adminFunctionsController',
                 }
             };
 
-            $scope.delete = function(func, ev){
+            $scope.delete = function(index, func, ev){
 
                 // Appending dialog to document.body to cover sidenav in docs app
                 var confirm = $mdDialog.confirm()
@@ -120,7 +110,7 @@ deebobo.controller('adminFunctionsController',
                     if( !func.isNew ){                                                  //its a real record, needs to be deleted from the server.
                         $http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/function/' + func._id})      //get the list of groups that can view
                             .then(function (response) {
-                                    $scope.functions.splice($scope.functions.indexOf(func), 1);
+                                    $scope.functions.splice(index, 1);
                                 },
                                 function (response) {
                                     messages.error(response.data);
@@ -128,7 +118,7 @@ deebobo.controller('adminFunctionsController',
                             );
                     }
                     else
-                        $scope.functions.splice($scope.functions.indexOf(func), 1);
+                        $scope.functions.splice(index, 1);
 
                 }, function() {
 

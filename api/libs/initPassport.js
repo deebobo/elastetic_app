@@ -45,11 +45,25 @@ async function initPassport(app, passport){
                     db = db.db;
                 }
                 if(db != null) {
-                    let user = await db.users.find(payload.id);
-                    if (!user || req.params.site != payload.site) { 		//the user must also be allowed to go to the requested site.
-                        return done(null, false);
+                    if(payload.isUserToken){
+                        let user = await db.users.find(payload.id);
+                        if (!user || req.params.site != payload.site)  		//the user must also be allowed to go to the requested site.
+                            return done(null, false);
+                        done(null, user);
                     }
-                    done(null, user);
+                    else{
+                        if(payload.resourceType == "function"){
+                            let func = await db.functions.findById(payload.resourceId);
+                            if(!func || req.params.site != payload.site)
+                                return done(null, false);
+                            done(null, func);
+                        }else if(payload.resourceType == "connection"){
+                            let connection = await db.connections.findById(payload.resourceId);
+                            if(!connection || req.params.site != payload.site)
+                                return done(null, false);
+                            done(null, connection);
+                        }
+                    }
                 }
                 else
                     done("database not loaded", false);

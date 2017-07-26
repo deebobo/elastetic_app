@@ -6,6 +6,8 @@
 
 //const config = require.main.require('../api/libs/config').config;
 const winston = require('winston');
+const funcLib = require.main.require('../api/libs/functions');
+const connectionsLib = require.main.require('../api/libs/connections');
 
 /**
  * create a record for the home page that points to a homepage plugin.
@@ -117,9 +119,19 @@ async function getGroups(db, sitename, definition, requestorName){
 /**
  * create a page based on the specified definition.
  * This function will replace plugin and group names with id's.
+ * @param db {object} ref to the db
+ * @param sitename {String} name of the site
+ * @param definition {Object} definition supplied in the template
+ * @param parameters {Object} parameters specified by the user creating the site.
+ * @returns {Promise.<void>}
  */
-async function createPage(db, sitename, definition){
+async function createPage(db, sitename, definition, parameters){
     definition.site = sitename;
+    if(parameters){
+        definition.data = parameters.data;
+        definition.plugin.name = parameters.plugin.name;
+        definition.plugin.global = parameters.plugin.site === "_common";
+    }
     let plugin = await getPlugin(db, sitename, definition, "page");
     definition.plugin = plugin._id;
 
@@ -129,8 +141,13 @@ async function createPage(db, sitename, definition){
     await db.pages.add(definition);
 }
 
-async function createView(db, sitename, definition) {
+async function createView(db, sitename, definition, parameters) {
     definition.site = sitename;
+    if(parameters){
+        definition.data = parameters.data;
+        definition.plugin.name = parameters.plugin.name;
+        definition.plugin.global = parameters.plugin.site === "_common";
+    }
     let plugin = await getPlugin(db, sitename, definition, "view");
     definition.plugin = plugin._id;
 
@@ -154,25 +171,38 @@ async function createGroup(db, sitename, definition) {
     await db.groups.add(definition);
 }
 
-async function createConnection(db, sitename, definition) {
+async function createConnection(plugins, db, sitename, definition, parameters) {
     definition.site = sitename;
+    if(parameters){
+        definition.content = parameters.data;
+        definition.plugin.name = parameters.plugin.name;
+        definition.plugin.global = parameters.plugin.site === "_common";
+    }
     let plugin = await getPlugin(db, sitename, definition, "connection");
-    definition.plugin = plugin._id;
+    definition.plugin = plugin._id.toString();
 
-    await db.connections.add(definition);
+    await connectionsLib.create(plugins, definition, plugin.name);              //some connections need to be initialized (db's that need to be created)...
 }
 
-async function createFunction(db, sitename, definition) {
+async function createFunction(plugins, db, sitename, definition, parameters, host) {
     definition.site = sitename;
+    if(parameters){
+        definition.data = parameters.data;
+        definition.plugin.name = parameters.plugin.name;
+        definition.plugin.global = parameters.plugin.site === "_common";
+    }
     let plugin = await getPlugin(db, sitename, definition, "function");
+    delete definition.plugin;                                               //stupid name change, need to change source to plugin, make it more generic.
     definition.source = plugin._id;
 
-    await db.functions.add(definition);
+    await funcLib.create(plugins, plugin.name, definition, host);                 //creates the function, also calls the plugin if there is a callback function
 }
 
-async function createSite(db, sitename, definition) {
-    definition._id = sitename;
-    let grp = await db.groups.find(sitename, definition.viewGroup);
+async function createSite(db, siteDetails, definition) {
+    definition._id = siteDetails.name;
+    definition.title = siteDetails.name;
+    definition.contactEmail = siteDetails.email;
+    let grp = await db.groups.find(siteDetails.name, definition.viewGroup);
     if(!grp)
         throw Error("unknwon group for " + requestorName + ": " + definition.name + ", plugin: " + definition.groups[i].name);
     definition.viewGroup = grp._id;
@@ -182,41 +212,53 @@ async function createSite(db, sitename, definition) {
 
 /**
  * apply a template to the site. The template will create users, pages, views & load plugins.
- * @param db {Object} ref to the db.
+ * @param plugins {Object} ref to the plugins manager, includes db.
+ * @param definition
  * @param template {Object} template definitions.
+ * @param host {String} protocol and host part of the URL, so functions/connections can register callbacks (create the url to call)
  * @returns {Promise.<void>}
  */
-async function applyTemplate(db, siteName, template, adminName, adminEmail, adminPwd){
+async function applyTemplate(plugins, definition, template, host){
+    let db = plugins.db;
     for(let i=0; i < template.definition.length; i++){
         let item = template.definition[i];
+        let templateParam = await definition.parameters.filter((rec) =>{ return rec.item == item.value.name } );
+        if(templateParam && templateParam.length > 0){
+            if(templateParam.length === 1)
+                templateParam = templateParam[0];
+            else
+                throw Error("to many parameter records for " + item.value.name);
+        }
+        else
+            templateParam = null;
         if(item.type === "view")
-            await createView(db, siteName, item.value);
+            await createView(db, definition.site, item.value, templateParam);
         else if(item.type === "page")
-            await createPage(db, siteName, item.value);
+            await createPage(db, definition.site, item.value, templateParam);
         else if(item.type === "user") {
-            if(item.value.name == "admin"){
-                item.value.name = adminName;
-                item.value.email = adminEmail;
-                item.value.password = adminPwd;
+            if(item.value.name === "admin"){
+                item.value.name = definition.name;
+                item.value.email = definition.email;
+                item.value.password = definition.password;
             }
-            await createUser(db, siteName, item.value);
+            await createUser(db, definition.site, item.value);
         }
         else if(item.type === "group")
-            await createGroup(db, siteName, item.value);
+            await createGroup(db, definition.site, item.value);
         else if(item.type === "plugin")
-            await module.exports.installPlugin(db, item.value.name, siteName. item.value.source);
+            await module.exports.installPlugin(db, item.value.name, def.site. item.value.source);
         else if(item.type === "connection")
-            await createConnection(db, siteName, item.value);
+            await createConnection(plugins, db, definition.site, item.value, templateParam);
         else if(item.type === "function")
-            await createFunction(db, siteName, item.value);
+            await createFunction(plugins, db, definition.site, item.value, templateParam, host);
         else if(item.type === "site")             //details like title, email plugin,..
-            await createSite(db, siteName, item.value);
+            await createSite(db, definition, item.value);
         else if(item.type === "emailtemplate"){          //like email templates and such.
-            item.value.site = siteName;
+            item.value.site = definition.site;
             await db.emailTemplates.add(item.value );
         }
         else if(item.type === "siteData"){          //like email templates and such.
-            item.value.site = siteName;
+            item.value.site = definition.site;
             await db.pluginSiteData.add(item.value );
         }
     }
@@ -279,13 +321,15 @@ module.exports.installTemplate = async function (db, name, filename)
 
 /**
  * create a new site.
- * @param db{object} ref to the db object
+ * @param plugins{object} ref to the plugins object (includes db
  * @param definition {Object} the definition describing the site that has to be created.
  * @param asAdmin {bool} when false, no 'admin' will be created in the account, just aa viewer (useful for sub accounts?) Default is true.
+ * @param host {String} protocol and host part of the URL, so functions/connections can register callbacks (create the url to call)
  * @returns {Promise.<boolean>}
  */
-module.exports.create = async function(db, definition, asAdmin = true){
+module.exports.create = async function(plugins, definition, host, asAdmin = true){
 
+    let db = plugins.db;
     let site = await db.sites.find(definition.site);
     if(site && site.length > 0)
         throw Error("The site name is already taken", 'siteExists');
@@ -294,7 +338,7 @@ module.exports.create = async function(db, definition, asAdmin = true){
         let templateDef = await db.siteTemplates.find(definition.template);
         if(!templateDef)
             throw Error("unknown template: " + definition.template);
-        await applyTemplate(db, definition.site, templateDef, definition.name, definition.email, definition.password);
+        await applyTemplate(plugins, definition, templateDef, host);
     }
     else {
         let admins = {name: "admins", site: definition.site, level: "admin"};

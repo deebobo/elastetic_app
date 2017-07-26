@@ -5,6 +5,7 @@
  */
 
 const winston = require('winston');
+const tokens = require.main.require('../api/libs/tokens');
 
 class Transporter {
 
@@ -17,18 +18,22 @@ class Transporter {
      * create a tansport between the 2 connections and store it in the system
      * @param db {Object} ref to the db
      * @param funcDef {object} the object that represents a transport def.
-     * @param req {Object} the request object that triggered this operation (used for building urls, getting user info and such.
+     * @param host {String} protocol and host part of the URL, so functions/connections can register callbacks (create the url to call)
      * $returns true if the functDe object has been changed and needs to be saved again in the db.
      */
-    async create(plugins, funcDef, req){
+    async create(plugins, funcDef, host){
         if(!funcDef.data.hasOwnProperty('to'))
             throw Error("missing to field");
         let fromConnection = await plugins.db.connections.find(funcDef.data.from, funcDef.site);
         if(funcDef.data.hasOwnProperty('from')) {
             if(fromConnection.plugin.name in plugins.plugins){
                 let plugin = plugins.plugins[fromConnection.plugin.name].create();
-                if (plugin.registerCallback)
-                    await plugin.registerCallback(fromConnection, funcDef, req);
+                if (plugin.registerCallback){
+                    funcDef.data.token = await tokens.createToken(plugins.db, "function", funcDef._id, funcDef.site)
+                    funcDef.data.token = funcDef.data.token._id.toString();
+                    let url = host + "/api/site/" + funcDef.site + "/function/" + funcDef._id + "/call";
+                    await plugin.registerCallback(fromConnection, funcDef, url);
+                }
                 return true;
             }
             else

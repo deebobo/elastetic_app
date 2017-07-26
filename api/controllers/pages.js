@@ -17,6 +17,8 @@ module.exports.get = async function(req, res)
         for(let item of pages){
             if(auth.allowed(item.groups, req.user.groups))
                 allowed.push(item);
+            else
+                return;                                                     //something was not allowed, error message has been set by auth
         }
         res.status(200).json(allowed);
     }
@@ -36,8 +38,6 @@ module.exports.getPage = async function(req, res) {
         if(page) {
             if (auth.allowed(page.groups, req.user.groups, res))         //auth will set the error message in res if there is a problem.
                 res.status(200).json(page);
-            else
-                res.status(401).json({message: "unauthorized request"});
         }
         else
             res.status(404).json({message: "record not found"});

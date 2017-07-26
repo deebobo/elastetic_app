@@ -15,9 +15,8 @@ const winston = require('winston');
  */
 module.exports.create = async function(req, res){
     try{
-        let db = await req.app.get('plugins');
-        db = db.db;
-        await sitesLib.create(db, req.body);
+        let plugins = await req.app.get('plugins');
+        await sitesLib.create(plugins, req.body, req.protocol + '://' + req.get('host'));
         res.status(200).json({message: 'ok'});
     }
     catch (err){
@@ -38,6 +37,26 @@ module.exports.listTemplates = async  function(req, res){
     catch (err){
         winston.log("error", err);
         res.status(500).json({message:err.message});
+    }
+};
+
+/**
+ * get the plugins that need to be configured for the specified template
+ * for now, simply return all global plugins. The client will do further filtering.
+ * @param req
+ * @param res
+ * @returns {Promise.<void>}
+ */
+module.exports.getTemplateParams = async function(req, res){
+    try {
+        let db = await req.app.get('plugins');
+        db = db.db;
+        let recs = await db.plugins.list("_common");
+        res.status(200).json(recs);
+    }
+    catch (err) {
+        winston.log("error", err);
+        res.status(400).json({message: err});
     }
 };
 

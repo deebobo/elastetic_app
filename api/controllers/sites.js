@@ -21,8 +21,11 @@ module.exports.create = async function(req, res){
     }
     catch (err){
         winston.log("error", err);
-        if(err.id == 'siteExists')
+        if(err.name == 'siteExists'){
             res.status(401).json({message:err.message});
+            return;
+        }
+
         res.status(500).json({message:err.message});
     }
 };

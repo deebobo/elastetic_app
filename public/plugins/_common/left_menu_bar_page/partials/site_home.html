@@ -1,5 +1,5 @@
-<div  ng-cloak layout="column" flex>
-	<md-toolbar class="md-hue-2">
+<div  layout="column" flex>
+	<md-toolbar name="tt_main_toolbar" class="md-hue-2">
 		<div class="md-toolbar-tools">
 			<md-button class="md-icon-button" aria-label="menu" ng-disabled="false"
 					   ng-click="toggleSidenav('left')">
@@ -15,7 +15,7 @@
 		</div>
 	</md-toolbar>
 
-	<section layout="row" flex layout-align="center stretch">
+	<section name="tt_body" layout="row" flex layout-align="center stretch">
 
 		<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left"
 					 md-whiteframe="4"
@@ -48,9 +48,7 @@
 
 		</md-sidenav>
 
-		<md-content flex layout="column">
-			<div ui-view="content" layout="column" flex></div>
-		</md-content>
+        <div ui-view="content" layout="column" flex></div>
 
 
 	</section>

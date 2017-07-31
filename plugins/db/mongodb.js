@@ -86,6 +86,38 @@ class MongoDb{
     }
 
 
+    /**
+     * goes over the list of records in reverse order and tries to delete all of them.
+     * @param records {List} documents that need to be destroyed.
+     * @returns {Promise.<void>}
+     */
+    async tryRollBack(records){
+        return new Promise((resolve, reject) => {
+            function removeAtIndex(index){
+                let rec = records[index];
+                try{
+                    //in case of references to objects, we make certain that every record is deleted in reverse order and we don't go to the next until prev is done deleting.
+                    rec.remove(
+                        function(err, rec){
+                            if(err)
+                                winston.log("error", "failed to roll back: ", rec);
+                            if(index <= 0)
+                                resolve();
+                            else
+                                removeAtIndex(index-1);
+                        }
+                    );
+                }
+                catch(err){
+                    winston.log("error", "failed to roll back: ", rec);
+                    removeAtIndex(index-1);
+                }
+            }
+            if(records.length > 0)
+                removeAtIndex(records.length -1);
+        });
+    }
+
 }
 
 //required for all plugins. returns information about the plugin

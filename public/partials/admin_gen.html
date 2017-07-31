@@ -1,91 +1,89 @@
-<div layout="row" layout-align="center center" >
+<div layout="column" layout-fill ng-cloak class="dbb_admin_page" >
 
-    <div flex="80" layout="column" layout-align="center stretch">
-
-        <md-toolbar class="md-table-toolbar md-default">
-            <div class="md-toolbar-tools">
-                <span>General configuration</span>
-            </div>
-        </md-toolbar>
+    <md-toolbar class="md-hue-3" layout="row">
+        <div class="md-toolbar-tools">
+            <span>General configuration</span>
+        </div>
+    </md-toolbar>
 
 
-        <md-tabs md-dynamic-height md-border-bottom>
-            <md-tab label="site" >
-                <md-content class="md-padding">
-                    <form ng-submit="submitSiteDetails(site)">
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="site" >
+            <md-content class="md-padding">
+                <form ng-submit="submitSiteDetails(site)">
 
-                        <div layout-gt-sm="row" layout="column" >
-                            <div flex-gt-sm="50" flex layout="column">
+                    <div layout-gt-sm="row" layout="column" >
+                        <div flex-gt-sm="50" flex layout="column">
 
-                                <md-input-container class="md-block">
-                                    <label for="siteTitle" >site title</label>
-                                    <input type="text" id="siteTitle" ng-model="site.title">
-                                    </input>
-                                    <md-tooltip >The title for the site</md-tooltip>
-                                </md-input-container>
+                            <md-input-container class="md-block">
+                                <label for="siteTitle" >site title</label>
+                                <input type="text" id="siteTitle" ng-model="site.title">
+                                </input>
+                                <md-tooltip >The title for the site</md-tooltip>
+                            </md-input-container>
 
-                                <md-input-container  class="md-block">
-                                    <label for="adminEmail" >admin email </label>
-                                    <input type="text" id="adminEmail" ng-model="site.contactEmail">
-                                        <md-tooltip >The email address of the administrator for this site.</md-tooltip>
-                                    </input>
-                                </md-input-container>
+                            <md-input-container  class="md-block">
+                                <label for="adminEmail" >admin email </label>
+                                <input type="text" id="adminEmail" ng-model="site.contactEmail">
+                                <md-tooltip >The email address of the administrator for this site.</md-tooltip>
+                                </input>
+                            </md-input-container>
 
-                                <md-input-container  class="md-block">
-                                    <label for="viewGroup" >view group</label>
+                            <md-input-container  class="md-block">
+                                <label for="viewGroup" >view group</label>
 
-                                    <md-select id="viewGroup" ng-model="site.viewGroup">
-                                        <md-option ng-value="x._id" ng-repeat="x in viewGroups">{{ x.name }}</md-option>
-                                    </md-select>
-
-
-                                    <md-tooltip >Select the group that newly registered users will be assigned to.</md-tooltip>
-                                </md-input-container>
-
-                                <md-input-container  class="md-block">
-                                    <label for="homepage" >homepage</label>
-
-                                    <md-select id="homepage" ng-model="site.homepage">
-                                        <md-option ng-value="x.name" ng-repeat="x in pages">{{ x.name }}</md-option>
-                                    </md-select>
+                                <md-select id="viewGroup" ng-model="site.viewGroup">
+                                    <md-option ng-value="x._id" ng-repeat="x in viewGroups">{{ x.name }}</md-option>
+                                </md-select>
 
 
-                                    <md-tooltip >Select the page that will function as the homepage.</md-tooltip>
-                                </md-input-container>
+                                <md-tooltip >Select the group that newly registered users will be assigned to.</md-tooltip>
+                            </md-input-container>
 
-                            </div>
+                            <md-input-container  class="md-block">
+                                <label for="homepage" >homepage</label>
 
-                            <div flex-gt-sm="50" flex layout="column">
-                                <md-input-container  class="md-block">
-                                    <md-checkbox ng-model="site.allowRegistration" id="allowRegistration">
-                                        allow registration
-                                        <md-tooltip >Determines if users can register on this site or only through invitation.</md-tooltip>
-                                    </md-checkbox>
-                                </md-input-container>
+                                <md-select id="homepage" ng-model="site.homepage">
+                                    <md-option ng-value="x.name" ng-repeat="x in pages">{{ x.name }}</md-option>
+                                </md-select>
 
-                                <md-input-container  class="md-block">
-                                    <md-checkbox  ng-model="site.requestEmailConfirmation" id="requestEmailConfirmation">
-                                        request email confirmation
-                                        <md-tooltip >Determines if users can register on this site or only through invitation.</md-tooltip>
-                                    </md-checkbox>
-                                </md-input-container>
 
-                                <md-input-container  class="md-block">
-                                    <md-checkbox type="checkbox" ng-model="site.sendHelloEmail" id="sendHelloEmail">
-                                    send hello email
-                                        <md-tooltip >when true, a hello email is sent to newly registered users (if the email template exists).</md-tooltip>
-                                    </md-checkbox>
-                                </md-input-container>
-                            </div>
+                                <md-tooltip >Select the page that will function as the homepage.</md-tooltip>
+                            </md-input-container>
 
                         </div>
-                        <input type="submit" value="Submit" />
-                    </form>
-                </md-content>
-            </md-tab>
 
-            <md-tab label="appearance">
-                <md-content class="md-padding">
+                        <div flex-gt-sm="50" flex layout="column">
+                            <md-input-container  class="md-block">
+                                <md-checkbox ng-model="site.allowRegistration" id="allowRegistration">
+                                    allow registration
+                                    <md-tooltip >Determines if users can register on this site or only through invitation.</md-tooltip>
+                                </md-checkbox>
+                            </md-input-container>
+
+                            <md-input-container  class="md-block">
+                                <md-checkbox  ng-model="site.requestEmailConfirmation" id="requestEmailConfirmation">
+                                    request email confirmation
+                                    <md-tooltip >Determines if users can register on this site or only through invitation.</md-tooltip>
+                                </md-checkbox>
+                            </md-input-container>
+
+                            <md-input-container  class="md-block">
+                                <md-checkbox type="checkbox" ng-model="site.sendHelloEmail" id="sendHelloEmail">
+                                    send hello email
+                                    <md-tooltip >when true, a hello email is sent to newly registered users (if the email template exists).</md-tooltip>
+                                </md-checkbox>
+                            </md-input-container>
+                        </div>
+
+                    </div>
+                    <input type="submit" value="Submit" />
+                </form>
+            </md-content>
+        </md-tab>
+
+        <md-tab label="appearance">
+            <md-content class="md-padding">
 
                 <md-list ng-cloak  layout="column">
                     <md-list-item class="secondary-button-padding" ng-repeat="skin in skins" layout-align="center stretch" layout-fill layout="column">
@@ -94,25 +92,25 @@
                         <form ng-submit="submitAppearance(skin)" layout-align="center stretch" layout-fill layout="column" layout-padding="10%">
 
 
-                                <md-button class="md-button-toggle"
-                                           ng-click="skin.isOpen = !skin.isOpen"
-                                           aria-controls="skin-btn-{{skin.name}}"
-                                           aria-expanded="skin.isOpen = !skin.isOpen"
-                                           flex
-                                           style="min-width:30px"
-                                           >
-                                    <div flex layout="row"
-                                         layout-align="end center">
-                                        <div ng-if="!skin.isOpen" flex="95" >
-                                            {{skin.name}}
-                                        </div>
-
-                                        <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
-                                              ng-class="{'toggled' : skin.isOpen}" ></span>
-
+                            <md-button class="md-button-toggle"
+                                       ng-click="skin.isOpen = !skin.isOpen"
+                                       aria-controls="skin-btn-{{skin.name}}"
+                                       aria-expanded="skin.isOpen = !skin.isOpen"
+                                       flex
+                                       style="min-width:30px"
+                            >
+                                <div flex layout="row"
+                                     layout-align="end center">
+                                    <div ng-if="!skin.isOpen" flex="95" >
+                                        {{skin.name}}
                                     </div>
 
-                                </md-button>
+                                    <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
+                                          ng-class="{'toggled' : skin.isOpen}" ></span>
+
+                                </div>
+
+                            </md-button>
 
 
 
@@ -128,9 +126,8 @@
                     </md-list-item>
                 </md-list>
                 <md-button ng-click="upload()">upload new skin</md-button>
-                </md-content>
-            </md-tab>
+            </md-content>
+        </md-tab>
 
-        </md-tabs>
-    </div>
+    </md-tabs>
 </div>

@@ -40,26 +40,36 @@ class PrivateMailer{
 	* send an email on behalf of the specified site, to the specified recepiant.
 	@param to {string} list of receivers ex: 'bar@blurdybloop.com, baz@blurdybloop.com'
 	*/
-	async send(site, to, subject, html){
+	async send(db, site, to, subject, html){
 		
 		let mailerconf = await db.pluginSiteData.get(site, 'private mail');		//get the data record for the plugin config.
 
-        mailerconf.data.auth = {user: mailerconf.data.name, pass: mailerconf.data.password};        //need to set the authorisation correct, is stored diffrently in db.
-        delete mailerconf.data.name;                                                                //delete this, it can confuse nodemailer (uses it in the HELLO message, which we do't want)
-		let transporter = nodemailer.createTransport(mailerconf.data);		// create reusable transporter object using the default SMTP transport
-		let mailOptions = {													// setup email data with unicode symbols
-			from: mailerconf.data.from,
-			to: to,
-			subject: subject,  //'Hello ✔', // Subject line
-			html: html //'<b>Hello world ?</b>' // html body
-		};
+        if(mailerconf && mailerconf.data && mailerconf.data.name && mailerconf.data.password){
+            mailerconf.data.auth = {user: mailerconf.data.name, pass: mailerconf.data.password};        //need to set the authorisation correct, is stored diffrently in db.
+            delete mailerconf.data.name;                                                                //delete this, it can confuse nodemailer (uses it in the HELLO message, which we do't want)
+            let transporter = nodemailer.createTransport(mailerconf.data);		// create reusable transporter object using the default SMTP transport
+            let mailOptions = {													// setup email data with unicode symbols
+                from: mailerconf.data.from,
+                to: to,
+                subject: subject,  //'Hello ✔', // Subject line
+                html: html //'<b>Hello world ?</b>' // html body
+            };
 
-		transporter.sendMail(mailOptions, (error, info) => {				// send mail with defined transport object
-			if (error) {
-				return winston.log("error", error);
-			}
-			winston.log("info", 'Message %s ; id: %s ; sent: %s', mailOptions, info.messageId, info.response);
-		});
+            return new Promise((resolve, reject) => {
+                transporter.sendMail(mailOptions, (error, info) => {				// send mail with defined transport object
+                    if (error) {
+                        winston.log("error", error);
+                        reject(Error("something went wrong trying to send the email: " + error.message));
+                    }
+                    else {
+                        winston.log("info", 'Message %s ; id: %s ; sent: %s', mailOptions, info.messageId, info.response);
+                        resolve();
+                    }
+                });
+            });
+        }
+        else
+            throw Error("mail handler plugin has not yet been configured correctly.")
 	}
 }
 

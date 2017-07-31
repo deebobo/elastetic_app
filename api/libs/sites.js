@@ -138,7 +138,7 @@ async function createPage(db, sitename, definition, parameters){
     let grps = await getGroups(db, sitename, definition, "page");
     definition.groups = grps;
 
-    await db.pages.add(definition);
+    return await db.pages.add(definition);
 }
 
 async function createView(db, sitename, definition, parameters) {
@@ -154,7 +154,7 @@ async function createView(db, sitename, definition, parameters) {
     let grps = await getGroups(db, sitename, definition, "view");
     definition.groups = grps;
 
-    await db.views.add(definition);
+    return db.views.add(definition);
 }
 
 async function createUser(db, sitename, definition) {
@@ -162,53 +162,61 @@ async function createUser(db, sitename, definition) {
     let grps = await getGroups(db, sitename, definition, "user");
     definition.groups = grps;
 
-    await db.users.add(definition);
+    return db.users.add(definition);
 }
 
 async function createGroup(db, sitename, definition) {
 
     definition.site = sitename;
-    await db.groups.add(definition);
+    return db.groups.add(definition);
 }
 
 async function createConnection(plugins, db, sitename, definition, parameters) {
     definition.site = sitename;
-    if(parameters){
+    if(parameters && parameters.data != undefined && parameters.plugin != undefined){
         definition.content = parameters.data;
         definition.plugin.name = parameters.plugin.name;
         definition.plugin.global = parameters.plugin.site === "_common";
     }
-    let plugin = await getPlugin(db, sitename, definition, "connection");
-    definition.plugin = plugin._id.toString();
-
-    await connectionsLib.create(plugins, definition, plugin.name);              //some connections need to be initialized (db's that need to be created)...
+    let pluginName = "";
+    if(parameters.plugin != undefined){
+        let plugin = await getPlugin(db, sitename, definition, "connection");
+        pluginName = plugin.name;
+        definition.plugin = plugin._id.toString();
+    }
+    return connectionsLib.create(plugins, definition, pluginName);              //some connections need to be initialized (db's that need to be created)...
 }
 
 async function createFunction(plugins, db, sitename, definition, parameters, host) {
     definition.site = sitename;
-    if(parameters){
+    if(parameters && parameters.data != undefined && parameters.plugin != undefined){
         definition.data = parameters.data;
         definition.plugin.name = parameters.plugin.name;
         definition.plugin.global = parameters.plugin.site === "_common";
     }
-    let plugin = await getPlugin(db, sitename, definition, "function");
-    delete definition.plugin;                                               //stupid name change, need to change source to plugin, make it more generic.
-    definition.source = plugin._id;
+    let pluginName = "";
+    if(parameters && parameters.plugin != undefined){
+        let plugin = await getPlugin(db, sitename, definition, "function");
+        pluginName = plugin.name;
+        delete definition.plugin;                                               //stupid name change, need to change source to plugin, make it more generic.
+        definition.source = plugin._id;
+    }
 
-    await funcLib.create(plugins, plugin.name, definition, host);                 //creates the function, also calls the plugin if there is a callback function
+    return funcLib.create(plugins, pluginName, definition, host);                 //creates the function, also calls the plugin if there is a callback function
 }
 
 async function createSite(db, siteDetails, definition) {
-    definition._id = siteDetails.name;
-    definition.title = siteDetails.name;
+    definition._id = siteDetails.site;
+    definition.title = siteDetails.site;
     definition.contactEmail = siteDetails.email;
-    let grp = await db.groups.find(siteDetails.name, definition.viewGroup);
+    let grp = await db.groups.find(siteDetails.site, definition.viewGroup);
     if(!grp)
-        throw Error("unknwon group for " + requestorName + ": " + definition.name + ", plugin: " + definition.groups[i].name);
+        throw Error("unknwon group for " + requestorName + ": " + definition.site + ", plugin: " + definition.groups[i].name);
     definition.viewGroup = grp._id;
 
-    await db.sites.add(definition);
+    return db.sites.add(definition);
 }
+
 
 /**
  * apply a template to the site. The template will create users, pages, views & load plugins.
@@ -220,48 +228,59 @@ async function createSite(db, siteDetails, definition) {
  */
 async function applyTemplate(plugins, definition, template, host){
     let db = plugins.db;
-    for(let i=0; i < template.definition.length; i++){
-        let item = template.definition[i];
-        let templateParam = await definition.parameters.filter((rec) =>{ return rec.item == item.value.name } );
-        if(templateParam && templateParam.length > 0){
-            if(templateParam.length === 1)
-                templateParam = templateParam[0];
-            else
-                throw Error("to many parameter records for " + item.value.name);
-        }
-        else
-            templateParam = null;
-        if(item.type === "view")
-            await createView(db, definition.site, item.value, templateParam);
-        else if(item.type === "page")
-            await createPage(db, definition.site, item.value, templateParam);
-        else if(item.type === "user") {
-            if(item.value.name === "admin"){
-                item.value.name = definition.name;
-                item.value.email = definition.email;
-                item.value.password = definition.password;
+    let record = null;
+    let records = [];
+    try{
+        for(let i=0; i < template.definition.length; i++){
+            let item = template.definition[i];
+            let templateParam = await definition.parameters.filter((rec) =>{ return rec.item == item.value.name } );
+            if(templateParam && templateParam.length > 0){
+                if(templateParam.length === 1)
+                    templateParam = templateParam[0];
+                else
+                    throw Error("to many parameter records for " + item.value.name);
             }
-            await createUser(db, definition.site, item.value);
-        }
-        else if(item.type === "group")
-            await createGroup(db, definition.site, item.value);
-        else if(item.type === "plugin")
-            await module.exports.installPlugin(db, item.value.name, def.site. item.value.source);
-        else if(item.type === "connection")
-            await createConnection(plugins, db, definition.site, item.value, templateParam);
-        else if(item.type === "function")
-            await createFunction(plugins, db, definition.site, item.value, templateParam, host);
-        else if(item.type === "site")             //details like title, email plugin,..
-            await createSite(db, definition, item.value);
-        else if(item.type === "emailtemplate"){          //like email templates and such.
-            item.value.site = definition.site;
-            await db.emailTemplates.add(item.value );
-        }
-        else if(item.type === "siteData"){          //like email templates and such.
-            item.value.site = definition.site;
-            await db.pluginSiteData.add(item.value );
+            else
+                templateParam = null;
+            if(item.type === "view")
+                record = await createView(db, definition.site, item.value, templateParam);
+            else if(item.type === "page")
+                record = await createPage(db, definition.site, item.value, templateParam);
+            else if(item.type === "user") {
+                if(item.value.name === "admin"){
+                    item.value.name = definition.name;
+                    item.value.email = definition.email;
+                    item.value.password = definition.password;
+                }
+                record = await createUser(db, definition.site, item.value);
+            }
+            else if(item.type === "group")
+                record = await createGroup(db, definition.site, item.value);
+            else if(item.type === "plugin")
+                record = await module.exports.installPlugin(db, item.value.name, def.site. item.value.source);
+            else if(item.type === "connection")
+                record = await createConnection(plugins, db, definition.site, item.value, templateParam);
+            else if(item.type === "function")
+                record = await createFunction(plugins, db, definition.site, item.value, templateParam, host);
+            else if(item.type === "site")             //details like title, email plugin,..
+                record = await createSite(db, definition, item.value);
+            else if(item.type === "emailtemplate"){          //like email templates and such.
+                item.value.site = definition.site;
+                record = await db.emailTemplates.add(item.value );
+            }
+            else if(item.type === "siteData"){          //like email templates and such.
+                item.value.site = definition.site;
+                record = await db.pluginSiteData.add(item.value );
+            }
+            records.push(record);
         }
     }
+    catch(err){
+        await db.tryRollBack(records);
+        throw err;
+    }
+
+
 }
 
 /**
@@ -331,8 +350,13 @@ module.exports.create = async function(plugins, definition, host, asAdmin = true
 
     let db = plugins.db;
     let site = await db.sites.find(definition.site);
-    if(site && site.length > 0)
-        throw Error("The site name is already taken", 'siteExists');
+    if(site){
+        let err = Error("The site name is already taken");
+        err.name = "siteExists";
+        throw err;
+    }
+
+	
 
     if(definition.template) {
         let templateDef = await db.siteTemplates.find(definition.template);

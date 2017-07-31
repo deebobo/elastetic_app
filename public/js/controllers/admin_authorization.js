@@ -13,6 +13,7 @@ deebobo.controller('AdminAuthorizationController',
 
             $scope.groups = [];
 			$scope.users = [];
+			$scope.usersSelected = true;				//for the ui: this is the first tab that is selected.
 
 		
             //get data from site for scope
@@ -38,7 +39,7 @@ deebobo.controller('AdminAuthorizationController',
 			//html callbacks.
 			//--------------------------------------------------------------------------------------
 			
-			$scope.resetPwd = function(user){
+			$scope.resetPwd = function(user, ev){
 				var confirm = $mdDialog.confirm()
 					  .title('Reset password')
 					  .textContent('Are you certain you want to reset the password for ' + user.name)
@@ -73,7 +74,7 @@ deebobo.controller('AdminAuthorizationController',
 				
 				$mdDialog.show(confirm).then(function(result) {
 					var newUser = {email: result};
-					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/user/invite'}, newUser )      //get the list of groups that can view
+					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/user/invite', data: newUser} )      //get the list of groups that can view
 					.then(function (response) {
 							$scope.users.push(newUser);
 						},
@@ -82,7 +83,7 @@ deebobo.controller('AdminAuthorizationController',
 						}
 					);
 				}, function() {
-					messages.error(response.data);
+					//user cancedeld, don't do anything.
 				});
 			}
 			
@@ -119,20 +120,33 @@ deebobo.controller('AdminAuthorizationController',
 						}
 					);
 				}, function() {
-					messages.error(response.data);
+					//user canceled, don't do anything.
 				});
 			}
 			
 			$scope.deleteUser = function(user){
-				$http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/user/' + user._id})      //get the list of groups that can view
-				.then(function (response) {
-						$scope.users.splice($scope.users.indexOf(user), 1);
-					},
-					function (response) {
-						messages.error(response.data);
-					}
-				);
-			}
+                var confirm = $mdDialog.confirm()
+                    .title('Delete user')
+                    .textContent('Are you certain you want to delete user: ' + user.name)
+                    .ariaLabel('no')
+                    .targetEvent(ev)
+                    .ok('yes')
+                    .cancel('no');
+
+                $mdDialog.show(confirm).then(function() {
+                    $http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/user/' + user._id})      //get the list of groups that can view
+                        .then(function (response) {
+                                $scope.users.splice($scope.users.indexOf(user), 1);
+                            },
+                            function (response) {
+                                messages.error(response.data);
+                            }
+                        );
+                }, function() {
+                    //user canceled
+                });
+
+			};
 			
 			$scope.deleteGroup = function(group){
 				$http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/group/' + group.name})      //get the list of groups that can view

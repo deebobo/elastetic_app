@@ -1,93 +1,56 @@
 
 
-<div layout="row" layout-align="center center" >
+<div layout="column" layout-fill ng-cloak class="dbb_admin_page">
 
-    <div flex="80" layout="column" layout-align="center stretch">
+     <md-toolbar class="md-hue-3" layout="row">
+		<div class="md-toolbar-tools">
+			<span>Functions</span>
+		</div>
+		<div flex></div>
+		<md-button class="md-primary"
+				   ng-click="addFunction()">
+			<md-icon md-font-icon="fa-plus-circle" class="fa fa-lg"></md-icon>
+		</md-button>
+	</md-toolbar>
 
-        <md-toolbar class="md-table-toolbar md-default"
-                    layout="row">
-            <div class="md-toolbar-tools">
-                <span>Functions</span>
-            </div>
-            <div flex></div>
-            <md-button class="md-primary"
-                       ng-click="addFunction()">
-                <md-icon md-font-icon="fa-plus-circle" class="fa fa-lg"></md-icon>
-            </md-button>
-        </md-toolbar>
-
-        <md-list ng-cloak  layout="column">
-            <md-list-item class="secondary-button-padding" ng-repeat="func in functions" layout-align="center stretch" layout-fill layout="column">
-
-
-                <form ng-submit="save(func)" layout-align="center stretch" layout-fill layout="column" layout-padding="10%">
-
-
-                    <div layout="row" layout-align="start center">
-                        <div ng-if="func.isOpen == true" flex="95">
-
-                            <md-input-container flex layout-fill>
-                                <label for="name-{{func.name}}" >name </label>
-                                <input id="name-{{func.name}}" type="text" ng-model="func.name" class="form-control" ng-change="func.needsSave = true" ng-click="$event.stopPropagation()" />
-                                <md-tooltip >The name of the function</md-tooltip>
-                            </md-input-container>
-
-                        </div>
-
-                        <md-button class="md-button-toggle"
-                                   ng-click="func.isOpen = !func.isOpen"
-                                   aria-controls="funcs-btn-{{func.name}}"
-                                   aria-expanded="func.isOpen = !func.isOpen"
-                                   flex
-                                   style="min-width:30px"
-                                   >
-                            <div flex layout="row"
-                                 layout-align="end center">
-                                <div ng-if="!func.isOpen" flex="95" >
-                                    {{func.name}}
-                                </div>
-                                <span ng-if="func.warning">error</span>
-                                <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
-                                      ng-class="{'toggled' : func.isOpen}" ></span>
-                            </div>
-
-                        </md-button>
-                    </div>
+	<md-content>
+		<div ng-repeat="func in functions">
+			<form ng-submit="save(func)"
+				  layout="column">
+				<md-card>
+					<md-card-title>
+						<md-card-title-text>
+							<md-input-container flex layout-fill>
+								<label for="name-{{func.name}}" >name </label>
+								<input id="name-{{func.name}}" type="text" ng-model="func.name" class="form-control" ng-change="func.needsSave = true" ng-click="$event.stopPropagation()" />
+								<md-tooltip >The name of the function</md-tooltip>
+							</md-input-container>
+							<span ng-if="func.warning">error</span>
+						</md-card-title-text>
+					</md-card-title>
+					<md-card-content>
+						<md-input-container  class="md-block">
+							<label for="plugin-{{data.to}}" >plugin</label>
+							<md-select   ng-model="func.source" required ng-change="func.needsSave = true">
+								<md-option ng-value="x" ng-repeat="x in functionPlugins">{{ x.name }} ({{x.description}}) </md-option>
+							</md-select>
+							<md-tooltip >Select the function plugin.</md-tooltip>
+						</md-input-container>
 
 
+						<pluginconfigurator plugin="func.source" value="func"/>
 
+					</md-card-content>
+					<md-card-actions layout="row" layout-align="end center">
+						<md-button class="md-primary"
+								   ng-click="delete($index, func, $event)">delete</md-button>
 
+						<md-button type="submit" ng-if="func.needsSave === true">save</md-button>
 
-                    <div ng-show="func.isOpen == true" layout="column">
+					</md-card-actions>
+				</md-card>
 
-                        <span ng-if="func.warning">func.warning</span>
-
-
-                        <md-input-container  class="md-block">
-                            <label for="plugin-{{data.to}}" >plugin</label>
-                            <md-select   ng-model="func.source" required ng-change="func.needsSave = true">
-                                <md-option ng-value="x" ng-repeat="x in functionPlugins">{{ x.name }} ({{x.description}}) </md-option>
-                            </md-select>
-                            <md-tooltip >Select the function plugin.</md-tooltip>
-                        </md-input-container>
-
-
-                        <pluginconfigurator plugin="func.source" value="func"/>
-
-
-
-                        <div layout="row" layout-align="end center">
-                            <md-button class="md-primary"
-                                       ng-click="delete($index, func, $event)">delete</md-button>
-
-                            <input type="submit" value="save"
-                                   ng-if="func.needsSave === true"/>
-                        </div>
-
-                    </div>
-                </form>
-            </md-list-item>
-        </md-list>
-
-    </div>
+			</form>
+		</div>
+	</md-content>
 </div>

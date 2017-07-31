@@ -4,6 +4,7 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+
 deebobo.directive('dbbMap', ['$timeout',
         function ($timeout) {
         return {
@@ -18,6 +19,17 @@ deebobo.directive('dbbMap', ['$timeout',
                 mapType: '=mapType'
             },
             link: function(scope, element, attrs) {
+
+                /**
+                 * V3 lost this function, so we add it again.
+                 */
+                if (!google.maps.Polyline.prototype.getBounds) {
+                    google.maps.Polyline.prototype.getBounds = function () {
+                        var bounds = new google.maps.LatLngBounds();
+                        this.getPath().forEach(function (element, index) { bounds.extend(new google.maps.LatLng(element.lat(), element.lng())); });
+                        return bounds;
+                    }
+                }
 
                 function addWatches(){
                     scope.$watch('zoom', function(newValue, oldValue) {

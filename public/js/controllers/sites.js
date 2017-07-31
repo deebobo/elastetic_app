@@ -77,7 +77,10 @@ deebobo.controller('sitesController', ['$scope', '$location', 'siteService', '$h
                     // handle error
                     .catch(function (err) {
                         $scope.error = true;
-                        $scope.errorMessage = err;
+                        if(err)
+                            $scope.errorMessage = err;
+                        else
+                            $scope.errorMessage = "unknown error";
                         $scope.disabled = false;
                     });
             }

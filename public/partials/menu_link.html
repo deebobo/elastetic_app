@@ -1,5 +1,6 @@
-<md-button class="{{section.icon}}" ui-sref-active="active"
+<md-button  ui-sref-active="active"
   ng-click="select()">
+  <md-icon md-font-icon="{{section.icon}}"></md-icon>
   {{section | humanizeDoc}}
   <span  class="md-visually-hidden "
     ng-if="isSelected()">

@@ -14,7 +14,7 @@ async function preparePlugin(pluginName, rec, plugins){
         await plugin.create(rec.content);                                //make certain that everything is set up correctly for the plugin.
         await plugin.close();                                   //close it again, don't want to keep 1000+ connections open at the same time.
     }
-};
+}
 
 
 /* create a connection */
@@ -26,7 +26,7 @@ module.exports.create = async function(plugins, rec, pluginName) {
     }
     catch (err){
         winston.log("warning", err);
-        newRec.warning = err;
+        rec.warning = err;
         newRec = await db.connections.update(rec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
     }
     return newRec;
@@ -41,8 +41,8 @@ module.exports.update = async function(plugins, rec, pluginName){
     }
     catch (err){
         winston.log("warning", err);
-        newRec.warning = err;
-        newRec = await db.connections.update(newRec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
+        rec.warning = err;
+        newRec = await db.connections.update(rec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
     }
     return newRec;
 };

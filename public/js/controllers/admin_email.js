@@ -14,6 +14,8 @@ deebobo.controller('AdminEmailController',
 
 
             $scope.mailConfig = {};
+            $scope.plugin = {name: ""};
+            $scope.emailPlugins = [];
 
 
 			

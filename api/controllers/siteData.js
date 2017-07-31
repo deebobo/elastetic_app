@@ -16,7 +16,7 @@ module.exports.get = async function(req, res)
         if(result)
             res.status(200).json(result.data);
         else
-            res.status(204);
+            res.status(204).send();
     }
     catch(err){
         winston.log("error", err);

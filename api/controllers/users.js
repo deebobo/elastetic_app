@@ -97,15 +97,22 @@ module.exports.removeFromGrp = async function(req, res) {
 
 module.exports.invite = async function(req, res){
 	try{
+        req.checkBody('email', 'Please provide a valid email to send the invitation to').isEmail();
+
+        let errors = req.validationErrors();
+        if (errors) {
+            res.send(errors, 400);
+            return;
+        }
         let plugins = await req.app.get('plugins');
 		let db = plugins.db;
-		let mailer = await plugins.getMailHandlerDefFor(req.params.site);
+		let mailer = await plugins.getMailHandlerFor(req.params.site);
 		if(mailer){
 			let template = await db.emailTemplates.find("invite", req.params.site);
 			if(template)
-				mailer.send(req.params.site, req.body.email, template.subject, template.body);
+				await mailer.send(db, req.params.site, req.body.email, template.subject, template.body);
 			else
-				mailer.send(req.params.site, req.body.email, "invitation", "you have been invited to join the deebobo community.");
+                await mailer.send(db, req.params.site, req.body.email, "invitation", "you have been invited to join the deebobo community.");
 		}
 		else
 		    res.status(400).json({message: "email handler plugin not set up correctly"});

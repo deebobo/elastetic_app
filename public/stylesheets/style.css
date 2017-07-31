@@ -8,16 +8,10 @@ a {
 }
 
 
-/* for the main/root div element */
-.fill-height{
-    display: flex;
-    flex: 1;
-    min-height: 100%;
-}
-
-.fill-height > div{
-    min-height: 100%;
-    display: flex;
+/* for the root element of administration pages */
+.dbb_admin_page{
+    padding-left: 5%;
+    padding-right: 5%
 }
 
 

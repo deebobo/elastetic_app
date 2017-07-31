@@ -11,6 +11,7 @@ angular.module("deebobo").controller('googleMapViewController', [
     function ($scope, connectionDataService, messages, $http, $stateParams, $mdSidenav, dbbMapService) {
 
         var particle = new Particle();
+		var connections = null;										//store ref to all the connections, so we can load the data again.
 
         $scope.mapCenter = [43.6650000, -79.4103000];
         $scope.zoom = 8;
@@ -35,6 +36,9 @@ angular.module("deebobo").controller('googleMapViewController', [
 
         $scope.devices = {};                         //a dict of routes per device, so we can load the data quickly.
         $scope.isOpen = false;
+		$scope.Start = 0;							//start & end time of data for filtering.
+		$scope.End = 0;
+		$scope.filter = { from: {date: 0, time: 0}, to: {date: 0, time: 0} };
 
         /**
          * if the connection is a particle.io connection, then register an event stream for each device.
@@ -69,8 +73,9 @@ angular.module("deebobo").controller('googleMapViewController', [
         //load the list of connections, so we can query every connection for data.
         $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
+					connections = response.data;
                     response.data.forEach((connection) => {
-                        loadRoutes(connection);
+                        loadRoutes(connection, {});
                         tryRegisterParticleEventStream(connection);
                     })
                 },
@@ -80,9 +85,11 @@ angular.module("deebobo").controller('googleMapViewController', [
             );
 
         //retrieves all the routes from the server async and renders the data.
-        function loadRoutes(connection){
+        function loadRoutes(connection, params){
+			params.pagesize = 50;
             function loadRouteSection(page){
-                connectionDataService.get(connection._id, {page:page, pagesize:50}).then(
+				params.page = page;
+                connectionDataService.get(connection._id, params).then(
                     function(data) {
                         storeRoutePoints(data);
                         if(data.length === 50)                                   //as long as we have a full record set, try to get a next set.
@@ -119,23 +126,48 @@ angular.module("deebobo").controller('googleMapViewController', [
                 $scope.devices[point.device] = newList;
                 $scope.routes.push(newList);
             }
+			var time = new Date(point.time);
+			if(time < $scope.Start)
+				$scope.Start = time;
+			if(time > $scope.End)
+				$scope.End = time;
         }
 
 
         function fit_map_to_devices() {
             // make sure all the markers are visible on the map
             var bounds = new google.maps.LatLngBounds();
-            for (var route in $scope.routes) {
-                if(route.route)
+			var routes = $scope.routes;
+			var found = false;
+            for (var i=0; i < routes.length; i++) {
+				var route = routes[i];
+                if(route.route){
                     bounds.union(route.route.getBounds());
+					found = true;
+				}
             }
-            map.fitBounds(bounds);
+			if(found)
+				map.fitBounds(bounds);
         }
 
 
         $scope.togglerFilterMenu = function(){
             $mdSidenav("filterMenu").toggle();
-        }
+        };
+		
+		//only show the data that matches the filter.
+		$scope.applyFilter = function(){
+			params = {from: $scope.filter.from.date + $scope.filter.from.time, to: $scope.filter.to.date + $scope.filter.to.time};
+			connections.forEach((connection) => {
+				loadRoutes(connection, params);
+			});
+		};
+
+        $scope.openMenu = function($mdMenu, ev) {
+            originatorEv = ev;
+            $mdMenu.open(ev);
+        };
+
 
     }]);
 

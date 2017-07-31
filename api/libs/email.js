@@ -28,14 +28,14 @@ function replaceParams(template, user, site){
  * @returns {Promise.<void>}
  */
  module.exports.sendEmailWithLink = async function (site, user, pluginMan, uri, templateName) {
-	db = pluginMan.db;
+	let db = pluginMan.db;
 	let template = await db.emailTemplates.find(templateName, site.name);
 	if(template){
 		let mailhandler = await pluginMan.getMailHandlerFor(site.name);
 		if(mailhandler){
 			let body = replaceParams(template.body, user, site).replace(/{{activationlink}}/g, urljoin(uri, user.generateJwt()));
 			let subject = replaceParams(template.subject, user, site);
-			return mailhandler.send(site.name, user.email, subject, body);
+			return mailhandler.send(db, site.name, user.email, subject, body);
 		} 
 	}
 	else
@@ -51,7 +51,7 @@ module.exports.sendMail = async function (site, user, pluginMan, templateName){
 		if(mailhandler){
 			let body = replaceParams(template.body, user, site);
 			let subject = replaceParams(template.subject, user, site);
-			mailhandler.send(site.name, user.email, subject, body);
+			mailhandler.send(db, site.name, user.email, subject, body);
 		} 
 	}
     else

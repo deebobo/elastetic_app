@@ -1,173 +1,131 @@
-<div layout="row" layout-align="center center" >
+<div layout="column" layout-fill ng-cloak class="dbb_admin_page">
+
+    <md-toolbar class="md-hue-3" layout="row">
+        <div class="md-toolbar-tools">
+            <span>Authorization</span>
+        </div>
+        <div flex></div>
+        <md-button class="md-primary"
+                   ng-click="usersSelected ? addUser($ev) : addGroup($ev)">
+            <md-icon md-font-icon="fa-plus-circle" class="fa fa-lg"></md-icon>
+        </md-button>
+    </md-toolbar>
+
+    <md-tabs md-border-bottom flex>
+
+        <md-tab label="users"
+                md-on-select="usersSelected = true">
+
+            <md-content class="md-padding">
+
+                <div ng-repeat="user in users">
+                    <form ng-submit="saveUser(user)"
+                          layout="column">
+                        <md-card>
+                            <md-card-title>
+                                <md-input-container flex layout-fill>
+                                    <label for="name-{{user.name}}" >name </label>
+                                    <input id="name-{{user.name}}" type="text" ng-model="user.name" class="form-control" ng-change="user.needsSave = true" ng-click="$event.stopPropagation()" />
+                                    <md-tooltip >The name of the user</md-tooltip>
+                                </md-input-container>
+                            </md-card-title>
+                            <md-card-content>
+                                <md-input-container flex layout-fill>
+                                    <label for="email-{{user.email}}" >email </label>
+                                    <input id="email-{{user.email}}" type="text" ng-model="user.email" class="form-control" ng-change="user.needsSave = true"  />
+                                    <md-tooltip >The email address of the user</md-tooltip>
+                                </md-input-container>
 
 
 
 
-
-    <div flex="80" layout="column" layout-align="center stretch">
-
-        <md-toolbar class="md-table-toolbar md-default" layout="row">
-            <div class="md-toolbar-tools">
-                <span>Authorization</span>
-            </div>
-            <!--<div flex></div>
-            <md-button class="md-primary"
-                       ng-click="addConnection()">
-                <md-icon md-font-icon="fa-plus-circle" class="fa fa-lg"></md-icon>
-            </md-button>-->
-        </md-toolbar>
-
-        <md-tabs md-dynamic-height md-border-bottom>
-
-            <md-tab label="users">
-                <md-content class="md-padding">
-
-                    <div>
-                        <md-button class="md-primary"
-                                   ng-click="addUser($ev)">Add user</md-button>
-                    </div>
-
-                    <md-list ng-cloak layout="column">
-                        <md-list-item class="secondary-button-padding" ng-repeat="user in users" layout-align="center stretch" layout-fill layout="column">
-
-                            <form ng-submit="saveUser(user)" layout-align="center stretch" layout-fill layout="column" layout-padding="10%">
-
-                                <div layout="row" layout-align="start center">
-                                    <div ng-if="user.isOpen == true" flex="90">
-
-                                        <md-input-container flex layout-fill>
-                                            <label for="name-{{user.name}}" >name </label>
-                                            <input id="name-{{user.name}}" type="text" ng-model="user.name" class="form-control" ng-change="user.needsSave = true" ng-click="$event.stopPropagation()" />
-                                            <md-tooltip >The name of the user</md-tooltip>
-                                        </md-input-container>
-
-                                    </div>
-
-                                    <md-button class="md-button-toggle"
-                                               ng-click="user.isOpen = !user.isOpen"
-                                               aria-controls="user-btn-{{user.name}}"
-                                               flex
-                                               aria-expanded="user.isOpen = !user.isOpen">
-
-                                        <div flex layout="row"
-                                             layout-align="end center" >
-
-                                            <div flex="90"
-                                                 ng-if="user.isOpen != true">
-                                                {{user.name}}
-                                            </div>
-                                            <span aria-hidden="true" class="fa fa-chevron-down md-toggle-icon"
-                                                  ng-class="{'toggled' : user.isOpen}"></span>
-                                        </div>
-                                    </md-button>
-                                </div>
-
-                                <div ng-show="user.isOpen == true" layout="column">
-
-                                    <md-input-container flex >
-                                        <label for="email-{{user.email}}" >email </label>
-                                        <input id="email-{{user.email}}" type="text" ng-model="user.email" class="form-control" ng-change="user.needsSave = true"  />
-                                        <md-tooltip >The email address of the user</md-tooltip>
-                                    </md-input-container>
-
-
-
-
-                                        <md-chips ng-model="user.groups"
-                                                  md-transform-chip="checkGroupChip(user, $chip)"
-                                                  md-on-add="groupAddedTo(user, $chip)"
-                                                  md-on-remove="groupRemovedFrom(user, $chip)"
-                                                  delete-button-label="Remove Tag"
-                                                  delete-hint="Press delete to remove tag">
-                                            <md-chip-template>
+                                <md-chips ng-model="user.groups"
+                                          md-transform-chip="checkGroupChip(user, $chip)"
+                                          md-on-add="groupAddedTo(user, $chip)"
+                                          md-on-remove="groupRemovedFrom(user, $chip)"
+                                          delete-button-label="Remove Tag"
+                                          delete-hint="Press delete to remove tag">
+                                    <md-chip-template>
                                             <span>
                                               <strong>{{$chip.name}}</strong>
                                             </span>
-                                            </md-chip-template>
+                                    </md-chip-template>
 
-                                            <md-autocomplete
-                                                    md-selected-item="user.selectedItem"
-                                                    md-search-text="user.searchText"
-                                                    md-items="item in groups"
-                                                    md-item-text="item.name"
-                                                    placeholder="Search for a group">
-                                                <span md-highlight-text="user.searchText">{{item.name}}</span>
-                                            </md-autocomplete>
-                                        </md-chips>
-
-
-
-
+                                    <md-autocomplete
+                                            md-selected-item="user.selectedItem"
+                                            md-search-text="user.searchText"
+                                            md-items="item in groups"
+                                            md-item-text="item.name"
+                                            placeholder="Search for a group">
+                                        <span md-highlight-text="user.searchText">{{item.name}}</span>
+                                    </md-autocomplete>
+                                </md-chips>
+                            </md-card-content>
+                            <md-card-actions layout="row" layout-align="end center">
 
 
-                                    <div layout="row" layout-align="end center">
-                                        <md-button class="md-primary"
-                                                   ng-click="deleteUser(user)">delete user</md-button>
+                                <md-button class="md-primary"
+                                           ng-click="deleteUser(user)">delete</md-button>
 
-                                        <md-button class="md-primary"
-                                                   ng-click="resetPwd(user)">reset password</md-button>
+                                <md-button class="md-primary"
+                                           ng-click="resetPwd(user, $ev)">reset password</md-button>
 
-                                        <input type="submit" value="save"
-                                               ng-if="user.needsSave === true"/>
-                                    </div>
-
-                                </div>
-
-                            </form>
-
-                        </md-list-item>
-
-                    </md-list>
+                                <md-button type="submit"
+                                            ng-if="user.needsSave === true">
+                                    Save
+                                </md-button>
 
 
-                </md-content>
-            </md-tab>
+                            </md-card-actions>
+                        </md-card>
+
+                    </form>
+                </div>
+            </md-content>
+        </md-tab>
 
 
-            <md-tab label="groups">
-                <md-content class="md-padding">
+        <md-tab label="groups"
+                md-on-select="usersSelected = false">
+            <md-content class="md-padding">
 
-                    <md-button class="md-primary"
-                               ng-click="addGroup($ev)">Add group</md-button>
 
-                    <md-list ng-cloak layout="column">
-                        <md-list-item  ng-repeat="group in groups" layout-align="center stretch" layout-fill layout="column">
+                <md-list ng-cloak layout="column">
+                    <md-list-item  ng-repeat="group in groups" layout-align="center stretch" layout-fill layout="column">
 
-                            <form ng-submit="saveGroup(group)" >
+                        <form ng-submit="saveGroup(group)" >
 
-                                <div layout="row"  layout-align="center start" >
-                                    <md-input-container flex="60" >
-                                        <label for="name-{{group._id}}" >name</label>
-                                        <input type="text" id="name-{{group._id}}" ng-model="group.name" ng-change="group.needsSave = true">
-                                        </input>
-                                        <md-tooltip >The name of the group</md-tooltip>
-                                    </md-input-container>
+                            <div layout="row"  layout-align="center start" >
+                                <md-input-container flex="60" >
+                                    <label for="name-{{group._id}}" >name</label>
+                                    <input type="text" id="name-{{group._id}}" ng-model="group.name" ng-change="group.needsSave = true">
+                                    </input>
+                                    <md-tooltip >The name of the group</md-tooltip>
+                                </md-input-container>
 
-                                    <md-input-container flex="40" >
-                                        <label for="viewGroup-{{group._id}}" >view group</label>
-                                        <md-select id="viewGroup-{{group._id}}" ng-model="group.level" ng-change="group.needsSave = true">
-                                            <md-option value="admin">admin</md-option>
-                                            <md-option value="edit">edit</md-option>
-                                            <md-option value="view">view</md-option>
-                                            <md-option value="public">public</md-option>
-                                        </md-select>
-                                        <md-tooltip >Select the group that newly registered users will be assigned to.</md-tooltip>
-                                    </md-input-container>
+                                <md-input-container flex="40" >
+                                    <label for="viewGroup-{{group._id}}" >view group</label>
+                                    <md-select id="viewGroup-{{group._id}}" ng-model="group.level" ng-change="group.needsSave = true">
+                                        <md-option value="admin">admin</md-option>
+                                        <md-option value="edit">edit</md-option>
+                                        <md-option value="view">view</md-option>
+                                        <md-option value="public">public</md-option>
+                                    </md-select>
+                                    <md-tooltip >Select the group that newly registered users will be assigned to.</md-tooltip>
+                                </md-input-container>
 
-                                    <input type="submit" value="save"
-                                           ng-if="group.needsSave === true"/>
+                                <input type="submit" value="save"
+                                       ng-if="group.needsSave === true"/>
 
-                                </div>
+                            </div>
 
-                            </form>
+                        </form>
 
-                        </md-list-item>
+                    </md-list-item>
 
-                    </md-list>
-                </md-content>
-            </md-tab>
+                </md-list>
+            </md-content>
+        </md-tab>
 
-        </md-tabs>
-    </div>
-
+    </md-tabs>
 </div>

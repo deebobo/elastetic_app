@@ -15,9 +15,9 @@ const winston = require('winston');
  * @returns {Promise.<*>}
  */
 module.exports.create = async function(plugins, pluginName, rec, host){
+    let db = plugins.db;
+    let newRec = await db.functions.add(rec);
     if(pluginName in plugins.plugins) {
-        let db = plugins.db;
-        let newRec = await db.functions.add(rec);
         let plugin = plugins.plugins[pluginName].create();
         try {
             if (plugin.create)             //try to create the function after storing the def, cause the plugin might need the id of the newly ceated record. also: if the create fails, it is still stored for the user
@@ -26,19 +26,19 @@ module.exports.create = async function(plugins, pluginName, rec, host){
         }
         catch(err){
             winston.log("warning", err);
-            newRec.warning = err;
-            newRec = await db.functions.update(newRec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
+            rec.warning = err;
+            newRec = await db.functions.update(rec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
         }
-        return newRec;
     }
-    else
-        throw Error("unknown function name: " + pluginName);
+    else if(pluginName)
+        winston.log('error', "unknown function name", pluginName);
+    return newRec;
 };
 
 module.exports.update = async function (plugin, pluginName, rec){
+    rec.warning = "";                                                       //reset any warnings before saving
+    let newRec = await db.functions.update(req.params.funcInstance, rec);
     if(pluginName in plugins.plugins) {
-        rec.warning = "";                                                       //reset any warnings before saving
-        let newRec = await db.functions.update(req.params.funcInstance, rec);
         let db = plugins.db;
         let plugin = plugins.plugins[pluginName].create();
         try {
@@ -48,11 +48,11 @@ module.exports.update = async function (plugin, pluginName, rec){
         }
         catch (err) {
             winston.log("warning", err);
-            newRec.warning = err;
-            newRec = await db.functions.update(newRec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
+            rec.warning = err;
+            newRec = await db.functions.update(rec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
         }
-        return newRec;
     }
     else
         throw Error("unknown function name: " + pluginName);
+    return newRec;
 };

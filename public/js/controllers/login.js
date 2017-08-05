@@ -40,7 +40,7 @@ deebobo.controller('loginController', ['$scope', '$location', '$stateParams', 'A
         .then(function () {
             $location.path('/' + site);
             $scope.disabled = false;
-            $scope.loginForm = {};
+            //$scope.loginForm = {};
         })
         // handle error
         .catch(function (err) {

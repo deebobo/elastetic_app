@@ -119,6 +119,8 @@ class MySqlDataStore {
             res += res.length > 0 ? ' and ' : '' + 'device = ' + filter.device;
         if(filter.hasOwnProperty('field') && filter.field)
             res += res.length > 0 ? ' and ' : '' + 'field = ' + filter.field;
+        if(filter.hasOwnProperty('site') && filter.site)
+            res += res.length > 0 ? ' and ' : '' + 'site = ' + filter.site;
 
         if(res.length > 0)
             res = " WHERE " + res;
@@ -149,6 +151,26 @@ class MySqlDataStore {
         return new Promise((resolve, reject) => {
             if(this.con){
                 var sql = "SELECT * from " + connectionInfo.tableName + self._buildWhere(filter);
+                self.con.query(sql, function (err, result, fields) {
+                    if (err) {
+                        reject(err);
+                        winston.log("error", 'table query failed', sql);
+                    }
+                    else {
+                        resolve(result);
+                    }
+                });
+            }
+            else
+                reject("connection is not opened")
+        });
+    }
+
+    async getTimerange(connectionInfo, filter){
+        let self = this;
+        return new Promise((resolve, reject) => {
+            if(this.con){
+                var sql = "SELECT MIN(time), MAX(time) from " + connectionInfo.tableName + self._buildWhere(filter);
                 self.con.query(sql, function (err, result, fields) {
                     if (err) {
                         reject(err);

@@ -13,16 +13,48 @@ angular.module('common.directives', ['common.services']);
 
 var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap','ui.grid']);  //, 'ui-grid-move-columns', 'ui.grid.resizeColumns'
 
-deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider', '$filterProvider',
-    function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider, $filterProvider) {
+deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider', '$filterProvider', '$urlRouterProvider',
+    function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider, $filterProvider, $urlRouterProvider) {
         $locationProvider.hashPrefix('');
         $locationProvider.html5Mode(true);                  //don't use the # in the path
-        $stateProvider.state('home', {
-            url: '/',
-            templateUrl: 'partials/home.html',
-            access: {restricted: false}
+
+        $urlRouterProvider.rule(function($injector, $location) {
+
+            var path = $location.path();
+            var hasTrailingSlash = path[path.length-1] === '/';
+
+            if(hasTrailingSlash) {
+
+                //if last charcter is a slash, return the same url without the slash
+                var newPath = path.substr(0, path.length - 1);
+                return newPath;
+            }
+
         });
+
+
+        //abstract state for all site related urls. This is abstract to have a default root state, a non-abstract
+        //version of the root state redirects to the default page...
         $stateProvider.state('site', {
+            abstract: true,
+            resolve: {                                   //need to load
+                siteDetails: ['siteService', '$stateParams',
+                    function (siteService, $stateParams) {
+                        var res = siteService.get($stateParams);
+                        return res;
+                    }]
+            },
+            url: '/{site}',
+            // Note: abstract still needs a ui-view for its children to populate.
+            // You can simply add it inline here.
+            template: '<ui-view flex layout="row"/>',
+            access: {restricted: true}
+        });
+
+
+        //default page for the root url. Still abstract so that the default view can be loaded.
+        $stateProvider.state('site.homepage', {
+            abstract: true,
             resolve: {                                   //need to load
                 siteDetails: ['siteService', '$stateParams',
                     function (siteService, $stateParams) {
@@ -36,7 +68,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                         return temp;
                     }]
             },
-            url: '/{site}',
+            url: '',
             templateProvider: ['page', '$q', '$http', function (page, $q, $http) {
                 var deferred = $q.defer();
                 $http.get("plugins/" + page.plugin.client.partials[page.partial]).then(function(data) {
@@ -44,21 +76,51 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                 });
                 return deferred.promise;
             }],
-
-
-
             controllerProvider: ['page','$q', 'pluginService',  function (page, $q, pluginService) {
                 var deferred = $q.defer();
                 pluginService.loadSingle(page.plugin.client.scripts[0])
-                   .then(function(){ deferred.resolve(page.controller); });
+                    .then(function(){ deferred.resolve(page.controller); });
                 return deferred.promise;
             }],
-            //templateUrl: "plugins/_common/left_menu_bar_page/partials/site_home.html",
-            //Controller: "siteHomeController",
-            //templateUrl: 'partials/login.html',
-            //controller: 'siteHomeController',
             access: {restricted: true}
         });
+
+        $stateProvider.state('site.homepage.defaultview', {
+            resolve: {                                   //need to load
+                viewData: ['viewService', '$stateParams', 'siteDetails',
+                    function (viewService, $stateParams, siteDetails) {
+                        return viewService.get($stateParams.site, siteDetails.defaultView);
+                    }]
+            },
+            url: '',
+            views:{
+                content:{
+                    templateProvider: ['viewData', '$q', '$http', function (viewData, $q, $http) {
+                        var deferred = $q.defer();
+                        $http.get("plugins/" + viewData.plugin.client.partials[viewData.partial]).then(function(data) {
+                            deferred.resolve(data.data);
+                        });
+                        return deferred.promise;
+                    }],
+                    controllerProvider: ['viewData','$q', 'pluginService',  function (viewData, $q, pluginService) {
+                        var deferred = $q.defer();
+                        pluginService.load(viewData.plugin.client)
+                            .then(function(){ deferred.resolve(viewData.controller); });
+                        return deferred.promise;
+                    }]
+                }
+            },
+            access: {restricted: true}
+        });
+
+        //important: must be after site.homepage.defaultview, otherwise we can't go to root (site.homepage.defaultview picks up empty sitename)
+        $stateProvider.state('home', {
+            url: '/',
+            templateUrl: 'partials/home.html',
+            access: {restricted: false}
+        });
+
+
 
         $stateProvider.state('login', {
             url: '/login',
@@ -101,7 +163,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
         });
 
 
-        $stateProvider.state('site.general', {
+        $stateProvider.state('site.page.general', {
             url: '/administration/general',
             views:{
                 content: {
@@ -112,7 +174,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             access: {restricted: true}
         });
 
-        $stateProvider.state('site.connections', {
+        $stateProvider.state('site.page.connections', {
             url: '/administration/connections',
             views:{
                 content: {
@@ -124,7 +186,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
         });
 
 
-        $stateProvider.state('site.email', {
+        $stateProvider.state('site.page.email', {
             url: '/administration/email',
             views:{
                 content:{
@@ -135,7 +197,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             access: {restricted: true}
         });
 
-        $stateProvider.state('site.authorization', {
+        $stateProvider.state('site.page.authorization', {
             url: '/administration/authorization',
             views:{
                 content:{
@@ -146,7 +208,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             access: {restricted: true}
         });
 
-        $stateProvider.state('site.plugins', {
+        $stateProvider.state('site.page.plugins', {
             url: '/administration/plugins',
             views:{
                 content:{
@@ -157,7 +219,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             access: {restricted: true}
         });
 
-        $stateProvider.state('site.functions', {
+        $stateProvider.state('site.page.functions', {
             url: '/administration/function',
             views:{
                 content:{
@@ -169,7 +231,9 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
         });
 
 
+        //another abstract state so that the default view can be loaded when going to a page only.
         $stateProvider.state('site.page', {
+            abstract: true,
             resolve: {                                   //need to load
                 page: ['pageService', '$stateParams',
                     function (pageService, $stateParams) {
@@ -191,18 +255,48 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                 return deferred.promise;
             }],
             access: {restricted: false}
-        }).state('site.view', {
+        });
+
+
+        $stateProvider.state('site.page.defaultview', {
+            resolve: {                                   //need to load
+                viewData: ['viewService', '$stateParams', 'siteDetails',
+                    function (viewService, $stateParams, siteDetails) {
+                        return viewService.get($stateParams.site, siteDetails.defaultView);
+                    }]
+            },
+            url: '',
+            views:{
+                content:{
+                    templateProvider: ['viewData', '$q', '$http', function (viewData, $q, $http) {
+                        var deferred = $q.defer();
+                        $http.get("plugins/" + viewData.plugin.client.partials[viewData.partial]).then(function(data) {
+                            deferred.resolve(data.data);
+                        });
+                        return deferred.promise;
+                    }],
+                    controllerProvider: ['viewData','$q', 'pluginService',  function (viewData, $q, pluginService) {
+                        var deferred = $q.defer();
+                        pluginService.load(viewData.plugin.client)
+                            .then(function(){ deferred.resolve(viewData.controller); });
+                        return deferred.promise;
+                    }]
+                }
+            },
+            access: {restricted: true}
+        });
+
+
+        $stateProvider.state('site.page.view', {
             resolve: {                                   //need to load
                 viewData: ['viewService', '$stateParams',
                     function (viewService, $stateParams) {
                         return viewService.get($stateParams.site, $stateParams.view);
                     }]
             },
-            url: '/{page}/{view}',
+            url: '/{view}',
             views:{
                 content:{
-                    //controller: 'adminGeneralController',
-                    //templateUrl: 'partials/admin_gen.html',
                     templateProvider: ['viewData', '$q', '$http', function (viewData, $q, $http) {
                         var deferred = $q.defer();
                         $http.get("plugins/" + viewData.plugin.client.partials[viewData.partial]).then(function(data) {

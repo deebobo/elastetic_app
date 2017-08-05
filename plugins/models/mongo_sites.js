@@ -32,6 +32,7 @@ class Sites{
             sendHelloEmail: {type: Boolean, default: true},				//when true, a hello email is sent to newly registered users (if the email template exists)
             viewGroup: {type: mongoose.Schema.Types.ObjectId, ref: 'groups'},                   //provides quick reference to the default 'view' group for registering new users.
             homepage:  String,                                                                  //the name of the page to use as homepage. Don't need an object id, cause that is usually not yet created if the site is not yet there. But site + page name is uniuqe, so can easiliy search on this.
+            defaultView: String,                                                                //the default view that needs to be used for the site
             createdOn:{type: Date, default: Date.now()}
         });
         sitesSchema.virtual('name').get(function() {                                            //convenience function, so we also have the field 'name

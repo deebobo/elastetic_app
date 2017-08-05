@@ -13,8 +13,12 @@ deebobo.factory('menu', [
         var self;
 
         return self = {
+			
+			//calculate the points of interest
+			caclulate: function(data){
+			},
 
-            sections: [],
+            sections: sections,
 
             /**
              * the name of the homepage, filled in by app.js, used in case we don't have a stateparam.page
@@ -48,13 +52,18 @@ deebobo.factory('menu', [
             select: function (view) {
                 if(view ) {
                     if(view.hasOwnProperty('view'))  //it's a regular nested view
-                        $state.go( 'site.page.view', { site: $stateParams.site, page: $stateParams.page || self.homepage, view: view.view});
+                    {
+                        $state.go( 'site.view', { site: $stateParams.site, page: $stateParams.page || self.homepage, view: view.view});
+
+                    }
                     else if(view.hasOwnProperty('page'))        //go to a different page within this site.
+                    {
                         $state.go( 'site.page', {site: $stateParams.site, page: view.page});
-                    else if(view.hasOwnProperty('state'))
-                        $state.go(view.state, {site: $stateParams.site, page: $stateParams.page || self.homepage});
+                    }
                     else if(view.hasOwnProperty('url'))
-                        $location.path(view.url);
+                    {
+                        $state.go(view.url, {site: $stateParams.site});
+                    }
                     else{
                         console.log("invalid menu type");
                         return;

@@ -26,52 +26,23 @@
             <md-content layout-padding >
                 <div layout="column">
                     <span>From:</span>
-                    <div layout="column" flex>
-                        <span>Time:</span>
-                        <md-slider-container layout="row"  flex layout-align="start center" >
-                            <md-slider flex min="0" max="24" ng-model="filter.from.time" aria-label="red" id="from-time-slider">
-                            </md-slider>
-
-
-                            <md-menu>
-                                <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="openMenu($mdMenu, $event)">
-                                    <span class="caret"></span>
-                                </md-button>
-                                <md-menu-content width="4">
-                                    <md-menu-item>
-                                        <md-input-container  >
-                                            <input type="time" ng-model="filter.from.time" aria-label="red" aria-controls="from-time-input">
-                                        </md-input-container>
-                                    </md-menu-item>
-                                </md-menu-content>
-                            </md-menu>
-
-
-
-
-
-                        </md-slider-container>
+                    <div layout="column" flex  style="margin-left: 20px">
+                        <div layout="row" layout-align="center center">
+                            <span>Time:</span>
+                            <input type="time" ng-model="filter.from.time" aria-label="red" aria-controls="from-time-input" flex>
+                        </div>
+                        <md-slider flex min="0" max="24" ng-model="filter.from.time" aria-label="red" id="from-time-slider">
+                        </md-slider>
 
                     </div>
-                    <div layout="column" flex>
-                        <span>Date:</span>
-                        <md-slider-container layout="row"  flex layout-align="start center" >
-                            <md-slider flex min="{{Start}}" max="{{End}}" ng-model="filter.from.date" aria-label="red" id="from-date-slider">
-                            </md-slider>
+                    <div layout="column" flex style="margin-left: 20px">
+                        <div layout="row" layout-align="center center" >
+                            <span>Date:</span>
+                            <input type="date" ng-model="filter.from.date" aria-label="red" aria-controls="from-date-input" flex>
+                        </div>
+                        <md-slider flex min="{{Start}}" max="{{End}}" ng-model="filter.from.date" aria-label="red" id="from-date-slider">
+                        </md-slider>
 
-                            <md-menu>
-                                <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="openMenu($mdMenu, $event)">
-                                    <span class="caret"></span>
-                                </md-button>
-                                <md-menu-content width="4">
-                                    <md-menu-item>
-                                        <md-input-container  >
-                                            <input type="date" ng-model="filter.from.date" aria-label="red" aria-controls="from-date-input">
-                                        </md-input-container>
-                                    </md-menu-item>
-                                </md-menu-content>
-                            </md-menu>
-                        </md-slider-container>
                     </div>
 
                 </div>
@@ -79,50 +50,22 @@
 
                 <div layout="column">
                     <span>To:</span>
-                    <div layout="column" flex>
-
-
-                        <span>Time:</span>
-                        <md-slider-container layout="row"  flex layout-align="start center" >
-                            <md-slider flex min="0" max="24" ng-model="filter.to.time" aria-label="red" id="to-time-slider">
-                            </md-slider>
-
-                            <md-menu>
-                                <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="openMenu($mdMenu, $event)">
-                                    <span class="caret"></span>
-                                </md-button>
-                                <md-menu-content width="4">
-                                    <md-menu-item>
-                                        <md-input-container  >
-                                            <input type="time" ng-model="filter.to.time" aria-label="red" aria-controls="to-time-input">
-                                        </md-input-container>
-                                    </md-menu-item>
-                                </md-menu-content>
-                            </md-menu>
-
-
-                        </md-slider-container>
-
+                    <div layout="column" flex  style="margin-left: 20px">
+                        <div layout="row" layout-align="center center">
+                            <span>Time:</span>
+                            <input type="time" ng-model="filter.from.time" aria-label="red" aria-controls="from-time-input" flex>
+                        </div>
+                        <md-slider flex min="0" max="24" ng-model="filter.to.time" aria-label="red" id="to-time-slider"></md-slider>
                     </div>
-                    <div layout="column" flex>
-                        <span>Date:</span>
-                        <md-slider-container layout="row"  flex layout-align="start center" >
-                            <md-slider flex min="{{Start}}" max="{{End}}" ng-model="filter.to.date" aria-label="red" id="to-date-slider">
-                            </md-slider>
 
-                            <md-menu>
-                                <md-button aria-label="Open phone interactions menu" class="md-icon-button" ng-click="openMenu($mdMenu, $event)">
-                                    <span class="caret"></span>
-                                </md-button>
-                                <md-menu-content width="4">
-                                    <md-menu-item>
-                                        <md-input-container  >
-                                            <input type="time" ng-model="filter.to.date" aria-label="red" aria-controls="to-date-input">
-                                        </md-input-container>
-                                    </md-menu-item>
-                                </md-menu-content>
-                            </md-menu>
-                        </md-slider-container>
+
+
+                    <div layout="column" flex style="margin-left: 20px">
+                        <div layout="row" layout-align="center center" >
+                            <span>Date:</span>
+                            <input type="time" ng-model="filter.to.date" aria-label="red" aria-controls="to-date-input" flex>
+                        </div>
+                        <md-slider flex min="{{Start}}" max="{{End}}" ng-model="filter.to.date" aria-label="red" id="to-date-slider"></md-slider>
                     </div>
 
                 </div>

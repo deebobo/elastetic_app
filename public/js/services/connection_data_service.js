@@ -13,7 +13,8 @@ deebobo.factory('connectionDataService',
     ['$q', '$http', '$stateParams', function ($q, $http, $stateParams) {
 
         return ({                                                       // return available functions for use in controllers
-            get: get
+            get: get,
+            getTimeRange: getTimeRange
         });
 
 
@@ -39,6 +40,26 @@ deebobo.factory('connectionDataService',
                      method: "GET",
                      params: options
                     })     // send a post request to the server
+                .then(function (data) {                                      // handle success
+                        //controller file should still be loaded dynamically (if not yet done)
+                        if(data && data.status == 200){
+                            deferred.resolve(data.data);
+                        } else {
+                            deferred.reject(data.data);
+                        }
+                    },function (data) {                                                // handle error
+                        deferred.reject(data.data);
+                    }
+                );
+            return deferred.promise;
+        }
+
+        function getTimeRange(connectionId, options){
+            var deferred = $q.defer();
+            $http(  {url: '/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data/timerange',
+                method: "GET",
+                params: options
+            })     // send a post request to the server
                 .then(function (data) {                                      // handle success
                         //controller file should still be loaded dynamically (if not yet done)
                         if(data && data.status == 200){

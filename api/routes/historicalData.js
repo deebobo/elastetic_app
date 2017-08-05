@@ -14,4 +14,7 @@ router.get('/', ctrlHistData.get);
 //store historical data on this connection
 router.post('/', ctrlHistData.post);
 
+//get statistics about historical data stored by this connection
+router.get('/timerange', ctrlHistData.getTimerange);
+
 module.exports = router;

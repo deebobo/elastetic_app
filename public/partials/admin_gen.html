@@ -42,13 +42,18 @@
 
                             <md-input-container  class="md-block">
                                 <label for="homepage" >homepage</label>
-
                                 <md-select id="homepage" ng-model="site.homepage">
                                     <md-option ng-value="x.name" ng-repeat="x in pages">{{ x.name }}</md-option>
                                 </md-select>
+                                <md-tooltip >Select the page that will be shown by default when first logged in.</md-tooltip>
+                            </md-input-container>
 
-
-                                <md-tooltip >Select the page that will function as the homepage.</md-tooltip>
+                            <md-input-container  class="md-block">
+                                <label for="defaultView" >default view</label>
+                                <md-select id="defaultView" ng-model="site.defaultView">
+                                    <md-option ng-value="x.name" ng-repeat="x in views">{{ x.name }}</md-option>
+                                </md-select>
+                                <md-tooltip >Select the view that will be loaded in the homepage when first logged in.</md-tooltip>
                             </md-input-container>
 
                         </div>

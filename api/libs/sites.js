@@ -25,32 +25,32 @@ async function createHomepage(db, sitename, grps){
             pages: [{
                 name: 'General',
                 type: 'link',
-                url: 'site.general',
-                //url: 'site.page',
+                state: 'site.page.general',
+                //state: 'site.page',
                 icon: 'fa fa-wrench'
             }, {
                 name: 'Email',
                 type: 'link',
-                url: 'site.email',
+                state: 'site.email',
                 icon: 'fa fa-envelope'
             }, {
                 name: 'Authorization',
                 type: 'link',
-                url: 'site.authorization',
+                state: 'site.authorization',
                 icon: 'fa fa-user-circle'
             }, {
                 name: 'connections',
-                url: 'site.connections',
+                state: 'site.connections',
                 type: 'link',
                 icon: 'fa fa-cloud'
             }, {
                 name: 'functions',
-                url: 'site.functions',
+                state: 'site.functions',
                 type: 'link',
                 icon: 'fa fa-connectdevelop'
             }/*, {
              name: 'Plugins',
-             url: 'site.plugins',
+             state: 'site.plugins',
              type: 'link',
              icon: 'fa fa-plug'
              }*/]
@@ -288,13 +288,20 @@ async function applyTemplate(plugins, definition, template, host){
  * @param section
  */
 function prepareCode(section, pluginName, site){
-    for(path = 0; path < section.scripts.length; path++)
-        section.scripts[path] = "./plugins/" + site + "/" + pluginName + '/' + section.scripts[path]
-    if(section.hasOwnProperty('external')){
-        section.scripts.push.apply(section.scripts, section.external);
+    if(section.hasOwnProperty('scripts')) {
+        for (path = 0; path < section.scripts.length; path++)
+            section.scripts[path] = "./plugins/" + site + "/" + pluginName + '/' + section.scripts[path]
     }
-    for(path = 0; path < section.partials.length; path++)
-        section.partials[path] =  site + "/" + pluginName + '/' + section.partials[path]
+    if(section.hasOwnProperty('external')){
+        if(section.hasOwnProperty('scripts'))
+            section.scripts.push.apply(section.scripts, section.external);
+        else
+            section.scripts = section.external;
+    }
+    if(section.hasOwnProperty('partials')) {
+        for (path = 0; path < section.partials.length; path++)
+            section.partials[path] = site + "/" + pluginName + '/' + section.partials[path]
+    }
     if(section.hasOwnProperty('css')){
         for(path = 0; path < section.css.length; path++)
             section.css[path] = site + "/" + pluginName + '/' + section.css[path]
@@ -356,8 +363,6 @@ module.exports.create = async function(plugins, definition, host, asAdmin = true
         throw err;
     }
 
-	
-
     if(definition.template) {
         let templateDef = await db.siteTemplates.find(definition.template);
         if(!templateDef)
@@ -373,7 +378,7 @@ module.exports.create = async function(plugins, definition, host, asAdmin = true
         let adminRec = await db.groups.add(admins);
         let editorRec =await db.groups.add(editors);
 
-        let site = {_id: definition.site, title: definition.site, viewGroup: viewGroup._id, contactEmail: definition.email, homepage: 'home'};
+        let site = {_id: definition.site, title: definition.site, viewGroup: viewGroup._id, contactEmail: definition.email, homepage: 'home', defaultView: 'map'};
         await db.sites.add(site);
 
         let grps = asAdmin === true ? adminRec._id : viewGroup._id;

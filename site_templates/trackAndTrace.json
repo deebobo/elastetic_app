@@ -31,6 +31,7 @@
       "value": {
         "viewGroup": "viewers",
         "homepage": "home",
+        "defaultView": "map",
         "sendHelloEmail": true,
         "requestEmailConfirmation": true,
         "allowRegistration": true
@@ -71,30 +72,30 @@
                 {
                   "name": "General",
                   "type": "link",
-                  "url": "site.general",
+                  "state": "site.page.general",
                   "icon": "fa fa-wrench"
                 },
                 {
                   "name": "Email",
                   "type": "link",
-                  "url": "site.email",
+                  "state": "site.page.email",
                   "icon": "fa fa-envelope"
                 },
                 {
                   "name": "Authorization",
                   "type": "link",
-                  "url": "site.authorization",
+                  "state": "site.page.authorization",
                   "icon": "fa fa-user-circle"
                 },
                 {
                   "name": "connections",
-                  "url": "site.connections",
+                  "state": "site.page.connections",
                   "type": "link",
                   "icon": "fa fa-cloud"
                 },
                 {
                   "name": "functions",
-                  "url": "site.functions",
+                  "state": "site.page.functions",
                   "type": "link",
                   "icon": "fa fa-connectdevelop"
                 }

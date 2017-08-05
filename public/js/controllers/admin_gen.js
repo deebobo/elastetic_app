@@ -23,6 +23,15 @@ deebobo.controller('adminGeneralController',
                     messages.error(response.data);
                 }
             );
+
+            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/view'})      //get the list of views
+                .then(function (response) {
+                        $scope.views = response.data;
+                    },
+                    function (response) {
+                        messages.error(response.data);
+                    }
+                );
 			
 			$http({method: 'GET', url: '/api/site/' + $stateParams.site + '/group/view'})      //get the list of groups that can view
             .then(function (response) {
@@ -54,7 +63,7 @@ deebobo.controller('adminGeneralController',
 						messages.error(response.data);
 					}
 				);
-			}
+			};
 			
 			$scope.submitAppearance = function(skin){
 				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/skin', data: skin})      //get the list of groups that can view
@@ -65,7 +74,7 @@ deebobo.controller('adminGeneralController',
 						messages.error(response.data);
 					}
 				);
-			}
+			};
 			
 			$scope.upload = function(){
 				//todo: upload a skin

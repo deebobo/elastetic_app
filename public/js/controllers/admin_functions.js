@@ -5,11 +5,20 @@
  */
 'use strict'
 deebobo.controller('adminFunctionsController',
-    ['$scope', '$http', 'messages', '$stateParams', '$mdDialog', 'pluginService', '$q',
-        function ($scope, $http, messages, $stateParams, $mdDialog, pluginService, $q) {
+    ['$scope', '$http', 'messages', '$stateParams', '$mdDialog', 'pluginService', '$q', 'toolbar',
+        function ($scope, $http, messages, $stateParams, $mdDialog, pluginService, $q, toolbar) {
 
             //scope vars
             //--------------------------------------------------------------------------------------
+
+            toolbar.title = "functions";
+            toolbar.buttons = [
+                {   tooltip: "add a new function",
+                    icon: "fa fa-plus-circle",
+                    type: "font-icon",
+                    click: function(ev){ $scope.addFunction();}
+                }
+            ];
 
             $scope.functions = [];
 
@@ -23,7 +32,7 @@ deebobo.controller('adminFunctionsController',
                 var deferred = $q.defer();
                 if(recs && plugins) {
                     var promises = [];
-                    for (i = 0; i < recs.length; i++) {
+                    for (var i = 0; i < recs.length; i++) {
                         if(recs[i].source){
                             recs[i].template = "plugins/" + recs[i].source.config.partials[0];
                             recs[i].source = plugins.find(function(x){ return x._id === recs[i].source._id; });

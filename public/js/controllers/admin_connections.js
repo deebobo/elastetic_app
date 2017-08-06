@@ -7,11 +7,20 @@
 'use strict'
 
 deebobo.controller('adminConnectionsController',
-    ['$scope', '$http', 'messages', '$stateParams', '$mdDialog', 'pluginService', '$q',
-        function ($scope, $http, messages, $stateParams, $mdDialog, pluginService, $q) {
+    ['$scope', '$http', 'messages', '$stateParams', '$mdDialog', 'pluginService', '$q', 'toolbar',
+        function ($scope, $http, messages, $stateParams, $mdDialog, pluginService, $q, toolbar) {
 
             //scope vars
             //--------------------------------------------------------------------------------------
+
+            toolbar.title = "connections";
+            toolbar.buttons = [
+                {   tooltip: "add a new connection",
+                    icon: "fa fa-plus-circle",
+                    type: "font-icon",
+                    click: function(ev){ $scope.addConnection();}
+                }
+            ];
 
             $scope.connections = [];
 
@@ -25,7 +34,7 @@ deebobo.controller('adminConnectionsController',
                 var deferred = $q.defer();
                 if(recs && plugins) {
                     var promises = [];
-                    for (i = 0; i < recs.length; i++) {
+                    for (var i = 0; i < recs.length; i++) {
                         if(recs[i].plugin){
                             recs[i].template = "plugins/" + recs[i].plugin.config.partials[0];
                             recs[i].plugin = plugins.find(function(x){ return x._id === recs[i].plugin._id; });

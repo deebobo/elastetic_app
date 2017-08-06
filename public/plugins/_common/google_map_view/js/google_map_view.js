@@ -7,8 +7,17 @@
 
 
 angular.module("deebobo").controller('googleMapViewController', [
-    '$scope', 'connectionDataService', 'messages','$http', '$stateParams', '$mdSidenav', 'dbbMapService',
-    function ($scope, connectionDataService, messages, $http, $stateParams, $mdSidenav, dbbMapService) {
+    '$scope', 'connectionDataService', 'messages','$http', '$stateParams', '$mdSidenav', 'dbbMapService', 'toolbar',
+    function ($scope, connectionDataService, messages, $http, $stateParams, $mdSidenav, dbbMapService, toolbar) {
+
+        toolbar.title = "map";
+        toolbar.buttons = [
+            {   tooltip: "show the filter options",
+                icon: "fa fa-filter",
+                type: "font-icon",
+                click: function(ev){ $scope.togglerFilterMenu();}
+            }
+        ];
 
         var particle = new Particle();
 		var connections = null;										//store ref to all the connections, so we can load the data again.

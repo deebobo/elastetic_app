@@ -7,8 +7,11 @@
 
 
 angular.module("deebobo").controller('particlIODevicesViewController',
-    ['$scope', 'messages', '$http', '$stateParams', 'viewData',
-    function ($scope, messages, $http, $stateParams, viewData) {
+    ['$scope', 'messages', '$http', '$stateParams', 'viewData', 'toolbar',
+    function ($scope, messages, $http, $stateParams, viewData, toolbar) {
+
+        toolbar.title = "particle.io devices";
+        toolbar.buttons = [];
 
         $scope.devices = [];
 

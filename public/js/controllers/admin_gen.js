@@ -6,14 +6,16 @@
  */
 'use strict'
 deebobo.controller('adminGeneralController',
-    ['$scope', '$http', '$stateParams', 'messages', 'siteDetails', '$window',
-        function ($scope, $http, $stateParams, messages, siteDetails, $window) {
+    ['$scope', '$http', '$stateParams', 'messages', 'siteDetails', '$window', 'toolbar',
+        function ($scope, $http, $stateParams, messages, siteDetails, $window, toolbar) {
 
 			//scope vars
 			//--------------------------------------------------------------------------------------
 			$scope.skinNeedsSave = false;
 			$scope.siteNeedsSave = false;
 			$scope.site = siteDetails;							//site details comes from 'resolve' in ui-router (on app.js)
+            toolbar.title = "general configuration";
+            toolbar.buttons = [];
 
 			
 			$http({method: 'GET', url: '/api/site/' + $stateParams.site + '/page'})      //get the list of pages
@@ -91,9 +93,7 @@ deebobo.controller('adminGeneralController',
                 {name: "deep-orange", color: "#FF5722"},
                 {name: "brown", color: "#795548"},
                 {name: "grey", color: "#9E9E9E"},
-                {name: "blue-grey", color: "#607D8B"},
-                {name: "white", color: "#FFFFFF"},
-                {name: "black", color: "#000000"}
+                {name: "blue-grey", color: "#607D8B"}
 			];
 
 			

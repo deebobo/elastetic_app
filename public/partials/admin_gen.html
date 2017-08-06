@@ -1,12 +1,5 @@
 <div layout="column" layout-fill ng-cloak class="dbb_admin_page" >
 
-    <md-toolbar class="md-hue-3" layout="row">
-        <div class="md-toolbar-tools">
-            <span>General configuration</span>
-        </div>
-    </md-toolbar>
-
-
     <md-tabs md-dynamic-height md-border-bottom class="md-primary">
         <md-tab label="site" >
             <md-content class="md-padding">
@@ -97,8 +90,8 @@
                         <div flex-gt-sm="50" flex layout="column">
                             <md-input-container  class="md-block">
                                 <label for="themePrimary" >Primary color</label>
-                                <md-select id=themePrimary" ng-model="site.theme.primary" ng-change="siteNeedsSave = true">
-                                    <md-option ng-value="x.name" ng-repeat="x in colors"> <div layout="row"> <div style="height: 16px; width: 16px; background: {{x.color}}; margin-right: 4px"/> <span>{{ x.name }}</span>  </div>  </md-option>
+                                <md-select id=themePrimary" ng-model="site.theme.primary" ng-change="siteNeedsSave = true" >
+                                    <md-option ng-value="x.name" ng-repeat="x in colors" > <div layout="row"  > <div style="height: 16px; width: 16px; background: {{x.color}}; margin-right: 4px"/> <span>{{ x.name }}</span>  </div>  </md-option>
                                 </md-select>
                                 <md-tooltip >Select the primary color palette.</md-tooltip>
                             </md-input-container>

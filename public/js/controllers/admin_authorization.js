@@ -6,8 +6,8 @@
 'use strict'
 
 deebobo.controller('AdminAuthorizationController',
-    ['$scope', '$http', 'messages', '$mdDialog', '$stateParams',
-        function ($scope, $http, messages, $mdDialog, $stateParams) {
+    ['$scope', '$http', 'messages', '$mdDialog', '$stateParams', 'toolbar',
+        function ($scope, $http, messages, $mdDialog, $stateParams, toolbar) {
 
 			//scope vars
             //--------------------------------------------------------------------------------------
@@ -15,6 +15,14 @@ deebobo.controller('AdminAuthorizationController',
             $scope.groups = [];
 			$scope.users = [];
 			$scope.usersSelected = true;				//for the ui: this is the first tab that is selected.
+            toolbar.title = "authorization";
+            toolbar.buttons = [
+                {   tooltip: "add a new record",
+                    icon: "fa fa-plus-circle",
+                    type: "font-icon",
+                    click: function(ev){ $scope.usersSelected ? $scope.addUser(ev) : $scope.addGroup(ev);}
+                }
+            ];
 
 		
             //get data from site for scope

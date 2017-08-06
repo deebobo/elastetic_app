@@ -21,6 +21,8 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
         $provide.value('themeProvider', $mdThemingProvider);
 
 
+        //this is required to support client state urls that end with a dash.  if we dont' do this,
+        //then url like /site/  will try to go to a /site/page where page is empty.
         $urlRouterProvider.rule(function($injector, $location) {
 
             var path = $location.path();
@@ -51,6 +53,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             // Note: abstract still needs a ui-view for its children to populate.
             // You can simply add it inline here.
             template: '<ui-view flex layout="row"/>',
+            //sets the theme colors
             controller: function(themeProvider, $mdTheming, siteDetails){
                 themeProvider.theme('default')
                     .primaryPalette(siteDetails.theme.primary)

@@ -3,7 +3,7 @@
  * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
-
+'use strict'
 deebobo.controller('sitesController', ['$scope', '$location', 'siteService', '$http','messages', '$q',
     function ($scope, $location, siteService, $http, messages, $q) {
 
@@ -62,7 +62,7 @@ deebobo.controller('sitesController', ['$scope', '$location', 'siteService', '$h
                 $scope.disabled = true;
 
                 //make a copy of the template config params, cause each object has too many fields, that we don't want to send over again.
-                toConfigure = []
+                var toConfigure = []
                 for(var i = 0; i < $scope.toConfigure.length; i++){
                     var item = $scope.toConfigure[i];
                     toConfigure.push({ item: item.item.value.name, data: item.content, plugin: item.plugin  });

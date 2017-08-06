@@ -1,3 +1,5 @@
+'use strict'
+
 deebobo.controller('loginController', ['$scope', '$location', '$stateParams', 'AuthService', '$http', '$mdDialog',
   function ($scope, $location, $stateParams,  AuthService, $http, $mdDialog) {
 

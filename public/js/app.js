@@ -13,10 +13,13 @@ angular.module('common.directives', ['common.services']);
 
 var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap','ui.grid']);  //, 'ui-grid-move-columns', 'ui.grid.resizeColumns'
 
-deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider', '$filterProvider', '$urlRouterProvider',
-    function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider, $filterProvider, $urlRouterProvider) {
+deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider', '$filterProvider', '$urlRouterProvider', '$mdThemingProvider',
+    function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider, $filterProvider, $urlRouterProvider, $mdThemingProvider) {
         $locationProvider.hashPrefix('');
         $locationProvider.html5Mode(true);                  //don't use the # in the path
+        $mdThemingProvider.generateThemesOnDemand(true);
+        $provide.value('themeProvider', $mdThemingProvider);
+
 
         $urlRouterProvider.rule(function($injector, $location) {
 
@@ -48,6 +51,14 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             // Note: abstract still needs a ui-view for its children to populate.
             // You can simply add it inline here.
             template: '<ui-view flex layout="row"/>',
+            controller: function(themeProvider, $mdTheming, siteDetails){
+                themeProvider.theme('default')
+                    .primaryPalette(siteDetails.theme.primary)
+                    .accentPalette(siteDetails.theme.accent)
+                    .backgroundPalette(siteDetails.theme.background)
+                    .warnPalette(siteDetails.theme.warn);
+                $mdTheming.generateTheme('default');                //reload the themes
+            },
             access: {restricted: true}
         });
 
@@ -341,7 +352,6 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
         deebobo.filter = $filterProvider.register;
         deebobo.factory = $provide.factory;
         deebobo.service = $provide.service;
-
 
         deebobo.requires.push()
 

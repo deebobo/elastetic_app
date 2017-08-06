@@ -4,6 +4,8 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+'use strict'
+
 deebobo.controller('AdminEmailTemplatesController',
     ['$scope', 'messages', '$http', '$stateParams', '$mdDialog',
         function ($scope, messages, $http, $stateParams, $mdDialog) {

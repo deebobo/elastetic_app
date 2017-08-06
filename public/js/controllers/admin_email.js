@@ -3,6 +3,7 @@
  * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
+'use strict'
 
 deebobo.controller('AdminEmailController',
     ['$scope', 'messages', '$http', '$stateParams', '$mdDialog',

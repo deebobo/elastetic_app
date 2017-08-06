@@ -4,6 +4,8 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+'use strict'
+
 deebobo.controller('adminConnectionsController',
     ['$scope', '$http', 'messages', '$stateParams', '$mdDialog', 'pluginService', '$q',
         function ($scope, $http, messages, $stateParams, $mdDialog, pluginService, $q) {

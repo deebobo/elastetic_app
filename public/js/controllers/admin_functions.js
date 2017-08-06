@@ -3,7 +3,7 @@
  * copyright 2017 Deebobo.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
-
+'use strict'
 deebobo.controller('adminFunctionsController',
     ['$scope', '$http', 'messages', '$stateParams', '$mdDialog', 'pluginService', '$q',
         function ($scope, $http, messages, $stateParams, $mdDialog, pluginService, $q) {

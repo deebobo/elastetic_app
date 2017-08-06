@@ -33,6 +33,7 @@ class Sites{
             viewGroup: {type: mongoose.Schema.Types.ObjectId, ref: 'groups'},                   //provides quick reference to the default 'view' group for registering new users.
             homepage:  String,                                                                  //the name of the page to use as homepage. Don't need an object id, cause that is usually not yet created if the site is not yet there. But site + page name is uniuqe, so can easiliy search on this.
             defaultView: String,                                                                //the default view that needs to be used for the site
+            theme: Object,                                                                      //theming information. currently not structured, should contain: primary, accent, warn, background
             createdOn:{type: Date, default: Date.now()}
         });
         sitesSchema.virtual('name').get(function() {                                            //convenience function, so we also have the field 'name

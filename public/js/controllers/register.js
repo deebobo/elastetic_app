@@ -1,3 +1,4 @@
+'use strict'
 deebobo.controller('registerController', ['$scope', '$location', '$stateParams', 'AuthService', '$http',
     function ($scope, $location, $stateParams, AuthService, $http) {
 

@@ -110,17 +110,17 @@ class MySqlDataStore {
     _buildWhere(filter){
         let res = '';
         if(filter.hasOwnProperty('to')  && filter.to)
-            res += 'time <= ' + filter.to;
+            res += 'time <= "' + filter.to + '"';
         if(filter.hasOwnProperty('from') && filter.from)
-            res += res.length > 0 ? ' and ' : '' + 'time >= ' + filter.from;
+            res += (res.length > 0 ? ' and ' : '') + 'time >= "' + filter.from  + '"';
         if(filter.hasOwnProperty('source') && filter.source)
-            res += res.length > 0 ? ' and ' : '' + 'source = ' + filter.source;
+            res += (res.length > 0 ? ' and ' : '') + 'source = "' + filter.source + '"';
         if(filter.hasOwnProperty('device') && filter.device)
-            res += res.length > 0 ? ' and ' : '' + 'device = ' + filter.device;
+            res += (res.length > 0 ? ' and ' : '') + 'device = "' + filter.device + '"';
         if(filter.hasOwnProperty('field') && filter.field)
-            res += res.length > 0 ? ' and ' : '' + 'field = ' + filter.field;
+            res += (res.length > 0 ? ' and ' : '') + 'field = "' + filter.field + '"';
         if(filter.hasOwnProperty('site') && filter.site)
-            res += res.length > 0 ? ' and ' : '' + 'site = ' + filter.site;
+            res += (res.length > 0 ? ' and ' : '') + 'site = "' + filter.site + '"';
 
         if(res.length > 0)
             res = " WHERE " + res;
@@ -150,7 +150,7 @@ class MySqlDataStore {
         let self = this;
         return new Promise((resolve, reject) => {
             if(this.con){
-                var sql = "SELECT * from " + connectionInfo.tableName + self._buildWhere(filter);
+                var sql = "SELECT time, device, source, field, data from " + connectionInfo.tableName + self._buildWhere(filter);
                 self.con.query(sql, function (err, result, fields) {
                     if (err) {
                         reject(err);
@@ -170,7 +170,7 @@ class MySqlDataStore {
         let self = this;
         return new Promise((resolve, reject) => {
             if(this.con){
-                var sql = "SELECT MIN(time), MAX(time) from " + connectionInfo.tableName + self._buildWhere(filter);
+                var sql = "SELECT MIN(time) as min, MAX(time) as max from " + connectionInfo.tableName + self._buildWhere(filter);
                 self.con.query(sql, function (err, result, fields) {
                     if (err) {
                         reject(err);

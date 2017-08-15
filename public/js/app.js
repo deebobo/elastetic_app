@@ -55,11 +55,20 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             template: '<ui-view flex layout="row"/>',
             //sets the theme colors
             controller: function(themeProvider, $mdTheming, siteDetails){
-                themeProvider.theme('default')
-                    .primaryPalette(siteDetails.theme.primary)
-                    .accentPalette(siteDetails.theme.accent)
-                    .backgroundPalette(siteDetails.theme.background)
-                    .warnPalette(siteDetails.theme.warn);
+                if(!siteDetails.theme)
+                    siteDetails.theme = {};
+                if(!siteDetails.theme.primary)
+                    siteDetails.theme.primary = "blue";
+                themeProvider.theme('default').primaryPalette(siteDetails.theme.primary);
+                if(!siteDetails.theme.accent)
+                    siteDetails.theme.accent = "pink";
+                themeProvider.theme('default').accentPalette(siteDetails.theme.accent);
+                if(!siteDetails.theme.background)
+                    siteDetails.theme.background = "grey";
+                themeProvider.theme('default').backgroundPalette(siteDetails.theme.background);
+                if(!siteDetails.theme.warn)
+                    siteDetails.theme.warn = "deep-orange";
+                themeProvider.theme('default').warnPalette(siteDetails.theme.warn);
                 $mdTheming.generateTheme('default');                //reload the themes
             },
             access: {restricted: true}

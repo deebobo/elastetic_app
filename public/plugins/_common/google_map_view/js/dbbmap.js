@@ -158,7 +158,8 @@ deebobo.factory('dbbMapService',
     ['$q',  function ($q) {
 
         return ({                                                       // return available functions for use in controllers
-            addPointToRoute: addPointToRoute
+            addPointToRoute: addPointToRoute,
+            removeRoute: removeRoute
         });
 
 
@@ -174,6 +175,10 @@ deebobo.factory('dbbMapService',
                 path.push(point);
                 value.route.setPath(path);
             }
+        }
+
+        function removeRoute(value){
+            value.route.setMap(null);
         }
     }]
 );

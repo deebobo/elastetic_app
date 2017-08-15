@@ -14,6 +14,7 @@ As a site owner, I want to:
 	- connection to db with valid/invalid data
 	- a function to store data from particle into db
 	- groups
+	- theming: change colors
 - add:
 	- connection to particle with valid/invalid data
 	- connection to db with valid/invalid data 

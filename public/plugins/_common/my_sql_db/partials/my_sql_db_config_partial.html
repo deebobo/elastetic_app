@@ -26,18 +26,6 @@
     </md-input-container>
 
 
-    <md-input-container class="md-block">
-        <label for="tblname" >table name</label>
-        <input type="text" id="tblname" ng-model="value.content.tableName" ng-change="value.needsSave = true" flex></input>
-        <md-tooltip >The name of the table that will be used to store the historical data.</md-tooltip>
-    </md-input-container>
 
-    <md-input-container  class="md-block">
-        <md-checkbox ng-model="value.content.createTable" id="allowRegistration"
-                     ng-change="value.needsSave = true">
-            create table
-            <md-tooltip >When checked, the system will try to create the table after saving.</md-tooltip>
-        </md-checkbox>
-    </md-input-container>
 
 </div>

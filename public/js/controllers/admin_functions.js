@@ -48,6 +48,22 @@ deebobo.controller('adminFunctionsController',
                 return deferred.promise;
             }
 
+            function tryConvertPluginRef(rec, plugins){
+                var deferred = $q.defer();
+                if(rec && plugins) {
+                    if(rec.source){
+                        rec.template = "plugins/" + rec.source.config.partials[0];
+                        rec.source = plugins.find(function(x){ return x._id === rec.source._id; });
+                        pluginService.load(rec.source.config).then(function() {
+                            deferred.resolve();
+                        });
+                    }
+                }
+                else
+                    deferred.resolve();
+                return deferred.promise;
+            }
+
             //get data from site for scope
             //--------------------------------------------------------------------------------------
             $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/function'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
@@ -84,6 +100,8 @@ deebobo.controller('adminFunctionsController',
                 if(func.isNew === true){
                     $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/function', data: func})      //get the list of groups that can view
                         .then(function (response) {
+                                angular.copy(response.data, func);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
+                                tryConvertPluginRef(func, $scope.functionPlugins);
                                 func.needsSave = false;
                                 func.isNew = false;
                             },
@@ -95,6 +113,8 @@ deebobo.controller('adminFunctionsController',
                 else {
                     $http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/function/' + func._id, data: func})      //get the list of groups that can view
                         .then(function (response) {
+                                angular.copy(response.data, func);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
+                                tryConvertPluginRef(func, $scope.functionPlugins);
                                 func.needsSave = false;
                             },
                             function (response) {
@@ -105,7 +125,7 @@ deebobo.controller('adminFunctionsController',
             };
 
             $scope.delete = function(index, func, ev){
-
+                var list = $scope.functions;
                 // Appending dialog to document.body to cover sidenav in docs app
                 var confirm = $mdDialog.confirm()
                     .title('Delete')
@@ -119,7 +139,7 @@ deebobo.controller('adminFunctionsController',
                     if( !func.isNew ){                                                  //its a real record, needs to be deleted from the server.
                         $http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/function/' + func._id})      //get the list of groups that can view
                             .then(function (response) {
-                                    $scope.functions.splice(index, 1);
+                                    list.splice(index, 1);
                                 },
                                 function (response) {
                                     messages.error(response.data);
@@ -127,7 +147,7 @@ deebobo.controller('adminFunctionsController',
                             );
                     }
                     else
-                        $scope.functions.splice(index, 1);
+                        list.splice(index, 1);
 
                 }, function() {
 

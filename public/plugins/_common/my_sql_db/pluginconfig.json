@@ -1,0 +1,15 @@
+{
+  "comment": "description for the my-sql plugin",
+  "name": "my_sql_db",
+  "description": "connection to a my sql db.",
+  "version": "0.0.1",
+  "author": "Deebobo",
+  "type": "connection",
+  "config": {
+      "scripts": [
+      ],
+      "partials": [
+        "partials/my_sql_db_config_partial.html"
+      ]
+    }
+}

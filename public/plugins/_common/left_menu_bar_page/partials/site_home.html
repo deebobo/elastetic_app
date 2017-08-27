@@ -1,42 +1,34 @@
-<div  layout="column" flex>
-	<md-toolbar name="tt_main_toolbar" class="md-hue-2">
+<div layout="column" flex>
+
+	<md-toolbar name="md-toolbar-tools" class="md-hue-2">
 		<div class="md-toolbar-tools">
-			<md-button class="md-icon-button" aria-label="menu" ng-disabled="false"
+			<md-button class="md-icon-button" aria-label="menu"
 					   ng-click="toggleSidenav('left')">
+				<md-tooltip>Show the menu</md-tooltip>
 				<md-icon md-svg-icon="images/menu.svg"></md-icon>
 			</md-button>
 
 			<h2 md-truncate>{{site.title}}</h2>
-            <h2 md-truncate ng-if="toolbar.title">&nbsp;/&nbsp;</h2>
+			<h2 md-truncate ng-if="toolbar.title">&nbsp;/&nbsp;</h2>
 			<h2 md-truncate>{{toolbar.title}}</h2>
 
 
-            <ul class="toolbar-list" flex layout="row" layout-align="end center" style="margin:0px">
-                <li ng-repeat="btn in toolbar.buttons"
-                    style="list-style-type: none">
-                    <md-button class="md-primary"
-                               ng-click="toolbarBtnClicked(btn, $ev)"
-                               ng-class="btn.ng-class"
-                               aria-label="test"
-                               ng-if="btn.type === 'text'">
-                        <md-tooltip>{{btn.tooltip}}</md-tooltip>
-                        <md-icon>{{btn.caption}}</md-icon>
-                    </md-button>
+			<ul class="toolbar-list" flex layout="row" layout-align="end center" style="margin:0px">
+				<li ng-repeat="btn in toolbar.buttons"
+					style="list-style-type: none">
 
-                    <md-button class="md-icon-button"
-                               ng-click="toolbarBtnClicked(btn, $ev)"
-                               ng-if="btn.type === 'font-icon'">
-                        <md-tooltip>{{btn.tooltip}}</md-tooltip>
-                        <md-icon md-font-icon="{{btn.icon}}" style="font-size:24px" ></md-icon>
-                    </md-button>
-                </li>
-            </ul>
-            <md-divider></md-divider>
+					<md-button class="md-icon-button"
+							   ng-click="toolbarBtnClicked(btn, $ev)"
+							   ng-if="btn.type === 'font-icon' && (!btn.hasOwnProperty('ng_if') || btn.ng_if())">
+						<md-tooltip>{{btn.tooltip}}</md-tooltip>
+						<md-icon md-font-icon="{{btn.icon}}" style="font-size:24px" ></md-icon>
+					</md-button>
+				</li>
+			</ul>
+			<md-divider></md-divider>
 			<md-button class="md-icon-button" aria-label="account">
-				<md-icon md-svg-icon="images/site.svg" style="color: greenyellow;"></md-icon>
+				<md-icon md-svg-icon="images/site.svg" ></md-icon>
 			</md-button>
-
-
 
 		</div>
 	</md-toolbar>
@@ -50,7 +42,7 @@
 					<h1>Menu</h1>
 				</div>
 			</md-toolbar>
-			<md-content role="navigation">
+			<md-content role="navigation" >
 
 					<ul class="side-menu" >
 						<li ng-repeat="section in menu.sections" class="parent-list-item"

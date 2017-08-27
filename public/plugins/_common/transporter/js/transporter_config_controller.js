@@ -34,12 +34,4 @@ angular.module("deebobo").controller('extAdminFunctionsController',
                     );
             }
 
-            /**
-             * refreshes the token for the plugin. Only available if the record had already been saved.
-             * @param value
-             */
-            $scope.refresh_token = function(value){
-
-            }
-
         }]);

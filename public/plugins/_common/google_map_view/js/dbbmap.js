@@ -126,7 +126,7 @@ deebobo.directive('dbbMap', ['$timeout',
                         value.route = new google.maps.Polyline({   // this is the marker at the center of the accuracy circle
                                 path: value.path,
                                 geodesic: true,
-                                strokeColor: '#FF0000',
+                                strokeColor: value.color,
                                 strokeOpacity: 1.0,
                                 strokeWeight: 2
                             });
@@ -158,7 +158,8 @@ deebobo.factory('dbbMapService',
     ['$q',  function ($q) {
 
         return ({                                                       // return available functions for use in controllers
-            addPointToRoute: addPointToRoute
+            addPointToRoute: addPointToRoute,
+            removeRoute: removeRoute
         });
 
 
@@ -174,6 +175,10 @@ deebobo.factory('dbbMapService',
                 path.push(point);
                 value.route.setPath(path);
             }
+        }
+
+        function removeRoute(value){
+            value.route.setMap(null);
         }
     }]
 );

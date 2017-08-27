@@ -22,7 +22,7 @@ class Functions{
             site: String,
             source: {type: mongoose.Schema.Types.ObjectId, ref: 'plugins'},
             data: Object,
-            warnng: String,                                                     //stores errors/warnings that were generated while creating the function. These didn't cause a failure in the creation (function can be stored), but the setup went wrong, user should correct and retry
+            warning: String,                                                     //stores errors/warnings that were generated while creating the function. These didn't cause a failure in the creation (function can be stored), but the setup went wrong, user should correct and retry
             createdOn:{type: Date, default: Date.now()}
         });
         functionSchema.index({ source: 1, site: 1});        //fast access at name & site level
@@ -43,8 +43,24 @@ class Functions{
      */
     add(rec){
         //this._preparePlugin(rec);
-        let record = new this._functions(rec);
-        return record.save();
+        return new Promise((resolve, reject) => {
+            let record = new this._functions(rec);
+            record.save(function (err) {
+                if (err) {
+                    winston.log("error", 'create function failed', connectionInfo);
+                    reject(err);
+                }
+                else {
+                    record.populate("source", function(err, res){
+                        if(err){
+                            winston.log("error", 'create-populate function failed', connectionInfo);
+                            reject(err);
+                        }else
+                            resolve(res); }
+                    );
+                }
+            });
+        });
     }
 
     /**
@@ -60,7 +76,7 @@ class Functions{
      * was added
      */
     update(id, value){
-        return this._functions.findOneAndUpdate({"_id": id}, value).exec();
+        return this._functions.findOneAndUpdate({"_id": id}, value, {new: true}).populate('source').exec();
     }
 
     /** Get a list of all the available functions for a site.

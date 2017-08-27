@@ -21,13 +21,18 @@ module.exports.create = async function(plugins, pluginName, rec, host){
         let plugin = plugins.plugins[pluginName].create();
         try {
             if (plugin.create)             //try to create the function after storing the def, cause the plugin might need the id of the newly ceated record. also: if the create fails, it is still stored for the user
-                if (await plugin.create(plugins, newRec, host))    //the plugin could hvae changed the record, so it needs to be saved again. (ex: particle io stores the webhookid, so it can be deleted again.
-                    newRec = await db.functions.update(rec);
+                await plugin.create(plugins, newRec, host);
         }
         catch(err){
-            winston.log("warning", err);
-            rec.warning = err;
-            newRec = await db.functions.update(rec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
+            if("body" in err){                                  //particle.io webhook generates this type of error, no ohter way to figure it out
+                winston.log("warning", err.body.error);
+                rec.warning = err.body.error;
+            }
+            else{
+                winston.log("warning", err);
+                rec.warning = err.toString();
+            }
+            newRec = await db.functions.update(newRec._id, rec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
         }
     }
     else if(pluginName)
@@ -35,24 +40,29 @@ module.exports.create = async function(plugins, pluginName, rec, host){
     return newRec;
 };
 
-module.exports.update = async function (plugin, pluginName, rec){
+module.exports.update = async function (plugins, pluginName, rec, host){
     rec.warning = "";                                                       //reset any warnings before saving
-    let newRec = await db.functions.update(req.params.funcInstance, rec);
+    let oldRec = await plugins.db.functions.update(rec._id, rec);
     if(pluginName in plugins.plugins) {
         let db = plugins.db;
         let plugin = plugins.plugins[pluginName].create();
         try {
             if (plugin.update)             //try to create the function after storing the def, this way, if the create fails, it is still stored for the user
-                if (await plugin.update(plugins, rec, newRec, req))
-                    newRec = await db.functions.update(newRec);
+                await plugin.update(plugins, oldRec, rec, host);
         }
         catch (err) {
-            winston.log("warning", err);
-            rec.warning = err;
-            newRec = await db.functions.update(rec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
+            if("body" in err){                                  //particle.io webhook generates this type of error, no ohter way to figure it out
+                winston.log("warning", err.body.error);
+                rec.warning = err.body.error;
+            }
+            else{
+                winston.log("warning", err);
+                rec.warning = err.toString();
+            }
+            rec = await db.functions.update(rec._id, rec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
         }
     }
     else
         throw Error("unknown function name: " + pluginName);
-    return newRec;
+    return rec;
 };

@@ -1,11 +1,4 @@
-body {
 
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
-}
 
 
 /* for the root element of administration pages */
@@ -15,5 +8,9 @@ a {
 }
 
 
+md-input-container{
+    margin-top: 9px;
+    margin-bottom: 9px;
+}
 
 

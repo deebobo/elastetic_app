@@ -6,11 +6,21 @@
 'use strict'
 
 deebobo.controller('AdminEmailController',
-    ['$scope', 'messages', '$http', '$stateParams', '$mdDialog',
-        function ($scope, messages, $http, $stateParams, $mdDialog) {
+    ['$scope', 'messages', '$http', '$stateParams', '$mdDialog', 'toolbar',
+        function ($scope, messages, $http, $stateParams, $mdDialog, toolbar) {
 
-			//helper functions
-			//--------------------------------------------------------------------------------------
+
+
+
+            toolbar.title = "email";
+            toolbar.buttons = [
+                {   tooltip: "Add a new template",
+                    icon: "fa fa-plus-circle",
+                    type: "font-icon",
+                    click: function(ev){ $scope.addTemplate();},
+                    ng_if: function() {return $scope.templatesSelected == true; }
+                }
+            ];
 
 
 

@@ -90,7 +90,7 @@ module.exports.update = async function(req, res) {
             let rec = req.body;
             let pluginName = cleanPluginRef(db, rec);
             try {
-                rec = await funcLib.update(plugins, pluginName, rec);
+                rec = await funcLib.update(plugins, pluginName, rec, req.protocol + '://' + req.get('host'));
                 res.status(200).json(rec);
             }
             catch(err){
@@ -123,35 +123,6 @@ module.exports.delete = async function(req, res) {
                 winston.log("error", err);
             }
             res.status(200).json(rec);
-        }
-    }
-    catch(err){
-        winston.log("error", err);
-        res.status(500).json({message:err.message});
-    }
-};
-
-/**
- * executes the function.
- * @param req
- * @param res
- * @returns {Promise.<void>}
- */
-module.exports.call = async function(req, res){
-    winston.log("info", "call params: ", req.body);
-    let page = null;
-    try{
-        let plugins = await req.app.get('plugins');
-        let db = plugins.db;
-        let record = await db.functions.findById(req.params.funcInstance);
-        if(record) {
-            let plugin = plugins.plugins[record.source.name].create();
-            await plugin.call(plugins, record, req);                             //do the function.
-            res.status(200).json({result: "ok"});
-        }
-        else {
-            winston.log("error", "unknown function: " + req.params.funcInstance);
-            res.status(403).json({message: "unknown function: " + req.params.funcInstance});
         }
     }
     catch(err){

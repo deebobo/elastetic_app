@@ -1,15 +1,34 @@
-<div flex layout="row"  layout-align="start center"
-    ng-controller="extAdminConnectionsController">
-    <md-input-container flex  style="margin-top: 20px;">
-        <label for="particleToken" >particle.io token </label>
-            <input type="text" id="particleToken" ng-model="value.content.token" ng-change="value.needsSave = true" flex></input>
-        <md-tooltip >The access token for particle.io cloud</md-tooltip>
-    </md-input-container>
+<div flex layout="column">
 
-    <md-progress-circular md-mode="indeterminate" ng-if="isLoading"></md-progress-circular>
+    <div flex layout="row"  layout-align="start center"
+         ng-controller="extAdminConnectionsController">
+        <md-input-container flex  >
+            <label >particle.io token </label>
+            <input type="text" ng-model="value.content.token" ng-change="value.needsSave = true" flex></input>
+            <md-tooltip >The access token for particle.io cloud</md-tooltip>
+        </md-input-container>
 
-    <md-button class="md-primary"
-               ng-click="get_particle_io_access_token(value, $event)">
-        get token
-    </md-button>
+        <md-progress-circular md-mode="indeterminate" ng-if="isLoading"></md-progress-circular>
+
+        <md-button class="md-primary"
+                   ng-click="get_particle_io_access_token(value, $event)">
+            get token
+        </md-button>
+    </div>
+
+    <div flex layout="row"  layout-align="start center" ng-if="value.content.authToken"
+         ng-controller="adminConnectionsController">
+        <md-input-container  flex>
+            <label >authentication token</label>
+            <input ng-readonly="true" type="text"
+                   ng-model="value.content.authToken"
+                   ng-change="value.needsSave = true">
+            <md-tooltip >The authentication token used by the webhook registered at particle.io to authenticate calls from particle to your application.</md-tooltip>
+            </input>
+        </md-input-container>
+        <md-button class="md-primary"
+                   ng-click="refresh_token(value, $event)">
+            refresh token
+        </md-button>
+    </div>
 </div>

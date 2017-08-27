@@ -8,8 +8,8 @@
 
 
 angular.module("deebobo").controller('googleMapViewController', [
-    '$scope', 'connectionDataService', 'messages','$http', '$stateParams', '$mdSidenav', 'dbbMapService', 'toolbar','$timeout',
-    function ($scope, connectionDataService, messages, $http, $stateParams, $mdSidenav, dbbMapService, toolbar, $timeout) {
+    '$scope', 'connectionDataService', 'messages','$http', '$stateParams', '$mdSidenav', 'dbbMapService', 'toolbar','$timeout', 'colorsList',
+    function ($scope, connectionDataService, messages, $http, $stateParams, $mdSidenav, dbbMapService, toolbar, $timeout, colorsList) {
 
         toolbar.title = "map";
         toolbar.buttons = [
@@ -17,11 +17,19 @@ angular.module("deebobo").controller('googleMapViewController', [
                 icon: "fa fa-filter",
                 type: "font-icon",
                 click: function(ev){ $scope.togglerFilterMenu();}
+            },
+			
+			{   tooltip: "show the visualisation options",
+                icon: "fa fa-eye",
+                type: "font-icon",
+                click: function(ev){ $scope.togglerVisualisationMenu();}
             }
+			
         ];
 
         var particle = new Particle();
 		var connections = null;										//store ref to all the connections, so we can load the data again.
+		var dataPoints = [];										//the data points that we found in db, so we can re-render when options change.
 
 
         if (navigator.geolocation)
@@ -48,6 +56,10 @@ angular.module("deebobo").controller('googleMapViewController', [
 		$scope.totalNrDays = 0;                     //the total nr of days in the range (from-to), for the slider
 		$scope.newFilter = { from: {date: new Date(), days: 0, hours: 0}, to:{date:new Date(), days: 0, hours: 0 }  };
         $scope.curFilter = { from: new Date(), to: new Date() };
+		$scope.showPoints = false;				
+		$scope.showRoutes = false;
+		$scope.showPoi = false;
+		$scope.colors = colorsList.colors;
 
 
         $scope.$watch('newFilter.from.hours', function(newVal) {
@@ -74,6 +86,16 @@ angular.module("deebobo").controller('googleMapViewController', [
             temp.setDate(temp.getDate() - $scope.totalNrDays + newVal);
             temp.setHours($scope.newFilter.to.hours);
             $scope.newFilter.to.date = temp;
+        });
+		
+		
+		
+		$scope.$watch('showPoints', function(newVal) {
+			renderPoints(dataPoints);
+        });
+		
+		$scope.$watch('showRoutes', function(newVal) {
+			renderPoints(dataPoints);
         });
 
 
@@ -117,30 +139,56 @@ angular.module("deebobo").controller('googleMapViewController', [
             .then(function (response) {
 					connections = response.data;
                     response.data.forEach((connection) => {
-
-                        connectionDataService.getTimeRange(connection._id, {})
-                            .then(function(range){
-                                if(range && range.length > 0){                                              //there is data and we found a range
-                                    range = {min: new Date(range[0].min), max: new Date(range[0].max) } ;   //we get a string (in an array of 1 rec), to calculate, we need date objects
-                                    setTimeRange(range);
-                                    var fromLocalStorage = tryReadDataFromLocalStorage(connection._id);
-                                    if(fromLocalStorage)
-                                        renderPoints(fromLocalStorage);
-                                    else
-                                        loadRoutes(connection, {});                                             //load all the data, we don't yet have enough filter info to select a single day (if there are multiple connections, the filter would be incorrect)
-                                }
-                                tryRegisterParticleEventStream(connection);
-                            },
-                            function(response){
-                                messages.error(response);
-                            }
-                        );
+						if(connection.name === 'my_sql_poi_data_store') 
+							loadPois(connection);
+						else
+							loadHistData(connection);
                     })
                 },
                 function (response) {
                     messages.error(response.data);
                 }
             );
+			
+		function loadHistData(connection){
+			connectionDataService.getTimeRange(connection._id, {})
+				.then(function(range){
+					if(range && range.length > 0){                                              //there is data and we found a range
+						range = {min: new Date(range[0].min), max: new Date(range[0].max) } ;   //we get a string (in an array of 1 rec), to calculate, we need date objects
+						setTimeRange(range);
+						var fromLocalStorage = tryReadDataFromLocalStorage(connection._id);
+						if(fromLocalStorage){
+							dataPoints = fromLocalStorage;
+							renderPoints(fromLocalStorage);
+						}
+						else
+							loadRoutes(connection, {});                                             //load all the data, we don't yet have enough filter info to select a single day (if there are multiple connections, the filter would be incorrect)
+					}
+					tryRegisterParticleEventStream(connection);
+				},
+				function(response){
+					messages.error(response);
+				}
+			);
+		}
+		
+		function loadPois(connection){
+			params.pagesize = 200;
+			var toStore = [];															//for storing in the local storage
+            function loadPoisSection(page){
+				params.page = page;
+                connectionDataService.get(connection._id, params).then(
+                    function(data) {
+                        var len = data.length;                                      //we need to see if we were at end of query or not, but the data list will be overwritten once it is rendered.
+                        data = renderPois(data);
+                        if(len === 200)                                   //as long as we have a full record set, try to get a next set.
+                            loadPoisSection(page + 1);
+                    },
+                    function(err){messages.error(err);}
+                )
+            }
+            loadPoisSection(0);
+		}
 
         //stores the min amd max time range for a single connection. We check for the outer limits.
         function setTimeRange(range){
@@ -180,6 +228,7 @@ angular.module("deebobo").controller('googleMapViewController', [
                             loadRouteSection(page + 1);
                         else{
                             fit_map_to_devices();                               //make everything fit nice.
+							dataPoints = toStore;
 							tryStoreInLocalStorage(toStore, connection._id);
 						}
                     },
@@ -255,6 +304,7 @@ angular.module("deebobo").controller('googleMapViewController', [
             }
             return res;
         }
+		
 
         function renderPoint(point){
             var coordinates = JSON.parse(point.data).split(',');
@@ -264,7 +314,7 @@ angular.module("deebobo").controller('googleMapViewController', [
                 dbbMapService.addPointToRoute($scope.devices[point.device], data);
             }
             else{
-                var newList = {path:[ data]};
+                var newList = {path:[ data], color: "red", isActive: true };
                 $scope.devices[point.device] = newList;
                 $scope.routes.push(newList);
             }
@@ -274,6 +324,11 @@ angular.module("deebobo").controller('googleMapViewController', [
 			if(time > $scope.End)
 				$scope.End = time;
         }
+		
+		function renderPois(data){
+			var location = new google.maps.LatLng(data.lat, data.lng);
+			dbbMapService.addPoi($scope.devices[point.device], data);
+		}
 
 
         function fit_map_to_devices() {
@@ -307,6 +362,10 @@ angular.module("deebobo").controller('googleMapViewController', [
             $mdMenu.open(ev);
         };
 
+		
+		$scope.togglerVisualisationMenu = function(){
+            $mdSidenav("visualisationMenu").toggle();
+        };
 
     }]);
 

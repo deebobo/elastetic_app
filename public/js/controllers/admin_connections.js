@@ -50,6 +50,22 @@ deebobo.controller('adminConnectionsController',
                 return deferred.promise;
             }
 
+            function tryConvertPluginRef(rec, plugins){
+                var deferred = $q.defer();
+                if(rec && plugins) {
+                    if(rec.plugin){
+                        rec.template = "plugins/" + rec.plugin.config.partials[0];
+                        rec.plugin = plugins.find(function(x){ return x._id === rec.plugin._id; });
+                        pluginService.load(rec.plugin.config).then(function() {
+                            deferred.resolve();
+                        });
+                    }
+                }
+                else
+                    deferred.resolve();
+                return deferred.promise;
+            }
+
             //get data from site for scope
             //--------------------------------------------------------------------------------------
             $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
@@ -97,6 +113,8 @@ deebobo.controller('adminConnectionsController',
                 if(connection.isNew === true){
                     $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/connection', data: connection})      //get the list of groups that can view
                         .then(function (response) {
+                                angular.copy(response.data, connection);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
+                                tryConvertPluginRef(connection, $scope.connectionPlugins);
                                 connection.needsSave = false;
                                 connection.isNew = false;
                             },
@@ -108,6 +126,8 @@ deebobo.controller('adminConnectionsController',
                 else {
                     $http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/connection/' + connection._id, data: connection})      //get the list of groups that can view
                         .then(function (response) {
+                                angular.copy(response.data, connection);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
+                                tryConvertPluginRef(connection, $scope.connectionPlugins);
                                 connection.needsSave = false;
                             },
                             function (response) {
@@ -148,6 +168,41 @@ deebobo.controller('adminConnectionsController',
 
 
             };
+
+
+            /**
+             * refreshes the token for the connection. Only available if the record had already been saved.
+             * @param value
+             */
+            $scope.refresh_token = function(connection, ev){
+                // Appending dialog to document.body to cover sidenav in docs app
+                var confirm = $mdDialog.confirm()
+                    .title('Refresh token')
+                    .textContent('Are you certain you want to renew the token for this connection (callbacks will be recreated)?')
+                    .ariaLabel('Refresh token')
+                    .targetEvent(ev)
+                    .ok('yes')
+                    .cancel('no');
+
+                $mdDialog.show(confirm).then(function() {
+                    if( !connection.isNew ){                                                  //its a real record, needs to be deleted from the server.
+                        $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/connection/' + connection._id + "/refreshtoken"})      //get the list of groups that can view
+                            .then(function (response) {
+                                    connection.content.authToken = response.data.content.authToken;
+                                    connection.warning = response.data.warning;
+                                },
+                                function (response) {
+                                    messages.error(response.data);
+                                }
+                            );
+                    }
+                    else
+                        $scope.connections.splice($scope.connections.indexOf(connection), 1);
+
+                }, function() {
+                    //$scope.status = 'You decided to keep your debt.';
+                });
+            }
 
         }
     ]

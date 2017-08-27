@@ -10,6 +10,7 @@
                 <md-option ng-value="x.name" ng-repeat="x in connections">{{ x.name }}</md-option>
             </md-select>
             <md-tooltip >Select the source connection, which will produce the data.</md-tooltip>
+            <div class="md-errors-spacer"></div>
         </md-input-container>
 
         <md-input-container  class="md-block" flex="50">
@@ -19,25 +20,10 @@
                 <md-option ng-value="x.name" ng-repeat="x in connections">{{ x.name }}</md-option>
             </md-select>
             <md-tooltip >Select the destination connection, which will store the data.</md-tooltip>
+            <div class="md-errors-spacer"></div>
         </md-input-container>
 
     </div>
-
-
-    <div flex layout="row"  layout-align="start center" ng-if="value.isNew === false">
-        <md-input-container  class="md-block" flex="50">
-            <label for="name-{{value.data.token}}" >authentication token</label>
-            <input ng-readonly="true" type="text" id="name-{{value.data.token}}" ng-model="token"
-                   ng-change="value.needsSave = true">
-            <md-tooltip >The authentication token that the webhook of the 'from' connection will use to authenticate itself on this site when sending data that needs to be transported..</md-tooltip>
-            </input>
-        </md-input-container>
-        <md-button class="md-primary"
-                   ng-click="refresh_token(value)">
-            refresh token
-        </md-button>
-    </div>
-
 
 
 

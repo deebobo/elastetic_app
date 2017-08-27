@@ -51,6 +51,15 @@ As a user, I want to:
     - "/{sitename}/{pagename}": and go to the requested page and default view
     - "/{sitename}/{pagename}/{viewname}": and go to the requested page and view
     - also accepts trailing "/" in url
+- filter data with:
+	- start date and time
+	- end date and time
+	- devices listed
+- change the appearance of the routes:
+	- line colors
+	- show/hide lines vs points
+	- hover over a point and see the date & device (future)
+
 
 # future use case (not yet working)
 

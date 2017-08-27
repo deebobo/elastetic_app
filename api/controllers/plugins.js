@@ -29,7 +29,7 @@ module.exports.getForType = async function (req, res, next) {
     try {
         let db = await req.app.get('plugins');
         db = db.db;
-        plugins = await db.plugins.listForType(req.params.site, req.params.type, true);
+        let plugins = await db.plugins.listForType(req.params.site, req.params.type, true);
         res.status(200).json(plugins);
     }
     catch (err) {

@@ -8,19 +8,19 @@ const jwt = require('jsonwebtoken');
 const config = require.main.require('../api/libs/config');
 
 /**
- * creates a new token
- * @param db: the db to add it to
+ * creates a new token that can be used for callbacks (connection/function) plugins
  * @param resourceType {String} the type of resource(function, connection)
  * @param resourceId {String} the id of the resource
  * @param site {String} the name of the site to create it for.
  * @returns {Promise.<void>}
  */
-module.exports.createToken = async function(db, resourceType, resourceId, site){
+module.exports.createCallbackToken = async function(resourceType, resourceId, site){
 
     let token = await jwt.sign({ isUserToken: false, resourceType: resourceType,  resourceId: resourceId, site: site}, config.config.security.secret);
-    let rec = {resourceType: resourceType, resourceId: resourceId.toString(), site: site, token: token};
+    //let rec = {resourceType: resourceType, resourceId: resourceId.toString(), site: site, token: token};
 
-    return db.tokens.add(rec);
+    //return db.tokens.add(rec);
+    return token;
 };
 
 

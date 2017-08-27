@@ -31,21 +31,21 @@ async function createHomepage(db, sitename, grps){
             }, {
                 name: 'Email',
                 type: 'link',
-                state: 'site.email',
+                state: 'site.page.email',
                 icon: 'fa fa-envelope'
             }, {
                 name: 'Authorization',
                 type: 'link',
-                state: 'site.authorization',
+                state: 'site.page.authorization',
                 icon: 'fa fa-user-circle'
             }, {
                 name: 'connections',
-                state: 'site.connections',
+                state: 'site.page.connections',
                 type: 'link',
                 icon: 'fa fa-cloud'
             }, {
                 name: 'functions',
-                state: 'site.functions',
+                state: 'site.page.functions',
                 type: 'link',
                 icon: 'fa fa-connectdevelop'
             }/*, {

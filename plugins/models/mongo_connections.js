@@ -75,7 +75,7 @@ class Connections{
      */
     update(connection){
         this._preparePlugin(connection);
-        return this._connections.findOneAndUpdate({"_id": connection._id}, connection).exec();
+        return this._connections.findOneAndUpdate({"_id": connection._id}, connection).populate('plugin').exec();
     }
 
     /** Get a list of all the available connections for a site.
@@ -127,7 +127,7 @@ class Connections{
      * was found
      */
     delete(id){
-        return this._connections.findOneAndRemove( { _id: id } ).exec();
+        return this._connections.findOneAndRemove( { _id: id } ).populate('plugin').exec();
     }
 }
 

@@ -12,4 +12,4 @@ jsdoc2md ..\plugins\models\mongo_plugins.js >> db\plugins.md
 jsdoc2md ..\plugins\models\mongo_site_collection.js >> db\site_collection.md
 jsdoc2md ..\plugins\models\mongo_views.js >> db\views.md
 
-jsdoc2md ..\plugins\connections\my_sql_data_store.js >> connections\my_sql_data_store.md
+jsdoc2md ..\plugins\connections\my_sql_db.js >> connections\my_sql_data_store.md

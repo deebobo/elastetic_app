@@ -15,7 +15,6 @@
 								<input id="name-{{func.name}}" type="text" ng-model="func.name" class="form-control" ng-change="func.needsSave = true" ng-click="$event.stopPropagation()" />
 								<md-tooltip >The name of the function</md-tooltip>
 							</md-input-container>
-							<span ng-if="func.warning">error</span>
 						</md-card-title-text>
 					</md-card-title>
 					<md-card-content>
@@ -25,10 +24,13 @@
 								<md-option ng-value="x" ng-repeat="x in functionPlugins">{{ x.name }} ({{x.description}}) </md-option>
 							</md-select>
 							<md-tooltip >Select the function plugin.</md-tooltip>
+							<div class="md-errors-spacer"></div>
 						</md-input-container>
 
 
 						<pluginconfigurator plugin="func.source" value="func"/>
+
+						<label ng-if="func.warning" class="md-warn">{{func.warning}}</label>
 
 					</md-card-content>
 					<md-card-actions layout="row" layout-align="end center">

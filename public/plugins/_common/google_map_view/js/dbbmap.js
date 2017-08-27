@@ -126,7 +126,7 @@ deebobo.directive('dbbMap', ['$timeout',
                         value.route = new google.maps.Polyline({   // this is the marker at the center of the accuracy circle
                                 path: value.path,
                                 geodesic: true,
-                                strokeColor: '#FF0000',
+                                strokeColor: value.color,
                                 strokeOpacity: 1.0,
                                 strokeWeight: 2
                             });

@@ -1,14 +1,6 @@
 
 
 
-/* tooltips appear to have a default opacity of 0
-need to use md-panel cause that's the level it was declared in angular
-*/
-.md-panel {
-  opacity: 1;
-}
-
-
 /* for the root element of administration pages */
 .dbb_admin_page{
     padding-left: 5%;
@@ -16,5 +8,9 @@ need to use md-panel cause that's the level it was declared in angular
 }
 
 
+md-input-container{
+    margin-top: 9px;
+    margin-bottom: 9px;
+}
 
 

@@ -19,12 +19,10 @@ deebobo.factory('connectionDataService',
 
 
         /**
-         * get the definition of a page. This is a record:
-         * { partial: name and relative path of the html partial to use for this page,
-         *   controller: path and name of javascript file that functions as the angular js controller of the partial
+         * get the data of a connection. 
          * @param connectionId {String} the id of the connection to get the data for.
          * @param options {Object} filter options to use.
-         * Possible fields:
+         * Possible fields for historical data:
          * - from
          * - to
          * - page
@@ -53,6 +51,12 @@ deebobo.factory('connectionDataService',
                 );
             return deferred.promise;
         }
+		
+		/*updates a record for the specified connection.
+		* @param data {Object} the record to update.
+		*/
+		function update(connectionId, data){
+		}
 
         function getTimeRange(connectionId, options){
             var deferred = $q.defer();

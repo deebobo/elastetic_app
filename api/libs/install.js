@@ -13,13 +13,16 @@ async function installPlugins(db)
 {
     winston.log("info", "installing plugins...");
     await sitesLib.installPlugin(db, 'private mail', '_common', '../public/plugins/_common/private mail/pluginconfig.json');
-    await sitesLib.installPlugin(db, 'my_sql_data_store', '_common', '../public/plugins/_common/my_sql_data_store/pluginconfig.json');
+    await sitesLib.installPlugin(db, 'my_sql_db', '_common', '../public/plugins/_common/my_sql_db/pluginconfig.json');
     await sitesLib.installPlugin(db, 'left_menu_bar_page', '_common', '../public/plugins/_common/left_menu_bar_page/pluginconfig.json');
     await sitesLib.installPlugin(db, 'particle_io', '_common', '../public/plugins/_common/particle_io/pluginconfig.json');
     await sitesLib.installPlugin(db, 'particle_io_devices_view', '_common', '../public/plugins/_common/particle_io_devices_view/pluginconfig.json');
     await sitesLib.installPlugin(db, 'google_map_view', '_common', '../public/plugins/_common/google_map_view/pluginconfig.json');
 
     await sitesLib.installPlugin(db, 'transporter', '_common', '../public/plugins/_common/transporter/pluginconfig.json');
+    await sitesLib.installPlugin(db, 'my_sql_historical_data', '_common', '../public/plugins/_common/my_sql_historical_data/pluginconfig.json');
+    await sitesLib.installPlugin(db, 'my_sql_poi_data', '_common', '../public/plugins/_common/poi_calculator/pluginconfig.json');
+
 }
 
 /**

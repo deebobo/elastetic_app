@@ -5,6 +5,45 @@
 
     <div layout="row" layout-align="center stretch" flex>
 
+		
+		
+		<md-sidenav
+                class="md-sidenav-right"
+                md-component-id="visualisationMenu"
+                md-whiteframe="4">
+			<md-toolbar class="md-theme-indigo">
+                <h1 class="md-toolbar-tools">Visualistaion</h1>
+            </md-toolbar>
+			
+			<md-content layout-padding >
+			
+				<md-checkbox ng-model="showPoints" aria-label="individual points">
+					Show individual points
+				</md-checkbox>
+				
+				<md-checkbox ng-model="showRoutes" aria-label="routes">
+					Show routes
+				</md-checkbox>
+				
+				<md-checkbox ng-model="showPoi" aria-label="points of interest">
+					Show points of interest
+				</md-checkbox>
+			
+				<p>Colors:</p>
+					<ul>
+						<li ng-repeat="(device, value) in devices"> 
+							<md-select ng-model="value.color" ng-change="redrawRoutes(device, value)" >
+								{{device}}:
+								<md-option ng-value="x.name" ng-repeat="x in colors" > 
+									<div layout="row"  > <div style="height: 16px; width: 16px; background: {{x.color}}; margin-right: 4px"/> <span>{{ x.name }}</span>  </div>  
+								</md-option>
+							</md-select>
+						</li>
+					</ul>
+			</md-content>
+
+        </md-sidenav>
+	
         <md-sidenav
                 class="md-sidenav-right"
                 md-component-id="filterMenu"
@@ -14,13 +53,23 @@
                 <h1 class="md-toolbar-tools">Filter</h1>
             </md-toolbar>
             <md-content layout-padding >
+			
+				<div layout="column">
+					<p class="md-body-2"><b>Max data range</b> </p>
+                    <div class="md-caption"><b>From:</b> {{Start.toISOString()}}</div>
+                    <div class="md-caption"><b>To:</b> {{End.toISOString()}}</div>
+
+                </div>
+			
+				<md-divider></md-divider>
+			
                 <div layout="column">
                     <p class="md-body-2"><b>From:</b> {{curFilter.from.toISOString()}}
                         <md-tooltip>The start time of the currently visible data</md-tooltip>
                     </p>
                     <div layout="column" flex  style="margin-left: 20px">
                         <div layout="row" layout-align="center center">
-                            <p class="md-body-1">Time:</p>
+                            <span class="md-body-1">Time:</span>
                             <input type="time" ng-model="newFilter.from.date" aria-label="red" aria-controls="from-time-input" flex placeholder="HH:mm:ss" />
                         </div>
                         <md-slider flex min="0" max="23" ng-model="newFilter.from.hours" aria-label="red" id="from-time-slider">
@@ -29,7 +78,7 @@
                     </div>
                     <div layout="column" flex style="margin-left: 20px">
                         <div layout="row" layout-align="center center" >
-                            <p class="md-body-1">Date:</p>
+                            <span class="md-body-1">Date:</span>
                             <input type="date" ng-model="newFilter.from.date" aria-label="red" aria-controls="from-date-input" flex/>
                         </div>
                         <md-slider flex min="0" max="{{totalNrDays}}" ng-model="newFilter.from.days" aria-label="red" id="from-date-slider">
@@ -61,7 +110,7 @@
                     </div>
 
                 </div>
-                <md-button ng-click="applyFilter()">apply</md-button>
+                <md-button ng-click="applyFilter()" >apply</md-button>
 
             </md-content>
 

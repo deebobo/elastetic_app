@@ -5,91 +5,28 @@
  */
 
 const winston = require('winston');
-const tokens = require.main.require('../api/libs/tokens');
+const Function = require.main.require('../plugins/base_classes/function');
 
-class Transporter {
+
+class Transporter extends Function {
 
     constructor() {
-
+		super();
     }
-
-
-    /**
-     * create a tansport between the 2 connections and store it in the system
-     * @param db {Object} ref to the db
-     * @param funcDef {object} the object that represents a transport def.
-     * @param host {String} protocol and host part of the URL, so functions/connections can register callbacks (create the url to call)
-     * $returns true if the functDe object has been changed and needs to be saved again in the db.
-     */
-    async create(plugins, funcDef, host){
-        if(!funcDef.data.hasOwnProperty('to'))
-            throw Error("missing to field");
-        let fromConnection = await plugins.db.connections.find(funcDef.data.from, funcDef.site);
-        if(funcDef.data.hasOwnProperty('from')) {
-            if(fromConnection.plugin.name in plugins.plugins){
-                let plugin = plugins.plugins[fromConnection.plugin.name].create();
-                if (plugin.registerCallback){
-                    funcDef.data.token = await tokens.createToken(plugins.db, "function", funcDef._id, funcDef.site)
-                    funcDef.data.token = funcDef.data.token._id.toString();
-                    let url = host + "/api/site/" + funcDef.site + "/function/" + funcDef._id + "/call";
-                    await plugin.registerCallback(fromConnection, funcDef, url);
-                }
-                return true;
-            }
-            else
-                throw Error("unknown plugin: " + fromConnection.plugin.name);
-        }
-        else
-            throw Error("missing from field");
-        return false;
-    }
-
-    /**
-     * called when the function is deleted
-     * @param funcDef
-     * @param db {Object} ref to the db
-     */
-    async destroy(plugins, funcDef){
-        let fromConnection = await plugins.db.connections.find(funcDef.data.from, funcDef.site);
-        if(funcDef.data.hasOwnProperty('from')) {
-            if(fromConnection.plugin.name in plugins.plugins) {
-                let plugin = plugins.plugins[fromConnection.plugin.name].create();
-                if (plugin.unRegisterCallback)
-                    await plugin.unRegisterCallback(fromConnection, funcDef);
-            }
-            else
-                throw Error("unknown plugin: " + fromConnection.plugin.name);
-        }
-    }
-
-    /**
-     * called when the function is changed.
-     * @param oldFuncDef
-     * @param newFuncDef
-     */
-    async update(plugins, oldFuncDef, newFuncDef, req){
-        await this.destroy(plugins, oldFuncDef);
-        return this.create(plugins, newFuncDef, req);
-    }
-
 
     /**
      * performs the function (transport data from source to dest).
      * @param plugins {Object} a ref to the plugins object, for finding the connection plugins.
      * @param funcDef {Object} the function instance data (defines the connection source and destination)
-     * @param req {Object} the request object with all the param
+     * @param connection {Object} the connection from where the request originated.
+
+	 * @param data {Object} the data to process
      */
-    async call(plugins, funcDef, req){
+    async call(plugins, funcDef, connection, data){
         let toConnection = await plugins.db.connections.find(funcDef.data.to, funcDef.site);
         if(toConnection){
             let to =  plugins.plugins[toConnection.plugin.name].create();
-            await to.connect(toConnection.content);                                       //make certain that we have an open connection
-            try{
-                await to.storeHistory(req.params.site, req.body, toConnection);
-            }
-            finally {
-                await to.close();                                           //make certain that the connection is closed again.
-            }
+			await to.execute(plugins, toConnection, data);
         }
         else{
             winston.log("error", "failed to find connection:", funcDef.data.to, "site:", funcDef.data.site)

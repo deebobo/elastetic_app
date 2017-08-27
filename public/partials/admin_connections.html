@@ -12,16 +12,29 @@
 							<md-input-container flex layout-fill>
 							<label for="name-{{connection.name}}" >name</label>
 							<input id="name-{{connection.name}}" type="text" ng-model="connection.name" class="form-control" ng-change="connection.needsSave = true" ng-click="$event.stopPropagation()" />
-							<md-tooltip md-z-index="10">The name of the connection</md-tooltip>
+							<md-tooltip md-delays="5">The name of the connection, must be unique.</md-tooltip>
 						</md-input-container>
 						</md-card-title-text>
-						<span ng-if="connection.warning">error</span>
 					</md-card-title>
 					<md-card-content>
 
-						<select class="form-control"  ng-model="connection.plugin" ng-options="x.name + '(' + x.description + ')' for x in connectionPlugins track by x._id" required ng-change="connection.needsSave = true"></select>
+
+						<md-input-container  class="md-block" >
+							<label  >plugin</label>
+							<md-select  ng-model="connection.plugin"
+										ng-change="connection.needsSave = true"
+										ng-model-options="{trackBy: '$value._id'}"
+										required>
+								<md-option ng-value="x" ng-repeat="x in connectionPlugins">{{ x.name }} ( {{x.description}} ) </md-option>
+							</md-select>
+							<md-tooltip >The connection plugin.</md-tooltip>
+							<div class="md-errors-spacer"></div>
+						</md-input-container>
+
 
 						<pluginconfigurator plugin="connection.plugin" value="connection"/>
+
+                        <label ng-if="connection.warning" class="md-warn">{{connection.warning}}</label>
 
 					</md-card-content>
 					<md-card-actions layout="row" layout-align="end center">

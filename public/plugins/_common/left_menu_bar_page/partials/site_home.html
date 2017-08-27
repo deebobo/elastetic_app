@@ -19,7 +19,7 @@
 
 					<md-button class="md-icon-button"
 							   ng-click="toolbarBtnClicked(btn, $ev)"
-							   ng-if="btn.type === 'font-icon'">
+							   ng-if="btn.type === 'font-icon' && (!btn.hasOwnProperty('ng_if') || btn.ng_if())">
 						<md-tooltip>{{btn.tooltip}}</md-tooltip>
 						<md-icon md-font-icon="{{btn.icon}}" style="font-size:24px" ></md-icon>
 					</md-button>

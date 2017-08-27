@@ -185,22 +185,37 @@ class MySqlDataStore {
                 reject("connection is not opened")
         });
     }
+	
+	/** execute this connection (used to send data to a connection).
+	*/
+	async execute(connectionInfo, device, field, data){
+		
+		let self = this;
+		await self.connect(connectionInfo.content);                                       //make certain that we have an open connection
+		try{
+			await self.storeHistory(connectionInfo, device, field, data);
+		}
+		finally {
+			await self.close();                                           //make certain that the connection is closed again.
+		}
+	}
 
     /**
-     * called by a function to store data in the db.
+     * stores the data in the db.
      * @param connectionInfo {object} the connection definition reocord.
      * @param data: the data to store in the db.
      * @returns {Promise}
      */
-    async storeHistory(site, data, connectionInfo){
-        let self = this;
+    async storeHistory(connectionInfo, device, field, data){
+		
+		let self = this;
         return new Promise((resolve, reject) => {
             if(!this.con)
                 reject("connection not opened");
             if(typeof data.data === "string")
                 var sql = "INSERT INTO " + connectionInfo.content.tableName + " (time, site, source, device, field, data) VALUES ('"
                     + data.published_at + "', '"
-                    + site + "', '"
+                    + connectionInfo.site + "', '"
                     + connectionInfo.name + "', '"
                     + data.coreid + "', '"
                     + data.event + "', '"

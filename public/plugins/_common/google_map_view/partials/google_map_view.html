@@ -32,7 +32,8 @@
 				<p>Colors:</p>
 					<ul>
 						<li ng-repeat="(device, value) in devices"> 
-							<md-select ng-model="value.color" ng-change="redrawRoutes(device, value)" >
+							<p>{{device}}</p>
+							<md-select ng-model="value.color" ng-change="setColor(value)" >
 								{{device}}:
 								<md-option ng-value="x.name" ng-repeat="x in colors" > 
 									<div layout="row"  > <div style="height: 16px; width: 16px; background: {{x.color}}; margin-right: 4px"/> <span>{{ x.name }}</span>  </div>  
@@ -54,7 +55,7 @@
             </md-toolbar>
             <md-content layout-padding >
 			
-				<div layout="column">
+				<div layout="column" id="filter_limits">
 					<p class="md-body-2"><b>Max data range</b> </p>
                     <div class="md-caption"><b>From:</b> {{Start.toISOString()}}</div>
                     <div class="md-caption"><b>To:</b> {{End.toISOString()}}</div>
@@ -63,7 +64,7 @@
 			
 				<md-divider></md-divider>
 			
-                <div layout="column">
+                <div layout="column" >
                     <p class="md-body-2"><b>From:</b> {{curFilter.from.toISOString()}}
                         <md-tooltip>The start time of the currently visible data</md-tooltip>
                     </p>
@@ -116,10 +117,19 @@
 
         </md-sidenav>
 
-        <dbb-map  center="mapCenter"
+        <dbb-map  id="main_map" 
+				  center="mapCenter"
                   zoom="zoom"
                   poi="pointsOfInterest"
                   routes="routes"
+				  drawpoints="showPoints"
+                  drawroutes="showRoutes"
+                  drawpois="showPoi"
+				  onpoimoved="updatePoi(marker)"
+				  onrenamepoi="showPoiRename($event, marker, onPoiRenamed)"
+				  ondeletepoi="deletePoi($event, marker)"
+				  onaddpoi="addPoi($event, location)"
+				  editable="canEditMap"
                   flex></dbb-map>
 
 

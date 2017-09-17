@@ -20,7 +20,7 @@ function cleanPluginRef(db, rec){
         rec.source = rec.source._id;
     }
     else {
-        let pluginref = db.plugins.findById(rec.source);
+        let pluginref = db.plugins.find(rec.source, rec.site);
         pluginName = pluginref.source;
     }
     return pluginName;

@@ -1,0 +1,87 @@
+<div layout="column">
+
+	<p>Update your user details: </p>
+	
+	<form ng-submit="updateDetails(user)" >
+		<md-input-container class="md-block">
+			<label for="siteTitle" >user name</label>
+			<input type="text" id="username" ng-model="user.username" ng-change="detailsNeedsSave = true"></input>
+			<md-tooltip >Your user name</md-tooltip>
+		</md-input-container>
+		
+		<div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" class="form-control" ng-model="name" required>
+        </div>
+		
+		<md-input-container class="md-block">
+			<label for="siteTitle" >email address</label>
+			<input type="email" id="email" class="form-control" ng-model="user.email" ng-change="detailsNeedsSave = true"></input>
+			<md-tooltip >Your email address</md-tooltip>
+		</md-input-container>
+		
+		<md-input-container class="md-block">
+			<md-button type="submit" 
+					   id="updateDetailsBtn" 
+					   value="Update" 
+					   class="md-primary" 
+					   aria-label="update details" 
+					   ng-disabled="user.$invalid()"
+					   ng-if="detailsNeedsSave === true">
+				Save
+			</md-button>
+		</md-input-container>
+	
+	</form>
+	
+	<md-divider style="margin-top: 10px; margin-bottom: 10px"/>
+	
+	<p>Change your password: </p>
+	
+	<form ng-submit="changePwd(userPwd)" >
+		<md-input-container class="md-block">
+			<label for="siteTitle" >current password</label>
+			<input type="password" id="curpwd" ng-model="userPwd.curPwd" ></input>
+			<md-tooltip >Your current password</md-tooltip>
+		</md-input-container>
+		
+		<md-input-container class="md-block">
+			<label for="siteTitle" >new password</label>
+			<input type="password" id="newpwd" ng-model="userPwd.newPwd" ng-change="pwdNeedsSave = true"></input>
+			<md-tooltip >Your new password</md-tooltip>
+		</md-input-container>
+		
+		<md-input-container class="md-block">
+			<label for="siteTitle" >re-enter new password</label>
+			<input type="password" id="newpwd2" ng-model="userPwd.newPwd2" ng-change="pwdNeedsSave = true"></input>
+			<md-tooltip >Re-enter your new password</md-tooltip>
+		</md-input-container>
+		
+		<md-input-container class="md-block">
+			<md-button type="submit" 
+					   id="ChangPwdBtn" 
+					   value="Update" 
+					   class="md-primary" 
+					   aria-label="change password" 
+					   ng-disabled="userPwd.$invalid()"
+					   ng-if="pwdNeedsSave === true">
+				Save
+			</md-button>
+		</md-input-container>
+		
+	</form>
+	
+	<md-divider style="margin-top: 10px; margin-bottom: 10px"/>
+	<p>You are a member of the following groups: </p>
+	<md-chips ng-model="user.groups"
+			  readonly="true">
+		<md-chip-template>
+				<span>
+				  <strong>{{$chip.name}}</strong>
+				</span>
+		</md-chip-template>
+	</md-chips>
+	
+</div>
+
+

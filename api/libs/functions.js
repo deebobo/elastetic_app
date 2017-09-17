@@ -42,7 +42,8 @@ module.exports.create = async function(plugins, pluginName, rec, host){
 
 module.exports.update = async function (plugins, pluginName, rec, host){
     rec.warning = "";                                                       //reset any warnings before saving
-    let oldRec = await plugins.db.functions.update(rec._id, rec);
+    let oldRec = await plugins.db.functions.update(rec._id, rec, true);
+    rec.source = oldRec.source;                                             //need to have a ref to the object for returning it to the caller.
     if(pluginName in plugins.plugins) {
         let db = plugins.db;
         let plugin = plugins.plugins[pluginName].create();

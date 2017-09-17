@@ -5,6 +5,9 @@
   "version": "0.0.1",
   "author": "Deebobo",
   "type": "mail",
+  "help": "This is a plugin for sending out emails to your users through your personal smtp server. It is the least secure way of sending out emails, it's probably better to use an email service like sendgrid (which is also supported). We recommend using this plugin only for testing.  You need to specify the host address of your smtp server, the port number, if it requires a secure connection, your username and password. This information can be found with your email service provider. Lastly, you should also specify the email address that should be placed in the 'from' field when sending out emails.",
+  "image": "smtp.jpg",
+  "icon": "smtp_icon.png",
   "config": {
       "partials": [
         "partials/private_mailer_config_partial.html"

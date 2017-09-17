@@ -22,7 +22,8 @@ class SiteTemplates{
             description: String,
             author: String,
             version: String,
-            icon: String,
+            icon: String,											//uri to small icon 
+			image: String,											//uri to bigger image 
             definition: Object,
             createdOn:{type: Date, default: Date.now()}
         });

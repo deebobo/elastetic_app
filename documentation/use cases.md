@@ -58,7 +58,14 @@ As a user, I want to:
 - change the appearance of the routes:
 	- line colors
 	- show/hide lines vs points
-	- hover over a point and see the date & device (future)
+	- click on a point and see the date & device
+
+#track & trace use cases
+- as a registered user, I can view all the routes and poi's
+- as an editor, I can add/change remove markers (points of interests)
+- as an administator, I can add a new connection and assign groups to that connection
+- as a user, I can display the individual points and click on each point to see more details (duplicate)
+- as a user I can click on a point of intererst and see more details
 
 
 # future use case (not yet working)

@@ -11,7 +11,11 @@ angular.module('common.services', []);
 angular.module('deebobo.controllers', ['common.directives']);
 angular.module('common.directives', ['common.services']);
 
-var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial', 'ui.bootstrap','ui.grid']);  //, 'ui-grid-move-columns', 'ui.grid.resizeColumns'
+var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial',
+                                         'ngSanitize',                  // required for ng-bindhtml
+                                         'ui.bootstrap','ui.grid',
+										 'ngResource'
+										 ]);  //, 'ui-grid-move-columns', 'ui.grid.resizeColumns'
 
 deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider', '$filterProvider', '$urlRouterProvider', '$mdThemingProvider',
     function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider, $filterProvider, $urlRouterProvider, $mdThemingProvider) {
@@ -71,7 +75,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                 themeProvider.theme('default').warnPalette(siteDetails.theme.warn);
                 $mdTheming.generateTheme('default');                //reload the themes
             },
-            access: {restricted: true}
+            restricted: true
         });
 
 
@@ -105,7 +109,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     .then(function(){ deferred.resolve(page.controller); });
                 return deferred.promise;
             }],
-            access: {restricted: true}
+            restricted: true
         });
 
         $stateProvider.state('site.homepage.defaultview', {
@@ -133,14 +137,14 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     }]
                 }
             },
-            access: {restricted: true}
+            restricted: true
         });
 
         //important: must be after site.homepage.defaultview, otherwise we can't go to root (site.homepage.defaultview picks up empty sitename)
         $stateProvider.state('home', {
             url: '/',
             templateUrl: 'partials/home.html',
-            access: {restricted: false}
+            restricted: false
         });
 
 
@@ -149,40 +153,40 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
             url: '/login',
             templateUrl: 'partials/login.html',
             controller: 'loginController',
-            access: {restricted: false}
+            restricted: false
         });
         $stateProvider.state('register', {
             url: '/register',
             templateUrl: 'partials/register.html',
             controller: 'registerController',
-            access: {restricted: false}
+            restricted: false
         });
         $stateProvider.state('create', {
             url: '/create',
             templateUrl: 'partials/new_site_register.html',
             controller: 'sitesController',
-            access: {restricted: false}
+            restricted: false
         });
 
         $stateProvider.state('sitelogin', {
             url: '/{site}/login',
             templateUrl: 'partials/site_login.html',
             controller: 'loginController',
-            access: {restricted: false}
+            restricted: false
         });
 
         $stateProvider.state('siteregister', {
             url: '/{site}/register',
             templateUrl: 'partials/site_register.html',
             controller: 'registerController',
-            access: {restricted: false}
+            restricted: false
         });
 
         $stateProvider.state('sitePwdReset', {
             url: '/{site}/resetpwd/{token}',
             templateUrl: 'partials/change_pwd.html',
             controller: 'resetPwdController',
-            access: {restricted: false}
+            restricted: false
         });
 
 
@@ -194,7 +198,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     templateUrl: 'partials/admin_gen.html',
                 }
             },
-            access: {restricted: true}
+            restricted: true
         });
 
         $stateProvider.state('site.page.connections', {
@@ -205,7 +209,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     templateUrl: 'partials/admin_connections.html',
                 }
             },
-            access: {restricted: true}
+            restricted: true
         });
 
 
@@ -217,7 +221,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     templateUrl: 'partials/admin_email.html',
                 }
             },
-            access: {restricted: true}
+            restricted: true
         });
 
         $stateProvider.state('site.page.authorization', {
@@ -228,7 +232,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     templateUrl: 'partials/admin_authorization.html'
                 }
             },
-            access: {restricted: true}
+            restricted: true
         });
 
         $stateProvider.state('site.page.plugins', {
@@ -239,7 +243,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     templateUrl: 'partials/admin_plugins.html'
                 }
             },
-            access: {restricted: true}
+            restricted: true
         });
 
         $stateProvider.state('site.page.functions', {
@@ -250,7 +254,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     templateUrl: 'partials/admin_functions.html'
                 }
             },
-            access: {restricted: true}
+            restricted: true
         });
 
 
@@ -277,7 +281,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     .then(function(){ deferred.resolve(page.controller); });
                 return deferred.promise;
             }],
-            access: {restricted: false}
+            restricted: false
         });
 
 
@@ -306,7 +310,7 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     }]
                 }
             },
-            access: {restricted: true}
+            restricted: true
         });
 
 
@@ -335,13 +339,13 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
                     }]
                 }
             },
-            access: {restricted: true}
+            restricted: true
         });
 
         $stateProvider.state('logout', {
             url: '/logout',
             controller: 'logoutController',
-            access: {restricted: true}
+            restricted: true
         });
 
         $stateProvider.state('otherwise', {
@@ -369,33 +373,35 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
 
     }]);
 
-deebobo.run(function ($rootScope, $location, $state, AuthService, $mdToast) {
-    $rootScope.$on('$stateChangeStart',
-        function (event, next, current) {
-            if ((!next.access || next.access.restricted) && !AuthService.isLoggedIn()) {
-                $location.path('/login');
-                $state.reload();
+deebobo.run(function ($rootScope, $location, $state, AuthService, $mdToast, $transitions) {
+
+        var match = {
+            to: function(state){
+                return state.restricted;
             }
-            if(next.redirectoTo){
-                event.preventDefault();
-                $state.go(next.redirectTo, current, {location: 'replace'})
+        };
+        $transitions.onStart(match, function(trans) {
+            if (!AuthService.isLoggedIn()) {
+                // User isn't authenticated. Redirect to a new Target State
+                return trans.router.stateService.target('/login');
             }
-        });
-    $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-            $rootScope.addError(error);
         });
 
-    $rootScope.addError = function(message){
-        console.log(message);
-        $mdToast.show($mdToast.simple()
-		  .textContent(message)
-		  .action('ok')
-		  .highlightAction(true)
-		  .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
-		    .position('top right')
-            //.hideDelay(5000)
-         );
+        $rootScope.$on('$stateChangeError',
+            function(event, toState, toParams, fromState, fromParams, error){
+                $rootScope.addError(error);
+            });
+
+        $rootScope.addError = function(message){
+            console.log(message);
+            $mdToast.show($mdToast.simple()
+              .textContent(message)
+              .action('ok')
+              .highlightAction(true)
+              .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+                .position('top right')
+                //.hideDelay(5000)
+             );
 
 
             /*.then(function(response) {

@@ -7,7 +7,7 @@
         <md-select  ng-model="value.content.dbConnection"
                    ng-change="value.needsSave = true"
                    required>
-            <md-option ng-value="x._id" ng-repeat="x in tables">{{ x.name }} </md-option>
+            <md-option ng-value="x.name" ng-repeat="x in tables">{{ x.name }} </md-option>
         </md-select>
         <md-tooltip >The connection that represents the database where this table will be located. This has to be a my-sql database</md-tooltip>
         <div class="md-errors-spacer"></div>

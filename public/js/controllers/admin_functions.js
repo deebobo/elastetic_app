@@ -11,6 +11,8 @@ deebobo.controller('adminFunctionsController',
             //scope vars
             //--------------------------------------------------------------------------------------
 
+            var scope = $scope;                         //make a local copy so the scope can't be screwed up in functions
+
             toolbar.title = "functions";
             toolbar.buttons = [
                 {   tooltip: "add a new function",
@@ -20,7 +22,7 @@ deebobo.controller('adminFunctionsController',
                 }
             ];
 
-            $scope.functions = [];
+            scope.functions = [];
 
             /**
              * if both the record list and the plugins exist, convert the objects of the recs to the objects
@@ -68,8 +70,8 @@ deebobo.controller('adminFunctionsController',
             //--------------------------------------------------------------------------------------
             $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/function'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                 .then(function (response) {
-                        tryConvertPluginRefs(response.data, $scope.functionPlugins).then(function(){
-                            $scope.functions.push.apply($scope.functions, response.data);
+                        tryConvertPluginRefs(response.data, scope.functionPlugins).then(function(){
+                            scope.functions.push.apply(scope.functions, response.data);
                         });
                     },
                     function (response) {
@@ -79,8 +81,8 @@ deebobo.controller('adminFunctionsController',
 
             $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/plugin/function'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                 .then(function (response) {
-                        tryConvertPluginRefs($scope.functions, response.data).then(function(){
-                            $scope.functionPlugins = response.data;
+                        tryConvertPluginRefs(scope.functions, response.data).then(function(){
+                            scope.functionPlugins = response.data;
                         });
                     },
                     function (response) {
@@ -91,17 +93,17 @@ deebobo.controller('adminFunctionsController',
 
             //html callbacks.
             //--------------------------------------------------------------------------------------
-            $scope.addFunction = function(){
-                $scope.functions.push({name: "new function", plugin: null, isOpen: true, needsSave: true, isNew: true});
+            scope.addFunction = function(){
+                scope.functions.push({name: "new function", plugin: null, isOpen: true, needsSave: true, isNew: true});
             };
 
 
-            $scope.save = function(func){
+            scope.save = function(func){
                 if(func.isNew === true){
                     $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/function', data: func})      //get the list of groups that can view
                         .then(function (response) {
                                 angular.copy(response.data, func);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
-                                tryConvertPluginRef(func, $scope.functionPlugins);
+                                tryConvertPluginRef(func, scope.functionPlugins);
                                 func.needsSave = false;
                                 func.isNew = false;
                             },
@@ -114,7 +116,7 @@ deebobo.controller('adminFunctionsController',
                     $http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/function/' + func._id, data: func})      //get the list of groups that can view
                         .then(function (response) {
                                 angular.copy(response.data, func);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
-                                tryConvertPluginRef(func, $scope.functionPlugins);
+                                tryConvertPluginRef(func, scope.functionPlugins);
                                 func.needsSave = false;
                             },
                             function (response) {
@@ -124,8 +126,8 @@ deebobo.controller('adminFunctionsController',
                 }
             };
 
-            $scope.delete = function(index, func, ev){
-                var list = $scope.functions;
+            scope.delete = function(index, func, ev){
+                var list = scope.functions;
                 // Appending dialog to document.body to cover sidenav in docs app
                 var confirm = $mdDialog.confirm()
                     .title('Delete')

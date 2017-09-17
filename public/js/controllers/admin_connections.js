@@ -7,22 +7,25 @@
 'use strict'
 
 deebobo.controller('adminConnectionsController',
-    ['$scope', '$http', 'messages', '$stateParams', '$mdDialog', 'pluginService', '$q', 'toolbar',
-        function ($scope, $http, messages, $stateParams, $mdDialog, pluginService, $q, toolbar) {
+    ['$scope', '$http', 'messages', '$stateParams', '$mdDialog', 'pluginService', '$q', 'toolbar', 'Group',
+        function ($scope, $http, messages, $stateParams, $mdDialog, pluginService, $q, toolbar, Group) {
 
             //scope vars
             //--------------------------------------------------------------------------------------
+
+            var scope = $scope;
 
             toolbar.title = "connections";
             toolbar.buttons = [
                 {   tooltip: "add a new connection",
                     icon: "fa fa-plus-circle",
                     type: "font-icon",
-                    click: function(ev){ $scope.addConnection();}
+                    click: function(ev){ scope.addConnection();}
                 }
             ];
 
-            $scope.connections = [];
+            scope.connections = [];
+			scope.groups = Group.query({site: $stateParams.site});
 
             /**
              * if both the record list and the plugins exist, convert the objects of the recs to the objects
@@ -70,8 +73,8 @@ deebobo.controller('adminConnectionsController',
             //--------------------------------------------------------------------------------------
             $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                 .then(function (response) {
-                        tryConvertPluginRefs(response.data, $scope.connectionPlugins).then(function(){
-                            $scope.connections.push.apply($scope.connections, response.data);
+                        tryConvertPluginRefs(response.data, scope.connectionPlugins).then(function(){
+                            scope.connections.push.apply(scope.connections, response.data);
                         });
                     },
                     function (response) {
@@ -81,8 +84,8 @@ deebobo.controller('adminConnectionsController',
 
             $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/plugin/connection'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                 .then(function (response) {
-                        tryConvertPluginRefs($scope.connections, response.data).then(function(){
-                            $scope.connectionPlugins = response.data;
+                        tryConvertPluginRefs(scope.connections, response.data).then(function(){
+                            scope.connectionPlugins = response.data;
                         });
                     },
                     function (response) {
@@ -93,12 +96,12 @@ deebobo.controller('adminConnectionsController',
 
             //html callbacks.
             //--------------------------------------------------------------------------------------
-            $scope.addConnection = function(){
-                $scope.connections.push({name: "new connection", plugin: null, isOpen: true, needsSave: true, isNew: true});
+            scope.addConnection = function(){
+                scope.connections.push({name: "new connection", plugin: null, isOpen: true, needsSave: true, isNew: true, groups: scope.groups.slice()});   //copy the grups list to give default access to everyone.
             };
 
             /* now done by pluginConfigurator directive
-           $scope.pluginChanged = function(connection){
+           scope.pluginChanged = function(connection){
                 if(connection.plugin.config){
                     pluginService.load(connection.plugin.config)
                         .then(function(){
@@ -109,12 +112,12 @@ deebobo.controller('adminConnectionsController',
                 }
             };*/
 
-            $scope.save = function(connection){
+            scope.save = function(connection){
                 if(connection.isNew === true){
                     $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/connection', data: connection})      //get the list of groups that can view
                         .then(function (response) {
                                 angular.copy(response.data, connection);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
-                                tryConvertPluginRef(connection, $scope.connectionPlugins);
+                                tryConvertPluginRef(connection, scope.connectionPlugins);
                                 connection.needsSave = false;
                                 connection.isNew = false;
                             },
@@ -127,7 +130,7 @@ deebobo.controller('adminConnectionsController',
                     $http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/connection/' + connection._id, data: connection})      //get the list of groups that can view
                         .then(function (response) {
                                 angular.copy(response.data, connection);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
-                                tryConvertPluginRef(connection, $scope.connectionPlugins);
+                                tryConvertPluginRef(connection, scope.connectionPlugins);
                                 connection.needsSave = false;
                             },
                             function (response) {
@@ -137,7 +140,7 @@ deebobo.controller('adminConnectionsController',
                 }
             };
 
-            $scope.delete = function(connection, ev){
+            scope.delete = function(connection, ev){
 
                 // Appending dialog to document.body to cover sidenav in docs app
                 var confirm = $mdDialog.confirm()
@@ -174,7 +177,7 @@ deebobo.controller('adminConnectionsController',
              * refreshes the token for the connection. Only available if the record had already been saved.
              * @param value
              */
-            $scope.refresh_token = function(connection, ev){
+            scope.refresh_token = function(connection, ev){
                 // Appending dialog to document.body to cover sidenav in docs app
                 var confirm = $mdDialog.confirm()
                     .title('Refresh token')
@@ -197,12 +200,32 @@ deebobo.controller('adminConnectionsController',
                             );
                     }
                     else
-                        $scope.connections.splice($scope.connections.indexOf(connection), 1);
+                        scope.connections.splice(scope.connections.indexOf(connection), 1);
 
                 }, function() {
-                    //$scope.status = 'You decided to keep your debt.';
+                    //scope.status = 'You decided to keep your debt.';
                 });
-            }
+            };
+			
+			scope.checkGroupChip = function(connection, chip){
+			    if(chip){
+			        if(typeof chip === "object")
+			            return chip;
+			        var found = scope.groups.find((item) =>{return item.name == chip} );
+			        if(found)
+			            return found;
+                }
+                return null;
+            };
+			
+			scope.groupAddedTo = function(connection, chip){
+				//connection.groups.push(chip);
+				connection.needsSave = true;
+			};
+			
+			$scope.groupRemovedFrom = function(connection, chip){
+				connection.needsSave = true;
+			}
 
         }
     ]

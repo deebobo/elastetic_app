@@ -5,7 +5,7 @@
  */
 
 
-angular.module("deebobo").controller('MySqlHistoricalDataConfigController',
+angular.module("deebobo").controller('MySqlPoiDataConfigController',
     ['$scope', '$controller', 'messages', '$mdDialog', '$http', '$stateParams',
         function($scope, $controller, messages, $mdDialog, $http, $stateParams) {
             //angular.extend(this, $controller('adminConnectionsController', {$scope: $scope}));  -> no longer needed, configs are now rapped inside pluginConfigurator directive.

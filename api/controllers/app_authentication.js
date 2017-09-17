@@ -69,3 +69,8 @@ module.exports.login = async function(req, res){
 	else
 		res.status(400).json({message:"missing username or password"});
 };
+
+module.exports.resetPwd = async function(req, res){
+	//todo: implement me
+	res.status(500).json({message:"to be implemented"});
+};

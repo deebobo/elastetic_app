@@ -63,7 +63,10 @@ class Pages{
      * was added
      */
     update(page){
-        return this._connections.findOneAndUpdate({"_id": page._id}, page).exec();
+        if('_id' in page)
+            return this._connections.findOneAndUpdate({"_id": page._id}, page).exec();
+        else
+            return this._connections.findOneAndUpdate({"name": page.name, 'site': page.site}, page).exec();
     }
 
 	/** Returns all the pages for a particular site, without the actual content.
@@ -94,6 +97,17 @@ class Pages{
     }
 	
 	/**
+     * finds a page by it's id.
+     *
+     * @param id {string}  - id of the page.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was found
+     */
+    findById(id){
+        return this._pages.findOne( { _id: id } ).populate('plugin').populate('groups').exec();
+    }
+	
+	/**
      * removes a page.
      *
      * @name .delete()
@@ -101,8 +115,21 @@ class Pages{
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
      * was found
      */
-    delete(id){
+    deleteById(id){
         return this._pages.findOneAndRemove( { _id: id } ).exec();
+    }
+
+    /**
+     * removes a page.
+     *
+     * @name .delete()
+     * @param name {String}  - the name of the object that needs to be deleted.
+     * @param site {string}  - name of the site.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was found
+     */
+    delete(name, site){
+        return this._pages.findOneAndRemove( { name: name, site: site } ).exec();
     }
 }
 

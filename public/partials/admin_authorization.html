@@ -1,11 +1,11 @@
-<div layout="column" layout-fill ng-cloak class="dbb_admin_page">
+<div layout="column" layout-fill ng-cloak  layout-fill>
 
     <md-tabs md-border-bottom flex class="md-primary">
 
         <md-tab label="users"
                 md-on-select="usersSelected = true">
 
-            <md-content class="md-padding">
+            <md-content class="dbb_admin_page" layout-fill>
 
                 <div ng-repeat="user in users">
                     <form ng-submit="saveUser(user)"
@@ -32,8 +32,8 @@
                                           md-transform-chip="checkGroupChip(user, $chip)"
                                           md-on-add="groupAddedTo(user, $chip)"
                                           md-on-remove="groupRemovedFrom(user, $chip)"
-                                          delete-button-label="Remove Tag"
-                                          delete-hint="Press delete to remove tag">
+                                          delete-button-label="Remove group"
+                                          delete-hint="Press delete to remove group">
                                     <md-chip-template>
                                             <span>
                                               <strong>{{$chip.name}}</strong>
@@ -76,7 +76,7 @@
 
         <md-tab label="groups"
                 md-on-select="usersSelected = false">
-            <md-content class="md-padding">
+            <md-content class="dbb_admin_page" layout-fill>
 
 
                 <md-list ng-cloak layout="column">

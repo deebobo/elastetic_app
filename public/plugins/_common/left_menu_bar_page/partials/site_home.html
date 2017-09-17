@@ -17,7 +17,8 @@
 				<li ng-repeat="btn in toolbar.buttons"
 					style="list-style-type: none">
 
-					<md-button class="md-icon-button"
+					<md-button id="{{btn.name}}"
+							   class="md-icon-button"
 							   ng-click="toolbarBtnClicked(btn, $ev)"
 							   ng-if="btn.type === 'font-icon' && (!btn.hasOwnProperty('ng_if') || btn.ng_if())">
 						<md-tooltip>{{btn.tooltip}}</md-tooltip>
@@ -26,9 +27,30 @@
 				</li>
 			</ul>
 			<md-divider></md-divider>
-			<md-button class="md-icon-button" aria-label="account">
-				<md-icon md-svg-icon="images/site.svg" ></md-icon>
-			</md-button>
+			
+			<md-menu>
+			  
+				<md-button class="md-icon-button" aria-label="account" class="md-icon-button" ng-click="ctrl.openMenu($mdMenu, $event)">
+					<md-icon md-menu-origin md-font-icon="fa fa-user-circle" style="font-size:24px"></md-icon>
+				</md-button>
+			  
+				<md-menu-content width="4">
+					<md-menu-item>
+					    <md-button disabled="disabled" ng-click="showUserDetails()">
+							<md-icon  md-font-icon="fa fa-wrench" style="font-size:24px"></md-icon>
+							my account
+					    </md-button>
+					</md-menu-item>
+					<md-menu-item>
+					    <md-button ng-click="logout()">
+							<md-icon md-font-icon="fa fa-sign-out" style="font-size:24px"></md-icon>
+							log out
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+			
+			
 
 		</div>
 	</md-toolbar>

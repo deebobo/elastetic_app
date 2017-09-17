@@ -16,8 +16,7 @@
         </md-button>
     </div>
 
-    <div flex layout="row"  layout-align="start center" ng-if="value.content.authToken"
-         ng-controller="adminConnectionsController">
+    <div flex layout="row"  layout-align="start center" ng-if="value.content.authToken">
         <md-input-container  flex>
             <label >authentication token</label>
             <input ng-readonly="true" type="text"
@@ -27,7 +26,7 @@
             </input>
         </md-input-container>
         <md-button class="md-primary"
-                   ng-click="refresh_token(value, $event)">
+                   ng-click="$parent.refresh_token(value, $event)">
             refresh token
         </md-button>
     </div>

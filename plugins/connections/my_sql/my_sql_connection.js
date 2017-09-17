@@ -25,7 +25,7 @@ class MySqlConnection extends Connection {
      */
     async connect(plugins, connectionInfo){
         let self = this;
-        let dbConnection = await plugins.db.connections.findById(connectionInfo.content.dbConnection);
+        let dbConnection = await plugins.db.connections.find(connectionInfo.content.dbConnection, connectionInfo.site);
         if(dbConnection){
             let connectionInfo = dbConnection.content;
             return new Promise((resolve, reject) => {

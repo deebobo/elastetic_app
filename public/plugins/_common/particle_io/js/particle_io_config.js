@@ -11,7 +11,8 @@ angular.module("deebobo").controller('extAdminConnectionsController',
     //angular.extend(this, $controller('adminConnectionsController', {$scope: $scope})); -> no longer needed, configs are now rapped inside pluginConfigurator directive.
 
     var _currentPluginPath = null;
-        $scope.isLoading = false;
+    $scope.isLoading = false;
+	$scope.refresh_token = $scope.$parent.refresh_token;						//make certain that the callback is available in child 
 
     var currentPluginPath = function () {
 

@@ -73,6 +73,8 @@ module.exports.update = async function(req, res) {
             let db = await req.app.get('plugins');
             db = db.db;
             let rec = req.body;
+			rec.name = req.params.page;
+			rec.site = req.params.site;
             let newRec = await db.pages.update(rec);
             res.status(200).json(newRec);
         }
@@ -89,7 +91,7 @@ module.exports.delete = async function(req, res) {
         if(auth.canWrite(req.user.groups, res)){                //auth will set the error message in res if there is a problem.
             let db = await req.app.get('plugins');
             db = db.db;
-            let newRec = await db.pages.delete(req.params.connection);
+            let newRec = await db.pages.delete(req.params.page, req.params.site);
             res.status(200).json(newRec);
         }
     }

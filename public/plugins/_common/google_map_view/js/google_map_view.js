@@ -4,32 +4,35 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-"use strict"
+"use strict";
 
 
 angular.module("deebobo").controller('googleMapViewController', [
-    '$scope', 'connectionDataService', 'messages','$http', '$stateParams', '$mdSidenav', 'dbbMapService', 'toolbar','$timeout', 'colorsList',
-    function ($scope, connectionDataService, messages, $http, $stateParams, $mdSidenav, dbbMapService, toolbar, $timeout, colorsList) {
+    '$scope', 'connectionDataService', 'messages','$http', '$stateParams', '$mdSidenav', 'dbbMapService', 'toolbar','$timeout', 'colorsList', '$mdDialog', 'UserService',
+    function ($scope, connectionDataService, messages, $http, $stateParams, $mdSidenav, dbbMapService, toolbar, $timeout, colorsList, $mdDialog, UserService) {
 
         toolbar.title = "map";
         toolbar.buttons = [
             {   tooltip: "show the filter options",
                 icon: "fa fa-filter",
                 type: "font-icon",
+				name: "show_filter_btn",
                 click: function(ev){ $scope.togglerFilterMenu();}
             },
 			
 			{   tooltip: "show the visualisation options",
                 icon: "fa fa-eye",
                 type: "font-icon",
+				name: "show_vis_options_btn",
                 click: function(ev){ $scope.togglerVisualisationMenu();}
             }
 			
         ];
 
         var particle = new Particle();
-		var connections = null;										//store ref to all the connections, so we can load the data again.
+		var connections = [];										//store ref to all the connections, so we can load the data again.
 		var dataPoints = [];										//the data points that we found in db, so we can re-render when options change.
+        var poiConnection = null;                                   //stores a ref to the last poi connection that is found, so we can add items to it.
 
 
         if (navigator.geolocation)
@@ -39,13 +42,7 @@ angular.module("deebobo").controller('googleMapViewController', [
 
 
         $scope.zoom = 8;
-        $scope.pointsOfInterest = [
-            {
-                title: "test point",
-                pos: {lat: 50.5039, lng: 4.4699},
-                accuracy: 5
-            }
-        ];
+        $scope.pointsOfInterest = [];
 
         $scope.routes = [];
 
@@ -57,9 +54,10 @@ angular.module("deebobo").controller('googleMapViewController', [
 		$scope.newFilter = { from: {date: new Date(), days: 0, hours: 0}, to:{date:new Date(), days: 0, hours: 0 }  };
         $scope.curFilter = { from: new Date(), to: new Date() };
 		$scope.showPoints = false;				
-		$scope.showRoutes = false;
+		$scope.showRoutes = true;
 		$scope.showPoi = false;
 		$scope.colors = colorsList.colors;
+		$scope.canEditMap = false;
 
 
         $scope.$watch('newFilter.from.hours', function(newVal) {
@@ -88,16 +86,6 @@ angular.module("deebobo").controller('googleMapViewController', [
             $scope.newFilter.to.date = temp;
         });
 		
-		
-		
-		$scope.$watch('showPoints', function(newVal) {
-			renderPoints(dataPoints);
-        });
-		
-		$scope.$watch('showRoutes', function(newVal) {
-			renderPoints(dataPoints);
-        });
-
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         //data
@@ -137,13 +125,19 @@ angular.module("deebobo").controller('googleMapViewController', [
         //load the list of connections, so we can query every connection for data.
         $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
-					connections = response.data;
-                    response.data.forEach((connection) => {
-						if(connection.name === 'my_sql_poi_data_store') 
-							loadPois(connection);
-						else
-							loadHistData(connection);
-                    })
+					for(var i = 0; i < response.data.length; i++){
+						var con = response.data[i];
+						if(UserService.isAuthorizedFor(con)){
+							if(connection.plugin.name === 'my_sql_poi_data'){
+								loadPois(connection, {});
+								connections.push(con);
+							}
+							else if(connection.plugin.name === 'my_sql_historical_data'){
+								loadHistData(connection);
+								connections.push(con);
+							}
+						}
+					}
                 },
                 function (response) {
                     messages.error(response.data);
@@ -172,16 +166,17 @@ angular.module("deebobo").controller('googleMapViewController', [
 			);
 		}
 		
-		function loadPois(connection){
+		function loadPois(connection, params){
+            poiConnection = connection;
+			$scope.canEditMap = UserService.isAuthorizedToEdit(poiConnection);
 			params.pagesize = 200;
 			var toStore = [];															//for storing in the local storage
             function loadPoisSection(page){
 				params.page = page;
                 connectionDataService.get(connection._id, params).then(
                     function(data) {
-                        var len = data.length;                                      //we need to see if we were at end of query or not, but the data list will be overwritten once it is rendered.
-                        data = renderPois(data);
-                        if(len === 200)                                   //as long as we have a full record set, try to get a next set.
+                        $scope.pointsOfInterest.push.apply($scope.pointsOfInterest, data);
+                        if(data.length === 200)                                   //as long as we have a full record set, try to get a next set.
                             loadPoisSection(page + 1);
                     },
                     function(err){messages.error(err);}
@@ -238,17 +233,25 @@ angular.module("deebobo").controller('googleMapViewController', [
             loadRouteSection(0);
         }
 
-        //only show the data that matches the filter.
+        //only show the data that matches the filter.test
         $scope.applyFilter = function(){
             $scope.routes = [];                         //reset all the data. This will also clear the routes from the map
             $scope.devices = {};
 
             var params = {from: $scope.newFilter.from.date, to: $scope.newFilter.to.date};
             connections.forEach((connection) => {
-                loadRoutes(connection, params);
+                if(connection.plugin.name === 'my_sql_poi_data')
+                    loadPois(connection, params);
+                else if(connection.plugin.name === 'my_sql_historical_data')
+                    loadRoutes(connection, params);
             });
 
             $scope.curFilter = {from: $scope.newFilter.from.date, to: $scope.newFilter.to.date};
+        };
+
+
+        $scope.setColor = function(device){
+            device.refreshOptions(device);
         };
 
 
@@ -309,25 +312,25 @@ angular.module("deebobo").controller('googleMapViewController', [
         function renderPoint(point){
             var coordinates = JSON.parse(point.data).split(',');
             var data = new google.maps.LatLng(parseFloat(coordinates[0]), parseFloat(coordinates[1]));
+			data.time = point.time;								//attach time info to the point, so we can render the info later on.
             if($scope.devices.hasOwnProperty(point.device)){            //existing device
-                $scope.devices[point.device].path.push(data);
-                dbbMapService.addPointToRoute($scope.devices[point.device], data);
+				var device = $scope.devices[point.device];
+                device.path.push(data);
+                if(device.addPointToRoute)                  //if it's been rendered before, render emmideatly, otherwise defer until it has been added to the map
+                    device.addPointToRoute(device, data);     //draw on map
             }
             else{
-                var newList = {path:[ data], color: "red", isActive: true };
+                var newList = {path:[ data], color: "red", isActive: true, device: point.device };		//add device name to the info, so we can display it when clicking on points
                 $scope.devices[point.device] = newList;
                 $scope.routes.push(newList);
+				//don't need to return the newList, it doesn't have to be reloaded, it has just been added.
             }
-			var time = new Date(point.time);
-			if(time < $scope.Start)
-				$scope.Start = time;
-			if(time > $scope.End)
-				$scope.End = time;
         }
 		
 		function renderPois(data){
-			var location = new google.maps.LatLng(data.lat, data.lng);
-			dbbMapService.addPoi($scope.devices[point.device], data);
+			data.location = new google.maps.LatLng(data.lat, data.lng);
+			//data.isActive = true;
+
 		}
 
 
@@ -336,14 +339,16 @@ angular.module("deebobo").controller('googleMapViewController', [
             var bounds = new google.maps.LatLngBounds();
 			var routes = $scope.routes;
 			var found = false;
+			var map =  null;
             for (var i=0; i < routes.length; i++) {
 				var route = routes[i];
+				map = route.route.getMap();
                 if(route.route){
                     bounds.union(route.route.getBounds());
 					found = true;
 				}
             }
-			if(found)
+			if(found && map)
 				map.fitBounds(bounds);
         }
 
@@ -366,6 +371,133 @@ angular.module("deebobo").controller('googleMapViewController', [
 		$scope.togglerVisualisationMenu = function(){
             $mdSidenav("visualisationMenu").toggle();
         };
+		
+		////////////////////////////
+		//callbacks
+		////////////////////////////
+		
+		$scope.deletePoi = function(ev, poi){
+			if(poiConnection && $scope.canEditMap){
+				var confirm = $mdDialog.confirm()
+					.title('Would you like to delete this point of interest?')
+					.textContent('The location will be blacklisted so that it will not be regarded anymore as a possibible poi in the future.')
+					.ariaLabel('Delete point of interest')
+					.targetEvent(ev)
+					.ok('Yes')
+					.cancel('No');
+
+				$mdDialog.show(confirm).then(function() {
+					poi.blacklisted = true;
+					let rec = {blacklisted: true, id: poi.id};
+					connectionDataService.update(poiConnection._id, rec).then(
+						function(data){
+							$scope.pointsOfInterest.splice($scope.pointsOfInterest.indexOf(poi), 1);
+						},
+						function(err){
+							messages.error(err);
+						}
+					);
+				});
+			}
+		};
+		
+		$scope.showPoiRename = function(ev, poi, onDone){
+            //ask for name
+            if(poiConnection && $scope.canEditMap){
+                var confirm = $mdDialog.prompt()
+                    .title('Rename')
+                    .textContent('How would you like to call the point-of-interest')
+                    .placeholder('name')
+                    .initialValue(poi.name)
+                    .ariaLabel('rename')
+                    .targetEvent(ev)
+                    .ok('Ok')
+                    .cancel('Cancel');
+
+                $mdDialog.show(confirm).then(function(result) {
+                    let record = {id: poi.id, name: result};
+                    connectionDataService.update(poiConnection._id, record).then(
+                        function(data){
+                            poi.name = result;
+                            onDone(poi, result);                    //let the map also update the UI
+                        },
+                        function(err){
+                            messages.error(err);
+                        }
+                    );
+                }, function() {
+                });
+            }
+            else{
+                $mdDialog.show(
+                    $mdDialog.alert()
+                        .clickOutsideToClose(true)
+                        .title('Invalid operation')
+                        .textContent("Can't store the point-of interest. Please first specify a connection to manage your poi data.")
+                        .ariaLabel("Can't store poi data")
+                        .ok('Ok')
+                        .targetEvent(ev)
+                );
+            }
+		};
+		
+		$scope.updatePoi = function(poi){
+			if(poiConnection && $scope.canEditMap){
+				let rec = {id: poi.id, name: poi.name, lat: poi.lat, lng: poi.lng, count: poi.count, duration: poi.duration};
+				connectionDataService.update(poiConnection._id, rec).then(
+					function(data){
+						poi.name = data.name;
+						poi.lat = data.lat;
+						poi.lng = data.lng;
+						poi.count = data.count;
+						poi.duration = data.duration;
+					},
+					function(err){
+						messages.error(err);
+					}
+				);
+			}
+		};
+		
+		$scope.addPoi = function(ev, location){
+			//ask for name
+			if($scope.canEditMap){
+				if(poiConnection){
+					var confirm = $mdDialog.prompt()
+						.title('Name')
+						.textContent('How would you like to call the new point-of-interest')
+						.placeholder('name')
+						.ariaLabel('name')
+						.targetEvent(ev)
+						.ok('Ok')
+						.cancel('Cancel');
+
+					$mdDialog.show(confirm).then(function(result) {
+						var poi = { name: result, lat: location.lat(), lng: location.lng(), count: 0, duration: 0};        //location is for googlemap, lat-lng is for storage in server
+						connectionDataService.post(poiConnection._id, poi).then(
+							function(data){
+								$scope.pointsOfInterest.push(data);
+							},
+							function(err){
+								messages.error(err);
+							}
+						);
+					}, function() {
+					});
+				}
+				else{
+					$mdDialog.show(
+						$mdDialog.alert()
+							.clickOutsideToClose(true)
+							.title('Invalid operation')
+							.textContent("Can't store the point-of interest. Please first specify a connection to manage your poi data.")
+							.ariaLabel("Can't store poi data")
+							.ok('Ok')
+							.targetEvent(ev)
+					);
+				}
+			}
+		}
 
     }]);
 

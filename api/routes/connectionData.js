@@ -14,7 +14,7 @@ router.get('/', ctrlConData.get);
 //store connection data on this connection
 router.post('/', ctrlConData.post);
 //store connection data on this connection
-router.put('/', ctrlConData.put);
+router.put('/:record', ctrlConData.put);
 
 //remove connection data from this connection
 router.delete('/:record', ctrlConData.deleteRec);

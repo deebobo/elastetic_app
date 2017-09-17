@@ -58,7 +58,7 @@ class MySqlPOIDataStore extends MySqlConnection{
      * - time
      */
     async execute(pluginData, connectionInfo, data){
-        postData(pluginData, connectionInfo, data);
+        return this.postData(pluginData, connectionInfo, data);
     }
 
     /** store data in the connection (can be different then executing it?)
@@ -72,17 +72,18 @@ class MySqlPOIDataStore extends MySqlConnection{
     async postData(plugins, connectionInfo, data){
 
         let self = this;
-
+        let result = null;
         await self.connect(plugins, connectionInfo);                                       //make certain that we have an open connection
         try{
-            await self.add(connectionInfo, data);
+            result = await self.add(connectionInfo, data);
         }
         finally {
             await self.close();                                           //make certain that the connection is closed again.
         }
+        return result;
     }
 
-    /** store data in the connection (can be different then executing it?)
+    /** get data from the connection
      @param filter an object used to filter the data.
      * @param plugins {Object} ref to the plugin manager
      * @param connectionInfo: {Object} connection record
@@ -102,22 +103,64 @@ class MySqlPOIDataStore extends MySqlConnection{
         return result;
     }
 
+    /** Get last value for the connection
+     * @param device {string} id of the device
+     * @time {number} timestamp to be close to.
+     * @param plugins {Object} ref to the plugin manager
+     * @param connectionInfo: {Object} connection record
+     */
+    async getLastestData(plugins, connectionInfo, device, time){
+
+        let self = this;
+
+        let result = null;
+        await self.connect(plugins, connectionInfo);                                       //make certain that we have an open connection
+        try{
+            result = await self.getLatest(connectionInfo.content, device, time);
+        }
+        finally {
+            await self.close();                                           //make certain that the connection is closed again.
+        }
+        return result;
+    }
+
+    /** Get last value for the connection
+     @param filter an object used to filter the data.
+     * @param plugins {Object} ref to the plugin manager
+     * @param connectionInfo: {Object} connection record
+     */
+    async getNearestData(plugins, connectionInfo, device, lat, lng){
+
+        let self = this;
+
+        let result = null;
+        await self.connect(plugins, connectionInfo);                                       //make certain that we have an open connection
+        try{
+            result = await self.getNearest(connectionInfo.content, device, lat, lng);
+        }
+        finally {
+            await self.close();                                           //make certain that the connection is closed again.
+        }
+        return result;
+    }
+
     /** store data in the connection (can be different then executing it?)
      @param data {Object} the data to process
      * @param plugins {Object} ref to the plugin manager
      * @param connectionInfo: {Object} connection record
      */
-    async updateData(plugins, connectionInfo, data){
+    async updateData(plugins, connectionInfo, record, data){
 
         let self = this;
-
+        let result = null;
         await self.connect(plugins, connectionInfo);                                       //make certain that we have an open connection
         try{
-            await self.update(connectionInfo, data);
+            result = await self.update(connectionInfo, record, data);
         }
         finally {
             await self.close();                                           //make certain that the connection is closed again.
         }
+        return result;
     }
 
     /** store data in the connection (can be different then executing it?)
@@ -145,12 +188,12 @@ class MySqlPOIDataStore extends MySqlConnection{
      * table fields
      * - site: string: name of the site/application that owns the data.
      * - source: id of connection that stored the data  (ex: source = particle.io connection) .
-     * - device: unique identifier (within the source) for the device
      * - lat, lng: coordinates of the point of iterest
      * - name: name of the point of interest.
 	 * - count: the nr of times that the POI has been found
 	 * - duration: amount of time spent on same poi, expressed in seconds
 	 * - time: last time that point was visited
+     * - radius: the size of the poi, expressed in meters. Default is 15
      */
     async create(connectionInfo){
         let self = this;
@@ -158,8 +201,8 @@ class MySqlPOIDataStore extends MySqlConnection{
             if(self.con){
 
                 try{
-                    if(connectionInfo.createTable){
-                        var sql = "CREATE TABLE " + connectionInfo.tableName + " (id int NOT NULL PRIMARY KEY, time datetime, site VARCHAR(255), source VARCHAR(255), device VARCHAR(255), name VARCHAR(255), lat DOUBLE, lng DOUBLE, count int, duration int   )";
+                    if(connectionInfo.content.createTable){
+                        var sql = "CREATE TABLE " + connectionInfo.content.tableName + " (id int NOT NULL PRIMARY KEY AUTO_INCREMENT, time datetime, site VARCHAR(255), source VARCHAR(255), device VARCHAR(255), name VARCHAR(255), lat DOUBLE, lng DOUBLE, count int DEFAULT 0, duration int DEFAULT 0, blacklisted bool DEFAULT false, radius int DEFAULT 15   )";
                         self.con.query(sql, function (err, result, fields) {
                             if (err) {
                                 winston.log("error", 'table creation failed', connectionInfo);
@@ -183,18 +226,22 @@ class MySqlPOIDataStore extends MySqlConnection{
         });
     }
 	
-	async getLatest(plugins, connection, device, time){
+	async getLatest(connection, device, time){
 		let self = this;
         return new Promise((resolve, reject) => {
             if(this.con){
-                var sql = "SELECT * from " + connection.tableName + ' WHERE device = "' + device + '" AND time < ' + time + ' ORDER BY time DESC LIMIT 1';
-                self.con.query(sql, function (err, result, fields) {
+                let sql = "SELECT * from " + connection.tableName + ' WHERE device = ? AND time < ? AND blacklisted = false ORDER BY time DESC LIMIT 1';
+                let params = [device, time];
+                self.con.query(sql, params, function (err, result) {
                     if (err) {
                         reject(err);
                         winston.log("error", 'table query failed', sql);
                     }
                     else {
-                        resolve(result);
+                        if(result.length > 0)
+                            resolve(result[0]);
+                        else
+                            resolve(null);
                     }
                 });
             }
@@ -203,12 +250,13 @@ class MySqlPOIDataStore extends MySqlConnection{
         });
 	}
 	
-	async getNearest(plugins, connection, device, lat, lng){
+	async getNearest(connection, device, lat, lng){
 		let self = this;
         return new Promise((resolve, reject) => {
             if(this.con){
-                var sql = "SELECT *, ABS(" + lat + " - lat) + ABS(" + lng + " - lng) as distance from " + connection.tableName + ' WHERE device = "' + device + '" ORDER BY distance LIMIT 10';
-                self.con.query(sql, function (err, result, fields) {
+                let sql = "SELECT *, ABS(" + lat + " - lat) + ABS(" + lng + " - lng) as distance from " + connection.tableName + ' WHERE device = ? AND blacklisted = false ORDER BY distance LIMIT 10';
+                let params = [device];
+                self.con.query(sql, params, function (err, result) {
                     if (err) {
                         reject(err);
                         winston.log("error", 'table query failed', sql);
@@ -233,6 +281,7 @@ class MySqlPOIDataStore extends MySqlConnection{
      * - lat
 	 * - lng
      * - device: id of device.
+	 * - blacklisted
      * @returns {Promise}
      */
     async store(connectionInfo, data){
@@ -242,57 +291,70 @@ class MySqlPOIDataStore extends MySqlConnection{
             if(!this.con)
                 reject("connection not opened");
             let sql = null;
+            let params = [];
             if('id' in data){
                 sql = "UPDATE " + connectionInfo.content.tableName + " set ";
-                let needsComma = false;
                 if( 'lat' in data){
-                    sql += "lat = " + data.lat;
-                    needsComma = true;
+                    sql += "lat = ?";
+                    params.push(data.lat);
                 }
 				if( 'lng' in data){
-					if (needsComma == true)
+					if (params.length >  0)
                         sql += ", ";
-                    sql += "lng = " + data.lng;
-                    needsComma = true;
+                    sql += "lng = ?";
+                    params.push(data.lng);
                 }
                 if( 'name' in data) {
-                    if (needsComma == true)
+                    if (params.length >  0)
                         sql += ", ";
-                    sql +=  "name = '" + data.name + "'";
+                    sql +=  "name = ?";
+                    params.push(data.name);
                 }
 				if( 'count' in data) {
-                    if (needsComma == true)
+                    if (params.length >  0)
                         sql += ", ";
-                    sql +=  "count = " + data.count;
+                    sql +=  "count = ?";
+                    params.push(data.count);
                 }
 				if( 'time' in data) {
-                    if (needsComma == true)
+                    if (params.length >  0)
                         sql += ", ";
-                    sql +=  "time = " + data.time;
+                    sql +=  "time = ?";
+                    params.push(data.time);
                 }
 				if( 'duration' in data) {
-                    if (needsComma == true)
+                    if (params.length >  0)
                         sql += ", ";
-                    sql +=  "duration = " + data.duration;
+                    sql +=  "duration = ?";
+                    params.push(data.duration);
                 }
-                sql += " WHERE id = '" + data.id;
+				if( 'blacklisted' in data) {
+                    if (params.length >  0)
+                        sql += ", ";
+                    sql +=  "blacklisted = ?";
+                    params.push(data.blacklisted);
+                }
+                sql += " WHERE id = ?";
+				params.push(data.id);
             }
             else {
-                sql = "INSERT INTO " + connectionInfo.content.tableName + " (site, source, device, lat, lng, count, duration, time, name) VALUES ('"
-                    + connectionInfo.site + "', '"
-                    + connectionInfo.name + "', '"
-                    + data.device + "', "
-                    + data.lat + ", '"
-                    + data.name + "')";
+                sql = "INSERT INTO " + connectionInfo.content.tableName +
+                    " SET site = ?, source = ?, device = ?, lat = ?, lng = ?, count = ?, duration = ?, time = ?, blacklisted = false, name = ?";
+                if(! data.count) data.count = 0;
+                if(! data.duration) data.duration = 0;
+                if(! data.name) data.name = "new point";
+                params = [connectionInfo.site, connectionInfo.name, data.device, data.lat, data.lng, data.count, data.duration, Date.now(), data.name];
             }
-            self.con.query(sql, function (err, result, fields) {
+            self.con.query(sql, params, function (err, result) {
                 if (err) {
                     reject(err);
                     winston.log("error", 'store poi data failed', err);
                 }
                 else {
-                    resolve(result);
-                    winston.log("info", 'poi data saved', result);
+                    if('insertId' in result && result.inserId != 0)
+                        data.id = result.insertId;
+                    resolve(data);
+                    winston.log("info", 'poi data saved', data, result);
                 }
             });
         });
@@ -312,7 +374,8 @@ class MySqlPOIDataStore extends MySqlConnection{
      * - data: the value to store.
      * @returns {Promise.<void>}
      */
-    async update(connectionInfo, data){
+    async update(connectionInfo, record, data){
+        data.id = record;
         return this.store(connectionInfo, data);
     }
 	
@@ -362,6 +425,10 @@ class MySqlPOIDataStore extends MySqlConnection{
             res += (res.length > 0 ? ' and ' : '') + 'count = ' + filter.count;
         if('duration' in filter && filter.duration)
             res += (res.length > 0 ? ' and ' : '') + 'duration = ' + filter.duration;
+		if('blacklisted' in filter && filter.blacklisted)
+            res += (res.length > 0 ? ' and ' : '') + 'blacklisted = ' + filter.blacklisted;
+		else
+			res += (res.length > 0 ? ' and ' : '') + 'blacklisted = false';
 
         if(res.length > 0)
             res = " WHERE " + res;
@@ -392,7 +459,7 @@ class MySqlPOIDataStore extends MySqlConnection{
         let self = this;
         return new Promise((resolve, reject) => {
             if(this.con){
-                var sql = "SELECT time, device, source, name, lat, lng,count, duration from " + connectionInfo.tableName + self._buildWhere(filter);
+                var sql = "SELECT id, time, device, source, name, lat, lng,count, duration from " + connectionInfo.tableName + self._buildWhere(filter);
                 self.con.query(sql, function (err, result, fields) {
                     if (err) {
                         reject(err);
@@ -422,8 +489,8 @@ let getPluginConfig = function (){
         license: "GPL-3.0",
         requires: {"mysql": "^2.13.0"},
         config:{
-            partial: "my_sql_data_store_config_partial.html",
-            code: ["my_sql_data_store_config_controller.js"]
+            partial: "my_sql_poi_data_config_partial.html",
+            code: ["my_sql_poi_data_config_controller.js"]
         },
         create: function(){ return new MySqlPOIDataStore();}
     };

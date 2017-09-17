@@ -1,17 +1,23 @@
-<div layout="column" layout-fill ng-cloak class="dbb_admin_page">
+<div layout="column" layout-fill ng-cloak >
 
 
 
-    <md-tabs md-border-bottom md-swipe-content flex class="md-primary">
+    <md-tabs md-border-bottom md-swipe-content flex class="md-primary" layout-fill>
 
         <md-tab label="configuration"
                 md-on-select="templatesSelected = false">
-            <md-content class="md-padding">
+            <md-content class="dbb_admin_page" layout-fill>
 
-                <form ng-submit="saveEmailConfig (mailConfig)"
-                      layout="column">
+                <form ng-submit="saveEmailConfig (mailConfig)" layout="column">
                     <md-card>
                         <md-card-title>
+
+                            <md-card-title-media ng-if="plugin.image">
+                                <div class="md-media-md card-media">
+                                    <img ng-src="{{plugin.image}}"  >
+                                </div>
+                            </md-card-title-media>
+
                             <md-card-title-text>
                                 <span class="md-headline">email processor plugin</span>
                                 <span class="md-subhead">Select and configure the plugin that will send out emails to your users.</span>
@@ -41,9 +47,18 @@
 
 
 
+                            <div layout-gt-xs="row" layout="column" >
+
+                                <div flex-gt-sm="65" flex layout="column">
+                                    <pluginconfigurator plugin="plugin" value="mailConfig"/>
+                                </div>
+                                <md-divider style="margin-right: 10px; margin-left: 10px"/>
+                                <div flex-gt-sm="35" flex layout="column">
+                                    <div ng-bind-html="plugin.help"></div>
+                                </div>
+                            </div>
 
 
-                            <pluginconfigurator plugin="plugin" value="mailConfig"/>
 
                         </md-card-content>
                         <md-card-actions layout="row" layout-align="end center">
@@ -64,7 +79,7 @@
         <md-tab label="templates"
                 md-on-select="templatesSelected = true">
 
-            <md-content>
+            <md-content class="dbb_admin_page" layout-fill>
                 <div ng-repeat="template in templates">
                     <form ng-submit="saveTemplate(template)"
                           layout="column">

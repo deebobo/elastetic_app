@@ -1,0 +1,17 @@
+	{"type": "function",
+	 "value": {
+		"name" : "guided tour", 
+		"data" : {
+			"steps":[
+				{"tip": "Welcome to your track & trace application. This guide will go through the most common features with you."},
+				{"tip": "this map is your default main view when starting the application. It displays your historical data.", "element": "#main_map"},
+				{"tip": "You can change the appearance and filter data with these menus", "element": "#show_filter_btn"},
+				{"tip": "In the filter section, you can select the lower and upper date limits using the sliders or input boxes", "element": "#filter_limits"}
+			]
+		}, 
+		"plugin" : {
+			  "name": "guided_tour",
+			  "global": true
+			}
+	 }
+	}

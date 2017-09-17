@@ -10,6 +10,6 @@ router.post('/', ctrlUsers.create);
 router.post('/:user/group/:group', ctrlUsers.addToGrp);
 router.delete('/:user/group/:group', ctrlUsers.removeFromGrp);
 router.post('/invite', ctrlUsers.invite);
-router.post('/resetpwd', ctrlUsers.resetPwd);
+router.post('/changepwd', ctrlUsers.changePwd);
 
 module.exports = router;

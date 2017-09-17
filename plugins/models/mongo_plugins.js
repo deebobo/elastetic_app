@@ -13,7 +13,7 @@ class Plugins{
      * @constructor
      * creates the collection that stores all the pages for each site.
      * required fields:
-     *  - name: the name of the page
+     *  - name: the name of the plugin
      * 	- site: the site to which this group applies
      * 	- description: a description of the plugin.
      *  - client:   (if the plugin is a client plugin)
@@ -28,6 +28,8 @@ class Plugins{
      *  - type: "mail', 'page', 'view', 'connection', 'function', 'db'
      *  - version: the version of the plugin that is installed.
      *  - author: the creator of the plugin
+	 *  - image: uri to a big sized image
+	 *  - icon: uri to a big sized image
      * @private
      */
     constructor(){
@@ -45,7 +47,10 @@ class Plugins{
             author: String,
             client: angularSchema,
             config: angularSchema,
-            installedOn:{type: Date, default: Date.now()}
+            installedOn:{type: Date, default: Date.now()},
+			image: String,
+			icon: String,
+            help: String
         });
         pluginSchema.index({ name: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
         this._plugins = mongoose.model('plugins', pluginSchema);

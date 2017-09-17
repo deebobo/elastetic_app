@@ -14,6 +14,8 @@ deebobo.factory('connectionDataService',
 
         return ({                                                       // return available functions for use in controllers
             get: get,
+            update: update,
+            post: create,
             getTimeRange: getTimeRange
         });
 
@@ -56,7 +58,45 @@ deebobo.factory('connectionDataService',
 		* @param data {Object} the record to update.
 		*/
 		function update(connectionId, data){
+            var deferred = $q.defer();
+            $http(  {url: '/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data/' + data.id,
+                data: data,
+                method: "PUT"
+            })     // send a post request to the server
+                .then(function (data) {                                      // handle success
+                        //controller file should still be loaded dynamically (if not yet done)
+                        if(data && data.status == 200){
+                            deferred.resolve(data.data);
+                        } else {
+                            deferred.reject(data.message);
+                        }
+                    },function (data) {                                                // handle error
+                        deferred.reject(data.message);
+                    }
+                );
+            return deferred.promise;
 		}
+
+
+        function create(connectionId, data){
+            var deferred = $q.defer();
+            $http(  {url: '/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data',
+                data: data,
+                method: "POST"
+            })     // send a post request to the server
+                .then(function (data) {                                      // handle success
+                        //controller file should still be loaded dynamically (if not yet done)
+                        if(data && data.status == 200){
+                            deferred.resolve(data.data);
+                        } else {
+                            deferred.reject(data.message);
+                        }
+                    },function (data) {                                                // handle error
+                        deferred.reject(data.data.message);
+                    }
+                );
+            return deferred.promise;
+        }
 
         function getTimeRange(connectionId, options){
             var deferred = $q.defer();

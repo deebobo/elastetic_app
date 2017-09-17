@@ -14,6 +14,7 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 const expressValidator = require('express-validator');
 const config = require.main.require('../api/libs/config');
+const winston = require('winston');
 
 const pluginMan = require('./plugin_manager');
 
@@ -51,11 +52,17 @@ function initApp(){
 
 var app = express();
 config.load().then(function() {
+    try{
         app.set('plugins', loadPlugins());
         initApp();
         require('./api/libs/initPassport')(app, passport);
         require('./api/libs/routes.js')(app, passport);
     }
+    catch(e){
+        winston.log("error", e);
+        throw e;                                //reraise the error, this happened at init, so can't start the app.
+    }
+}
 );
 
 //todo: secure access to site local  plugins

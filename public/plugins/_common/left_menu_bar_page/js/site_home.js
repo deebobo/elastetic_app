@@ -6,8 +6,8 @@
 
 
 
-angular.module("deebobo").controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', 'siteDetails', 'page', 'toolbar',
-    function ($scope, $location, menu, $stateParams, $state,  $mdSidenav, siteDetails, page, toolbar) {
+angular.module("deebobo").controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', 'siteDetails', 'page', 'toolbar', 'AuthService',
+    function ($scope, $location, menu, $stateParams, $state,  $mdSidenav, siteDetails, page, toolbar, AuthService) {
 
 
         $scope.status = {
@@ -34,6 +34,14 @@ angular.module("deebobo").controller('siteHomeController', ['$scope', '$location
             $mdSidenav(navid).toggle();
         }
 
+		function logout(){
+			AuthService.logout();
+			$location.path('/login');		//go to the login page
+		}
+		
+		function showUserDetails(){
+			menu.select({type: "link", view: "userdetails"});
+		}
 
         //functions for menu-link and menu-toggle
         $scope.isOpen = isOpen;

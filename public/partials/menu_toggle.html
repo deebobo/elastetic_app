@@ -2,7 +2,8 @@
            ng-click="toggle()"
            aria-controls="docs-menu-{{section.name | nospace}}"
            flex layout="row"
-           aria-expanded="{{isOpen()}}">
+           aria-expanded="{{isOpen()}}"
+		   ng-if="section.allowed">
     {{section.name}}
     <span aria-hidden="true" class=" pull-right fa fa-chevron-down md-toggle-icon"
           ng-class="{'toggled' : isOpen()}"></span>

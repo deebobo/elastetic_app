@@ -72,6 +72,12 @@ async function createHomepage(db, sitename, grps){
     await db.pages.add(page);
 }
 
+async function createUserDetails(db, sitename, grps){
+	let userDetailsPluginId = await db.plugins.find("userdetails_view", "_common");
+    let view = { name: "user details", site: sitename, plugin: userDetailsPluginId._id, groups: grps, partial: 0, controller: "userDetailsViewController" };
+    await db.views.add(view);
+}
+
 async function createParticleIODevicesView(db, sitename, grps) {
     let particlePluginId = await db.plugins.find("particle_io_devices_view", "_common");
     let view = { name: "particle io devices", site: sitename, plugin:particlePluginId._id, groups: grps, partial: 0, controller: "particlIODevicesViewController" };
@@ -184,6 +190,7 @@ async function createConnection(plugins, db, sitename, definition, parameters) {
         pluginName = plugin.name;
         definition.plugin = plugin._id.toString();
     }
+    definition.groups = await getGroups(db, sitename, definition, "connection");
     return connectionsLib.create(plugins, definition, pluginName);              //some connections need to be initialized (db's that need to be created)...
 }
 
@@ -313,15 +320,47 @@ function prepareCode(section, pluginName, site){
             section.css = section.externalCss;
 }
 
+/** checks if the uri is absolute. When not, adjust the path to point to the public dirs.
+*/
+function preparePath(uri, pluginName, site){
+	if(uri){
+		let regexp = RegExp('^(?:[a-z]+:)?//', 'i');			//checks if uri starts with xxx://
+		if(regexp.test(uri) == false){
+			if(!uri.startsWith("/"))
+				uri = "./plugins/" + site + "/" + pluginName + '/' + uri;
+			else
+				uri = "./plugins/" + site + "/" + pluginName + uri;
+		}
+	}
+	return uri;
+}
+
+function prepareTemplatePath(uri){
+    if(uri){
+        let regexp = RegExp('^(?:[a-z]+:)?//', 'i');			//checks if uri starts with xxx://
+        if(regexp.test(uri) == false){
+            if(!uri.startsWith("/"))
+                uri = "./site_templates/" + uri;
+            else
+                uri = "./site_templates" + uri;
+        }
+    }
+    return uri;
+}
+
 module.exports.installPlugin = async function (db, pluginName, site, file)
 {
-    let def = require.main.require(file);
-    def.site = site;
-    if(def.hasOwnProperty('client'))
-        prepareCode(def.client, pluginName, site);
-    if(def.hasOwnProperty('config'))
-        prepareCode(def.config, pluginName, site);
     try{
+        let def = require.main.require(file);
+        def.site = site;
+        if(def.hasOwnProperty('client'))
+            prepareCode(def.client, pluginName, site);
+        if(def.hasOwnProperty('config'))
+            prepareCode(def.config, pluginName, site);
+        if("icon" in def)
+            def.icon = preparePath(def.icon, pluginName, site);
+        if("image" in def)
+            def.image = preparePath(def.image, pluginName, site);
         await db.plugins.add(def);
         winston.log("info", "succesfully installed plugin", file);
     }
@@ -335,6 +374,10 @@ module.exports.installTemplate = async function (db, name, filename)
     let def = require.main.require(filename);
 
     try{
+        if("icon" in def)
+            def.icon = prepareTemplatePath(def.icon);
+        if("image" in def)
+            def.image = prepareTemplatePath(def.image);
         await db.siteTemplates.add(def);
         winston.log("info", "succesfully installed template", filename);
     }
@@ -387,6 +430,7 @@ module.exports.create = async function(plugins, definition, host, asAdmin = true
 
         let allgroups =  [adminRec._id, viewGroup._id, editorRec._id];
         await createHomepage(db, definition.site, allgroups);
+		await createUserDetails(db, definition.site, allgroups);
 
         await createParticleIODevicesView(db, definition.site, allgroups);
         await createGoogleMapView(db, definition.site, allgroups);

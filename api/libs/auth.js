@@ -34,7 +34,7 @@ module.exports.login = async function(res, plugins, site, name, pwd){
 		if(user.accountState == 'verified'){
 			if(user.checkPassword(pwd)) {
 				res.cookie("jwt", user.generateJwt());            //return the token as a cookie, this is more secure to store it client side
-				res.json({message: "ok"});
+				res.json({message: "ok", user: user});
 			} else {
 				res.status(401).json({message:"invalid name or passowrd"});
 			}
@@ -63,14 +63,41 @@ module.exports.login = async function(res, plugins, site, name, pwd){
 module.exports.allowed = function(resource, groups, res){
     try{
     	for(let i = 0; i < groups.length; i++){
-        let item = groups[i];											//need to use counter  into array, cause otherwise we iterate over every property of the array as wel, which we don't want.
+			let item = groups[i];											//need to use counter  into array, cause otherwise we iterate over every property of the array as wel, which we don't want.
+			if( item.level == 'admin')
+				return true;
+			if (resource.find((el) => el._id == item._id || el.level == 'public') !== -1)			//public resources are always allowed to be viewed.
+				return true;
+		}
+		if(res)
+        	res.status(403).json({message:"resource does not allow access"});
+		return false;
+    }
+    catch(err){
+    	if(res)
+        	res.status(500).json({message:err.message});
+        return false;												//something went wrong, can't allow access.
+    }
+};
+
+/**
+ * Checks if the resource can be modified by one of the specfied groups . If not, the res object is udpated with an appropriate error message.
+ * @param resource {list} a list  of allowed groups ( this list contains objects, not j ust ids) for the resource.s
+ * @param groups {list} a list of groups that is requesting access to the resource.
+ * * @param res {object} optional, express result objects
+ * @returns {bool} True if the resource grants access.
+ */
+module.exports.allowedToEdit = function(resource, groups, res){
+    try{
+    	for(let i = 0; i < groups.length; i++){
+			let item = groups[i];											//need to use counter  into array, cause otherwise we iterate over every property of the array as wel, which we don't want.
             if( item.level == 'admin')
                 return true;
-        	if (resource.find((el) => el._id == item._id) !== -1)
+        	if (item.level == 'edit' && resource.find((el) => el._id == item._id ) !== -1)
         		return true;
 		}
 		if(res)
-        	res.status(401).json({message:"resource does not allow access"});
+        	res.status(403).json({message:"resource does not allow this operation"});
 		return false;
     }
     catch(err){

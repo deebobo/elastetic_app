@@ -5,6 +5,9 @@
   "version": "0.0.1",
   "author": "Deebobo",
   "type": "function",
+  "help": "This function is responsible for transfering data from 1 connection to another one. A common use case is for storing data produced by devices, into a table that is capable of storing historical data. The plugin requires a reference to 2 connections: the 'from' connection serves as the source of the data while the 'to' connection is the destination.  Some source connections require some extra information (for instance to register a webhook). This can be provided in the 'extra' field which expects valid json data. As an example, the particle.io connection requires a list of fields for which is should create webhooks. This is defined with the following json struct:{'fields' : ['G']} ",
+  "image": "transport.jpg",
+  "icon": "transport_icon.png",
   "config": {
       "scripts": [
         "js/transporter_config_controller.js"

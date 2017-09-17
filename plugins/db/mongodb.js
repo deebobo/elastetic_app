@@ -53,7 +53,12 @@ class MongoDb{
 	* @return {Promise} a promise to perform async operations with.
 	*/
     connect(){
-        return mongoose.connect(config.config.db_connection_string);
+        return mongoose.connect(config.config.db_connection_string, function(error) {
+            if(error){
+                winston.log("error", error);
+                process.exit(1);
+            }
+        });
     }
 
 	/**

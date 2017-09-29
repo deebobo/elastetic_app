@@ -119,14 +119,14 @@ class MySqlPOIDataStore extends MySqlConnection{
      * @param plugins {Object} ref to the plugin manager
      * @param connectionInfo: {Object} connection record
      */
-    async getNearestData(plugins, connectionInfo, device, lat, lng){
+    async getNearestData(plugins, connectionInfo, lat, lng){
 
         let self = this;
 
         let result = null;
         await self.connect(plugins, connectionInfo);                                       //make certain that we have an open connection
         try{
-            result = await self.getNearest(connectionInfo.content, device, lat, lng);
+            result = await self.getNearest(connectionInfo.content, lat, lng);
         }
         finally {
             await self.close();                                           //make certain that the connection is closed again.
@@ -282,13 +282,12 @@ class MySqlPOIDataStore extends MySqlConnection{
     }
 
 	
-	async getNearest(connection, device, lat, lng){
+	async getNearest(connection, lat, lng){
 		let self = this;
         return new Promise((resolve, reject) => {
             if(this.con){
-                let sql = "SELECT *, ABS(" + lat + " - lat) + ABS(" + lng + " - lng) as distance from " + connection.tableName + ' WHERE (device = ? OR device = NULL) AND blacklisted = false ORDER BY distance LIMIT 10';
-                let params = [device];
-                self.con.query(sql, params, function (err, result) {
+                let sql = "SELECT *, ABS(" + lat + " - lat) + ABS(" + lng + " - lng) as distance from " + connection.tableName + ' WHERE blacklisted = false AND temp = false ORDER BY distance LIMIT 10';
+                self.con.query(sql, function (err, result) {
                     if (err) {
                         reject(err);
                         winston.log("error", 'table query failed', sql);

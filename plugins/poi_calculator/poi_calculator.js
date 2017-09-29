@@ -4,6 +4,8 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
+"use strict";
+
 const winston = require('winston');
 const Function = require.main.require('../plugins/base_classes/function');
 
@@ -34,7 +36,7 @@ class POICalculator extends Function {
      *
      * algorithm:
      * - route for a device is always tracked by a single 'temporary' point.
-     * - when the device remains at the same location, the duration of that stay is tracked in that temp point
+     * - when the device remains at the same location, the duration is tracked in that temp point
      * - when the device moves again, a existing point is searched that matches the temporary one, if one is found, the duration
      *   is passed on to the existing one, otherwise a new, permanent point is created
      */
@@ -50,53 +52,38 @@ class POICalculator extends Function {
             let newDate = new Date(data.timestamp);
             let to =  plugins.plugins[toConnection.plugin.name].create();
 			let foundPoi = false;
-			let latestPoint = await to.getLastestData(plugins, toConnection, data.device);
-			if(latestPoint){
-			    let latestPointChanged = false;
-				if(POICalculator.calculateDistance(data.data, [latestPoint.lat, latestPoint.lng]) <= latestPoint.radius){			//check if still on same point
-                    let timeLatestPoint = new Date(latestPoint.time);
-                    if(!isNaN(timeLatestPoint)) {                                                               //NaN is possible when timestamp  of latest = 00:00:00, which happens when the user created the poi manually.
-                        if(newDate >  timeLatestPoint) {                                                        //don't try to update the duration if the new point is older, cause then we would substract duration.
-                            let duration = (new Date(data.timestamp) - timeLatestPoint) / 1000;					//we compare and work in seconds.  substr of time is in milliseconds.
-                            latestPoint.duration += duration;
-                            latestPointChanged = true;
+            let tempPoi = await to.getTempPoint(plugins, toConnection, data.device);
+            if(!tempPoi){                                   //first time that this device is being tracked
+                tempPoi = {time: new Date(data.timestamp), lat: lat, lng: lng, device: data.device, site: funcDef.site, source: connection.name, temp: true};
+                await to.execute(plugins, toConnection, tempPoi);
+            }
+            else{
+                if(POICalculator.calculateDistance(data.data, [tempPoi.lat, tempPoi.lng]) <= tempPoi.radius) {			//check if still on same point
+                    let timeLatestPoint = new Date(tempPoi.time);                                           //manually created points might return a string here, so always try to conver to date
+                    if(newDate >  timeLatestPoint) {                                                        //don't try to update the duration if the new point is older, cause then we would substract duration.
+                        let duration = (new Date(data.timestamp) - timeLatestPoint) / 1000;					//we compare and work in seconds.  substr of time is in milliseconds.
+                        tempPoi.duration += duration;
+                    }
+                }
+                else if(tempPoi.duration > 0){                                                          //the device remained at the same location for a while but is moving again, check if we have a tempPoi.
+                    if(tempPoi.duration > funcDef.data.minDuration){
+                        let nearest = await to.getNearestData(plugins, toConnection, tempPoi.lat, tempPoi.lng);     //we take the position of the last point, cause that was the one that remained at the same position. The new point indicates new movement, so is no longer at the poi, the previous one is.
+                        let poi = self.getPoi(nearest, [tempPoi.lat, tempPoi.lng]);
+                        if(poi){
+                            poi.count++;
+                            poi.duration += tempPoi.duration;
                         }
                         else
-                            newDate = null;
+                            poi = {time: new Date(data.timestamp), lat: lat, lng: lng, device: null, site: funcDef.site, source: connection.name, temp: false, count: 1, duration: tempPoi.duration};     //poi's are device independent.
+                        await to.execute(plugins, toConnection, poi);
                     }
-                    if(newDate) {                                                                 //if newdate is smaller, then don't stor it, we already have a newer date.
-                        latestPoint.time = newDate;
-                        latestPointChanged = true;
-                    }
-					foundPoi = true;
-				}
-				else if(latestPoint.duration > funcDef.data.minDuration){						//check if we stayed long enough on the previous point to consider it a poi.
-					latestPoint.count++;
-					latestPoint.temp = false;                                                   //found an actual point, so make certain it is no longer labeled as a temp point
-                    latestPointChanged = true;
-				}
-				if(latestPointChanged == true)
-				    await to.execute(plugins, toConnection, latestPoint);
-			}
-			if(!foundPoi){
-				let nearest = await to.getNearestData(plugins, toConnection, data.device, lat, lng);
-				let poi = self.getPoi(nearest, data.data);
-				if(poi) {
-                    poi.time = newDate;																	//found existing poi that we just reached, mark as latest.
+                    tempPoi.duration = 0;
                 }
-				else{
-                    poi = await to.getTempPoint(plugins, toConnection, data.device);
-                    if(poi){
-                        poi.time = newDate;
-                        poi.lat = lat;
-                        poi.lng = lng;
-                    }
-                    else
-                        poi = {time: new Date(data.timestamp), lat: lat, lng: lng, device: data.device, site: funcDef.site, source: connection.name, temp: true};
-                }
-
-                await to.execute(plugins, toConnection, poi);
-			}
+                tempPoi.time = newDate;
+                tempPoi.lat = lat;
+                tempPoi.lng = lng;
+                await to.execute(plugins, toConnection, tempPoi);
+            }
         }
         else{
             winston.log("error", "failed to find connection:", funcDef.data.to, "site:", funcDef.site)

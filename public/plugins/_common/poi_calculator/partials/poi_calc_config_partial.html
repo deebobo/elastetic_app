@@ -1,0 +1,50 @@
+<div layout="column" ng-controller="poiAdminConfigController">
+
+
+    <div layout="row" flex >
+
+        <md-input-container  class="md-block" flex="50">
+            <label for="from-{{value.data.name}}" >from</label>
+            <md-select id="from-{{value.data.name}}" ng-model="value.data.from"
+                       ng-change="value.needsSave = true">
+                <md-option ng-value="x.name" ng-repeat="x in connections">{{ x.name }}</md-option>
+            </md-select>
+            <md-tooltip >Select the source connection, which will produce the data used to calculate the points of interest.</md-tooltip>
+            <div class="md-errors-spacer"></div>
+        </md-input-container>
+
+        <md-input-container  class="md-block" flex="50">
+            <label for="to-{{value.data.to}}" >to</label>
+            <md-select id="to-{{value.data.to}}" ng-model="value.data.to"
+                       ng-change="value.needsSave = true">
+                <md-option ng-value="x.name" ng-repeat="x in connections">{{ x.name }}</md-option>
+            </md-select>
+            <md-tooltip >Select the destination connection, which will store the data. This has to be a poi-data connection.</md-tooltip>
+            <div class="md-errors-spacer"></div>
+        </md-input-container>
+
+    </div>
+
+    <md-input-container class="md-block">
+        <label >Minimum duration</label>
+        <input  type="number" id="tblname" ng-model="value.data.minDuration" ng-change="value.needsSave = true" flex></input>
+        <md-tooltip >The minimum amount of time (in seconds) that the device has to spend at the same location in order to consider it a point of interest.</md-tooltip>
+    </md-input-container>
+
+    <md-input-container  class="md-block" flex="50">
+        <label for="extra-{{value.data.extra}}" >extra</label>
+        <!--note: json-text is self made-->
+        <textarea type="text"
+                  json-text
+                  id="extra-{{value.data.extra}}"
+                  ng-model="value.data.extra"
+                  ng-change="value.needsSave = true"
+                  flex
+                  rows="5"></textarea>
+
+        <md-tooltip >Extra configuration data that should be passed to the from part of the resource (ex: fields for particle.oi)</md-tooltip>
+        </input>
+    </md-input-container>
+
+</div>
+

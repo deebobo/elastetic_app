@@ -1,0 +1,19 @@
+{
+  "comment": "description for the poi-calculator plugin",
+  "name": "poi_calculator",
+  "description": "Calculate points of interest",
+  "version": "0.0.1",
+  "author": "elastetic",
+  "type": "function",
+  "help": "With this function, you can automatically calculate the points of interest that your vehicles stopped at and store the results in a table. The points of interest are calculated based on the amount of time spend at the same location.",
+  "image": "poi.jpg",
+  "icon": "poi_icon.png",
+  "config": {
+      "scripts": [
+        "js/poi_calc_config_controller.js"
+      ],
+      "partials": [
+        "partials/poi_calc_config_partial.html"
+      ]
+    }
+}

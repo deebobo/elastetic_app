@@ -1,12 +1,12 @@
 /**
- * Created by Deebobo.dev on 28/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 28/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 'use strict';
 
 
-deebobo.factory('pageService',
+elastetic.factory('pageService',
     ['$q', '$http',  function ($q, $http) {
 
         return ({                                                       // return available functions for use in controllers

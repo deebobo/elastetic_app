@@ -1,13 +1,13 @@
 /**
- * Created by Deebobo.dev on 9/06/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 9/06/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 'use strict';
 
 
-deebobo.factory('pluginService',
+elastetic.factory('pluginService',
     ['$q', '$http',  function ($q, $http) {
 
         var plugins = {};                                               //stores all the already loaded js scripts.

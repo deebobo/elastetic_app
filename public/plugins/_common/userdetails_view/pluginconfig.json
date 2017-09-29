@@ -3,7 +3,7 @@
   "name": "userdetails_view",
   "description": "view the account details of a user.",
   "version": "0.0.1",
-  "author": "Deebobo",
+  "author": "elastetic",
   "type": "view",
   "client": {
       "scripts": [

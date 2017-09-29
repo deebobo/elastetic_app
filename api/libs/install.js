@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 24/06/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 24/06/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -19,9 +19,11 @@ async function installPlugins(db)
     await sitesLib.installPlugin(db, 'particle_io_devices_view', '_common', '../public/plugins/_common/particle_io_devices_view/pluginconfig.json');
     await sitesLib.installPlugin(db, 'google_map_view', '_common', '../public/plugins/_common/google_map_view/pluginconfig.json');
     await sitesLib.installPlugin(db, 'userdetails_view', '_common', '../public/plugins/_common/userdetails_view/pluginconfig.json');
+	await sitesLib.installPlugin(db, 'report_view', '_common', '../public/plugins/_common/report_view/pluginconfig.json');
 
     await sitesLib.installPlugin(db, 'transporter', '_common', '../public/plugins/_common/transporter/pluginconfig.json');
 	await sitesLib.installPlugin(db, 'poi_calculator', '_common', '../public/plugins/_common/poi_calculator/pluginconfig.json');
+	await sitesLib.installPlugin(db, 'route_recorder', '_common', '../public/plugins/_common/route_recorder/pluginconfig.json');
 	
 	await sitesLib.installPlugin(db, 'my_sql_db', '_common', '../public/plugins/_common/my_sql_db/pluginconfig.json');
     await sitesLib.installPlugin(db, 'my_sql_historical_data', '_common', '../public/plugins/_common/my_sql_historical_data/pluginconfig.json');
@@ -38,6 +40,7 @@ async function installPlugins(db)
 async function installTemplates(db)
 {
     await sitesLib.installTemplate(db, "track and trace", '../public/site_templates/trackAndTrace.json');
+	await sitesLib.installTemplate(db, "track and trace", '../public/site_templates/shared_TrackAndTrace.json');
 }
 
 /**

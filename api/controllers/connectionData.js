@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 4/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 4/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -93,6 +93,46 @@ module.exports.getTimerange = async function (req, res){
 					}
 					else
 						res.status(503).json({message: "getTimerange not supported on " + connection.plugin.name});
+				}
+				else
+					res.status(403).json({message:"unknown connection-plugin: " + connection.plugin.name});
+			}
+        }
+        else
+            res.status(403).json({message:"unknown connection: " + req.params.connection});
+    }
+    catch(err){
+        winston.log("error", err);
+        res.status(500).json({message:err.message});
+    }
+};
+
+module.exports.getReport = async function (req, res){
+    try{
+        let plugins = await req.app.get('plugins');
+        let db = plugins.db;
+        let connection = await db.connections.findById(req.params.connection);
+        if(connection){
+			
+			let allowed;
+			if(req.user)																	//when it comes from an external callback, the authorisation is assumed
+				allowed = auth.allowed(connection.groups, req.user.groups);					//we only need read rights, so if any groups is present, then it's ok.
+			else
+				allowed = true;
+			
+			if(allowed){
+				if(connection.plugin.name in plugins.plugins) {
+					let plugin = plugins.plugins[connection.plugin.name].create();
+					if('getReport' in plugin){
+						let filter = req.body;
+						filter.site = req.params.site;
+						filter.page = req.query.page;
+						filter.pagesize = req.query.pagesize;
+						let results = await plugin.getReport(plugins, connection, filter);
+						res.status(200).json(results);
+					}
+					else
+						res.status(503).json({message: "getReport not supported on " + connection.plugin.name});
 				}
 				else
 					res.status(403).json({message:"unknown connection-plugin: " + connection.plugin.name});

@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 16/06/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 16/06/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -21,5 +21,8 @@ router.delete('/:record', ctrlConData.deleteRec);
 
 //get statistics about historical data stored by this connection
 router.get('/timerange', ctrlConData.getTimerange);
+
+//get data in a report form. This allows for grouping, selecting fields, calculations on fields (min, max,..), filtering
+router.get('/report', ctrlConData.getReport);
 
 module.exports = router;

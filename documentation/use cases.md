@@ -3,23 +3,38 @@
 ## site owner
 As a site owner, I want to:
 - install the application using the online interface (url: "\install") and see a default application
-- create a new site:
-	- with new sitename, using track & trace template
-	- with already used sitename
-	- with valid/invalid credentials
-	- with valid/invalid particle.io credentials
-	- with valid/invalid mysql credentials
-- change:
-	- connection to particle with valid/invalid data
-	- connection to db with valid/invalid data
-	- a function to store data from particle into db
-	- groups
-	- theming: change colors
-- add:
-	- connection to particle with valid/invalid data
-	- connection to db with valid/invalid data 
-	- a function to store data from particle into db
-	- groups
+- for the standard track & trace template:
+    - create a new site:
+        - with new sitename, using track & trace template
+        - with already used sitename should fail
+        - with valid/invalid credentials (invalid should fail)
+        - with valid/invalid particle.io credentials (invalid should fail)
+        - with valid/invalid mysql credentials (invalid should fail)
+    - change:
+        - connection to particle with valid/invalid data
+        - connection to db with valid/invalid data
+- for the shared track & trace template:
+	- create a new site:
+		- with a new sitename
+		- fail for already existing sittename
+		- can't set credentials for db
+		- can set credentials for particle.io
+    - change:
+    	- cant view current mysql db settings
+    	- can change mysql db settings to private db
+    	- can reassign db for table-connections to newly created db connection
+- for all templates:
+    - change: 
+        - a function to store data from particle into db
+        - groups
+        - theming: change colors
+        - add/remove groups that connections belong to.
+    - add:
+        - connection to particle with valid/invalid data
+        - connection to db with valid/invalid data 
+        - table-connections for history and poi
+        - a function to store data from particle into db
+        - groups
 	
 ## regular user
 As a user, I want to:

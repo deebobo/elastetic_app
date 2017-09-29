@@ -1,13 +1,13 @@
 /**
- * Created by Deebobo.dev on 5/06/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 5/06/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 'use strict';
 
 
-angular.module("deebobo").controller('userdetailsViewController',
-    ['$scope', 'messages','toolbar', 'UserService'
+angular.module("elastetic").controller('userDetailsViewController',
+    ['$scope', 'messages','toolbar', 'UserService',
     function ($scope, messages, toolbar, UserService) {
 
         toolbar.title = "user details";
@@ -21,11 +21,17 @@ angular.module("deebobo").controller('userdetailsViewController',
 
 		//change the pwd for the user.
 		function changePwd(user){
-			UserService.update(user);
+			UserService.update(user, function()
+			{
+				$scope.pwdNeedsSave = false;
+			});
 		}
         
-		function updateDetails(user){
-			UserService.update(user);
+		$scope.updateDetails = function (user){
+			UserService.update(user, function()
+			{
+				$scope.detailsNeedsSave = false;
+			});
 		}
 
     }]);

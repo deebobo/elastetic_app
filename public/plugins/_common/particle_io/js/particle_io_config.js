@@ -1,11 +1,11 @@
 /**
- * Created by Deebobo.dev on 1/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 1/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 
-angular.module("deebobo").controller('extAdminConnectionsController',
+angular.module("elastetic").controller('extAdminConnectionsController',
     ['$scope', '$controller', 'messages', '$mdDialog',
     function($scope, $controller, messages, $mdDialog) {
     //angular.extend(this, $controller('adminConnectionsController', {$scope: $scope})); -> no longer needed, configs are now rapped inside pluginConfigurator directive.
@@ -55,6 +55,7 @@ angular.module("deebobo").controller('extAdminConnectionsController',
                             connection.content.token = data.body.access_token;
                         else
                             connection.content = {token: data.body.access_token};
+                        connection.needsSave = true;
                     },
                     function (err) {
                         $scope.isLoading = false;

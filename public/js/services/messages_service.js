@@ -1,5 +1,5 @@
 'use strict'
-deebobo.factory("messages", function($rootScope){
+elastetic.factory("messages", function($rootScope){
     return {
         error: function(message){
             if(message)

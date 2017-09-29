@@ -1,11 +1,12 @@
 /**
- * Created by Deebobo.dev on 25/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 25/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 /**@ignore */ 
 const mongoose = require('mongoose');
+const winston = require('winston');
 
 /**
  * @class represents the collection of function
@@ -25,7 +26,8 @@ class Functions{
             warning: String,                                                     //stores errors/warnings that were generated while creating the function. These didn't cause a failure in the creation (function can be stored), but the setup went wrong, user should correct and retry
             createdOn:{type: Date, default: Date.now()}
         });
-        functionSchema.index({ source: 1, site: 1});        //fast access at name & site level
+        functionSchema.index({ name: 1, site: 1}, {unique: true});        //names must be unique per site
+        functionSchema.index({ source: 1, site: 1});
         this._functions = mongoose.model('functions', functionSchema);
     }
 

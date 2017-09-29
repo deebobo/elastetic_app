@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 26/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 26/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
  
@@ -48,7 +48,7 @@ module.exports.register = async function(req, res) {
 						user.accountState = 'verified';
 					if(site.sendHelloEmail)
 						email.sendMail(site, user,  pluginMan, "welcome");
-                    res.status(204);
+                    res.status(200).json(user);
                 }
                 else if (userName) {
                     res.status(403).json({message:"name is already used"});

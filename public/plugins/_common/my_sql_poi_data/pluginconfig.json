@@ -3,7 +3,7 @@
   "name": "my_sql_poi_data",
   "description": "connection to a my sql db for storing points of interest.",
   "version": "0.0.1",
-  "author": "Deebobo",
+  "author": "elastetic",
   "type": "connection",
   "help": "This connection defines a table in a my-sql database that holds all the data required/produced for/by the 'points-of-interest function. This plugin requires the following parameters: - a reference to the my-sql database connection: this connection defines the database where the table will be located. - the name of the table and if this table needs to be created or not after saving the connection.",
   "image": "mysql_poi.png",

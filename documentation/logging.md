@@ -1,6 +1,6 @@
 # logging
 
-deebobo uses winston as it's logging package. To write to the log from your plugins, use the following method:
+elastetic uses winston as it's logging package. To write to the log from your plugins, use the following method:
 
 ```
 const winston = require('winston')

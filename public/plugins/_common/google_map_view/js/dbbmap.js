@@ -1,11 +1,11 @@
 /**
- * Created by Deebobo.dev on 2/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 2/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 "use strict"
 
-deebobo.directive('dbbMap', ['$timeout',
+elastetic.directive('dbbMap', ['$timeout',
         function ($timeout) {
         return {
             template: '<div flex></div>',
@@ -13,6 +13,7 @@ deebobo.directive('dbbMap', ['$timeout',
             replace: true,
             scope:{
                 pointsofinterest: '=poi',
+				showcurrent: '=showcurrent',			//when true, the current/latest location for each route is shown.
                 routes: '=routes',
                 zoom: '=zoom',
                 center: '=center',
@@ -27,6 +28,9 @@ deebobo.directive('dbbMap', ['$timeout',
 				onaddpoi: '&', 							//called when user wants to add a poi, param = location
             },
             link: function(scope, element, attrs) {
+				
+				//image used to display the current location
+				var curLocImage = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
 
                 /**
                  * V3 lost this function, so we add it again.
@@ -44,6 +48,13 @@ deebobo.directive('dbbMap', ['$timeout',
                         if(newValue){
                             map.setZoom(newValue);
                         }
+                    });
+					
+					scope.$watch('showcurrent', function(newValue) {
+                        if(newValue)
+                            showCurrentLoc();
+                        else
+                            hideCurrentLoc();
                     });
 
                     scope.$watch('drawroutes', function(newValue) {
@@ -224,6 +235,21 @@ deebobo.directive('dbbMap', ['$timeout',
                             circle.setMap(map);
                         attachEventListenerToPoint(circle, value, point);
                     }
+					//reset the current location, if it has changed.
+					if(value.current == point){							//there is a new current location
+						if(value.currentLoc){                        		// if there is any previous map associated with the value, make certain that it is gone.
+							value.currentLoc.setPosition(point);
+						}
+						else{
+							value.currentLoc = new google.maps.Marker({   // this is the marker at the center of the accuracy circle
+									title: value.name,
+									position: value.current,
+									icon: curLocImage
+							});
+							if(scope.showcurrent)
+								value.currentLoc.setMap(map);
+						}
+					}
                 }
 
                 //this function gets attached to a route, so it can refresh the colors
@@ -277,6 +303,18 @@ deebobo.directive('dbbMap', ['$timeout',
 								circle.setMap(map);
 							attachEventListenerToPoint(circle, value, value.path[i]);
 						}
+						if(value.current){							//there is a current location, should always be the case
+							if(value.currentLoc)                        		// if there is any previous map associated with the value, make certain that it is gone.
+								value.currentLoc.setMap(null);
+								
+							value.currentLoc = new google.maps.Marker({   // this is the marker at the center of the accuracy circle
+									title: value.name,
+									position: value.current,
+									icon: curLocImage
+							});
+							if(scope.showcurrent)
+								value.currentLoc.setMap(map);
+						}
                     }
                 }
 				
@@ -303,7 +341,7 @@ deebobo.directive('dbbMap', ['$timeout',
 						scope.routes[i].route.setMap(null);									//remove from previous, if any.
 					}
 				}
-
+				
                 function removeRoutes(values){
                     for(var i=0; i < values.length; i++) {
                         var value = values[i];
@@ -313,10 +351,27 @@ deebobo.directive('dbbMap', ['$timeout',
 							for(var i = 0; i < value.circles.length; i++)
 								value.circles[i].setMap(null);
 							value.circles = null;
-							
+							value.currentLoc.setMap(null);
+							value.currentLoc = null;
                         }
                     }
                 }
+				
+				function showCurrentLoc(){
+					for(var i = 0; i < scope.routes.length; i++){
+						if(scope.routes[i].isActive == true){										//only display if the individual route wasn't turned off.
+							scope.routes[i].currentLoc.setMap(null);									//remove from previous, if any.
+							scope.routes[i].currentLoc.setMap(map);
+						}
+					}
+				}
+				
+				function hideCurrentLoc(){
+					for(var i = 0; i < scope.routes.length; i++){
+						scope.routes[i].currentLoc.setMap(null);									//remove from previous, if any.
+					}
+				}
+				
 				
 				function showPoints(){
 					for(var i = 0; i < scope.routes.length; i++){
@@ -364,7 +419,7 @@ deebobo.directive('dbbMap', ['$timeout',
 
 
 
-deebobo.factory('dbbMapService',
+elastetic.factory('dbbMapService',
     ['$q',  function ($q) {
 
         return ({                                                       // return available functions for use in controllers

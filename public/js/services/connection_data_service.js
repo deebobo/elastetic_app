@@ -1,15 +1,15 @@
 /**
- * Created by Deebobo.dev on 28/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 28/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 'use strict';
 
 
 /**
- * a service that provides access to data stored by a connection. It queries the connection through the deebobo api server.
+ * a service that provides access to data stored by a connection. It queries the connection through the elastetic api server.
  */
-deebobo.factory('connectionDataService',
+elastetic.factory('connectionDataService',
     ['$q', '$http', '$stateParams', function ($q, $http, $stateParams) {
 
         return ({                                                       // return available functions for use in controllers
@@ -103,6 +103,26 @@ deebobo.factory('connectionDataService',
             $http(  {url: '/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data/timerange',
                 method: "GET",
                 params: options
+            })     // send a post request to the server
+                .then(function (data) {                                      // handle success
+                        //controller file should still be loaded dynamically (if not yet done)
+                        if(data && data.status == 200){
+                            deferred.resolve(data.data);
+                        } else {
+                            deferred.reject(data.data);
+                        }
+                    },function (data) {                                                // handle error
+                        deferred.reject(data.data);
+                    }
+                );
+            return deferred.promise;
+        }
+		
+		function getReportData(connectionId, queryDef){
+            var deferred = $q.defer();
+            $http(  {url: '/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data/report',
+                method: "GET",
+                data: queryDef
             })     // send a post request to the server
                 .then(function (data) {                                      // handle success
                         //controller file should still be loaded dynamically (if not yet done)

@@ -3,7 +3,7 @@
   "name": "left-menu-bar homepage",
   "description": "A homepage that has a small top-bar and a menu bar on the left side, which pops open.",
   "version": "0.0.1",
-  "author": "Deebobo",
+  "author": "elastetic",
   "type": "page",
   "client": {
       "scripts": [

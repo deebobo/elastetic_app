@@ -17,6 +17,9 @@
 			
 			<md-content layout-padding >
 			
+				<md-checkbox ng-model="showCurrent" aria-label="current position">
+					Show current position
+				</md-checkbox>
 				<md-checkbox ng-model="showPoints" aria-label="individual points">
 					Show individual points
 				</md-checkbox>
@@ -130,6 +133,7 @@
 				  ondeletepoi="deletePoi($event, marker)"
 				  onaddpoi="addPoi($event, location)"
 				  editable="canEditMap"
+				  showcurrent="showCurrent"
                   flex></dbb-map>
 
 

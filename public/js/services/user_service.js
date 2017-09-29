@@ -1,25 +1,28 @@
 /**
- * Created by Deebobo.dev on 28/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 28/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 'use strict';
 
-deebobo.factory('UserService',
+elastetic.factory('UserService',
     ['$q', '$http', 'User', '$stateParams', function ($q, $http, User, $stateParams) {
 		
 		var rec = {                                                       
             user: null,														//this value is populated by auth_service upon login
 			update: update,
-			isAuthorizedFor: isAuthorizedFor
+			isAuthorizedFor: isAuthorizedFor,
+            isAuthorizedToEdit: isAuthorizedToEdit
         };
 
 	
 		/* updates the user record and copies the new data into the global user object.
 		*/
-		function update(value){
+		function update(value, callback){
 			User.update(value, function(){
 				angular.copy(value, rec.user);
+				if(callback)
+                    callback();
 			});
 		} 
 		

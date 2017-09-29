@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 18/08/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 18/08/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -19,18 +19,8 @@ class MySqlPOIDataStore extends MySqlConnection{
     }
 
     /**
-     * called when a connection is created (after connect is called, so the db is already connected).
+     * called when a connection is created.
      * Makes certain that the db and table exist (if need be)
-     *
-     * table fields
-     * - site: string: name of the site/application that owns the data.
-     * - source: id of connection that stored the data  (ex: source = particle.io connection) .
-     * - device: unique identifier (within the source) for the device
-     * - lat, lng: coordinates of the point of iterest
-     * - name: name of the point of interest.
-     * - count: the nr of times that the POI has been found
-     * - duration: amount of time spent on same poi, expressed in seconds
-     * - time: last time that point was visited
      */
     async createConnection(plugins, connectionInfo){
         let self = this;
@@ -109,14 +99,14 @@ class MySqlPOIDataStore extends MySqlConnection{
      * @param plugins {Object} ref to the plugin manager
      * @param connectionInfo: {Object} connection record
      */
-    async getLastestData(plugins, connectionInfo, device, time){
+    async getLastestData(plugins, connectionInfo, device){
 
         let self = this;
 
         let result = null;
         await self.connect(plugins, connectionInfo);                                       //make certain that we have an open connection
         try{
-            result = await self.getLatest(connectionInfo.content, device, time);
+            result = await self.getLatest(connectionInfo.content, device);
         }
         finally {
             await self.close();                                           //make certain that the connection is closed again.
@@ -143,6 +133,23 @@ class MySqlPOIDataStore extends MySqlConnection{
         }
         return result;
     }
+
+    async getTempPoint(plugins, connectionInfo, device){
+
+        let self = this;
+
+        let result = null;
+        await self.connect(plugins, connectionInfo);                                       //make certain that we have an open connection
+        try{
+            result = await self.getTempPointInternal(connectionInfo.content, device);
+        }
+        finally {
+            await self.close();                                           //make certain that the connection is closed again.
+        }
+        return result;
+    }
+
+
 
     /** store data in the connection (can be different then executing it?)
      @param data {Object} the data to process
@@ -202,7 +209,7 @@ class MySqlPOIDataStore extends MySqlConnection{
 
                 try{
                     if(connectionInfo.content.createTable){
-                        var sql = "CREATE TABLE " + connectionInfo.content.tableName + " (id int NOT NULL PRIMARY KEY AUTO_INCREMENT, time datetime, site VARCHAR(255), source VARCHAR(255), device VARCHAR(255), name VARCHAR(255), lat DOUBLE, lng DOUBLE, count int DEFAULT 0, duration int DEFAULT 0, blacklisted bool DEFAULT false, radius int DEFAULT 15   )";
+                        var sql = "CREATE TABLE " + connectionInfo.content.tableName + " (id int NOT NULL PRIMARY KEY AUTO_INCREMENT, time datetime, site VARCHAR(255), source VARCHAR(255), device VARCHAR(255), name VARCHAR(255), lat DOUBLE, lng DOUBLE, count int DEFAULT 0, duration int DEFAULT 0, blacklisted bool DEFAULT false, radius int DEFAULT 20, temp bool DEFAULT false   )";
                         self.con.query(sql, function (err, result, fields) {
                             if (err) {
                                 winston.log("error", 'table creation failed', connectionInfo);
@@ -226,12 +233,12 @@ class MySqlPOIDataStore extends MySqlConnection{
         });
     }
 	
-	async getLatest(connection, device, time){
+	async getLatest(connection, device){
 		let self = this;
         return new Promise((resolve, reject) => {
             if(this.con){
-                let sql = "SELECT * from " + connection.tableName + ' WHERE device = ? AND time < ? AND blacklisted = false ORDER BY time DESC LIMIT 1';
-                let params = [device, time];
+                let sql = "SELECT * from " + connection.tableName + ' WHERE device = ? AND blacklisted = false ORDER BY time DESC LIMIT 1';
+                let params = [device];
                 self.con.query(sql, params, function (err, result) {
                     if (err) {
                         reject(err);
@@ -249,12 +256,37 @@ class MySqlPOIDataStore extends MySqlConnection{
                 reject("connection is not opened")
         });
 	}
+
+    async getTempPointInternal(connection, device){
+        let self = this;
+        return new Promise((resolve, reject) => {
+            if(this.con){
+                let sql = "SELECT * from " + connection.tableName + ' WHERE device = ? AND blacklisted = false AND temp = true ORDER BY time DESC LIMIT 1';
+                let params = [device];
+                self.con.query(sql, params, function (err, result) {
+                    if (err) {
+                        reject(err);
+                        winston.log("error", 'table query failed', sql);
+                    }
+                    else {
+                        if(result.length > 0)
+                            resolve(result[0]);
+                        else
+                            resolve(null);
+                    }
+                });
+            }
+            else
+                reject("connection is not opened")
+        });
+    }
+
 	
 	async getNearest(connection, device, lat, lng){
 		let self = this;
         return new Promise((resolve, reject) => {
             if(this.con){
-                let sql = "SELECT *, ABS(" + lat + " - lat) + ABS(" + lng + " - lng) as distance from " + connection.tableName + ' WHERE device = ? AND blacklisted = false ORDER BY distance LIMIT 10';
+                let sql = "SELECT *, ABS(" + lat + " - lat) + ABS(" + lng + " - lng) as distance from " + connection.tableName + ' WHERE (device = ? OR device = NULL) AND blacklisted = false ORDER BY distance LIMIT 10';
                 let params = [device];
                 self.con.query(sql, params, function (err, result) {
                     if (err) {
@@ -334,16 +366,28 @@ class MySqlPOIDataStore extends MySqlConnection{
                     sql +=  "blacklisted = ?";
                     params.push(data.blacklisted);
                 }
+                if( 'temp' in data) {
+                    if (params.length >  0)
+                        sql += ", ";
+                    sql +=  "temp = ?";
+                    params.push(data.temp);
+                }
                 sql += " WHERE id = ?";
 				params.push(data.id);
             }
             else {
                 sql = "INSERT INTO " + connectionInfo.content.tableName +
-                    " SET site = ?, source = ?, device = ?, lat = ?, lng = ?, count = ?, duration = ?, time = ?, blacklisted = false, name = ?";
+                    " SET site = ?, source = ?, device = ?, lat = ?, lng = ?, count = ?, duration = ?, time = ?, blacklisted = false, name = ?, temp = ?";
                 if(! data.count) data.count = 0;
                 if(! data.duration) data.duration = 0;
                 if(! data.name) data.name = "new point";
-                params = [connectionInfo.site, connectionInfo.name, data.device, data.lat, data.lng, data.count, data.duration, Date.now(), data.name];
+                if(! ("temp" in data)) data.temp = false;
+                let time = null;
+                if('time' in data)
+                    time = data.time;
+                else
+                    time = new Date(Date.now()).toISOString();
+                params = [connectionInfo.site, connectionInfo.name, data.device, data.lat, data.lng, data.count, data.duration, time, data.name, data.temp];
             }
             self.con.query(sql, params, function (err, result) {
                 if (err) {
@@ -391,9 +435,10 @@ class MySqlPOIDataStore extends MySqlConnection{
         return new Promise((resolve, reject) => {
             if(!this.con)
                 reject("connection not opened");
-            let sql = 'DELETE from " + connectionInfo.content.tableName + " WHERE id = "' + id + '"';
+            let sql = "DELETE from " + connectionInfo.content.tableName + " WHERE id = ?";
+			let params = [id];
             
-            self.con.query(sql, function (err, result, fields) {
+            self.con.query(sql, params, function (err, result, fields) {
                 if (err) {
                     reject(err);
                     winston.log("error", 'store poi data failed', err);
@@ -429,6 +474,10 @@ class MySqlPOIDataStore extends MySqlConnection{
             res += (res.length > 0 ? ' and ' : '') + 'blacklisted = ' + filter.blacklisted;
 		else
 			res += (res.length > 0 ? ' and ' : '') + 'blacklisted = false';
+        if('temp' in filter && filter.temp)
+            res += (res.length > 0 ? ' and ' : '') + 'temp = ' + filter.temp;
+        else
+            res += (res.length > 0 ? ' and ' : '') + 'temp = false';
 
         if(res.length > 0)
             res = " WHERE " + res;
@@ -483,7 +532,7 @@ let getPluginConfig = function (){
         category: "connection",
         title: "My sql POI data store",
         description: "a connection to your mysql database for the poi data calculated by a poi calculator function",
-        author: "DeeBobo",
+        author: "elastetic",
         version: "0.0.1",
         icon: "https://www.mysql.com/common/logos/logo-mysql-170x115.png",
         license: "GPL-3.0",

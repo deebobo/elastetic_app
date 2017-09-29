@@ -1,4 +1,4 @@
-deebobo
+elastetic
     .directive('menuToggle', ['$timeout', "menu", function ($timeout, menu) {
         return {
             scope: {

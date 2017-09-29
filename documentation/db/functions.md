@@ -27,8 +27,8 @@
 
 <dl>
 <dt><a href="#mongoose">mongoose</a></dt>
-<dd><p>Created by Deebobo.dev on 25/05/2017.
-copyright 2017 Deebobo.dev
+<dd><p>Created by elastetic.dev on 25/05/2017.
+copyright 2017 elastetic.dev
 See the COPYRIGHT file at the top-level directory of this distribution</p>
 </dd>
 </dl>
@@ -71,7 +71,8 @@ Get a list of all the available functions for a site.
 adds a function definition to the db
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas added  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
+was added  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -83,7 +84,8 @@ adds a function definition to the db
 updates a function definition to the db
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas added  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
+was added  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -95,7 +97,8 @@ updates a function definition to the db
 finds a function for a specific site.
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas found  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
+was found  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -108,7 +111,8 @@ finds a function for a specific site.
 removes a function for a specific site.
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas found  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
+was found  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -117,6 +121,8 @@ removes a function for a specific site.
 <a name="mongoose"></a>
 
 ## mongoose
-Created by Deebobo.dev on 25/05/2017.copyright 2017 Deebobo.devSee the COPYRIGHT file at the top-level directory of this distribution
+Created by elastetic.dev on 25/05/2017.
+copyright 2017 elastetic.dev
+See the COPYRIGHT file at the top-level directory of this distribution
 
 **Kind**: global constant  

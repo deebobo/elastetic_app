@@ -10,7 +10,7 @@
             </md-card-header>
             <md-card-title flex>
 			
-				<md-card-title-media>
+				<md-card-title-media ng-if="createForm.template.image">
 					<img ng-src="{{createForm.template.image}}" class="md-card-image" alt="plugin image">
 				</md-card-title-media>
 				
@@ -67,6 +67,7 @@
 								Depending on the template that you select, some additional information might be required, see further.
 							</p>
 						</div>
+						<div ng-bind-html="createForm.template.help"></div>
 					</div>
 				</div>
                 

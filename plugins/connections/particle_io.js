@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 4/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 4/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -33,6 +33,8 @@ class ParticleIoConnection extends Connection {
     async registerCallback(plugins, connection, definition, host){
         if(!("content" in connection))
             connection.content = {callbacks: {}};
+        else if(!("callbacks" in connection.content))
+            connection.content.callbacks = {};
 
 
         if(! connection.content.authToken) {
@@ -187,7 +189,7 @@ let getPluginConfig = function (){
         category: "connection",
         title: "Particle.io",
         description: "a connection to your particle.io account",
-        author: "DeeBobo",
+        author: "elastetic",
         version: "0.0.1",
         icon: "https://www.mysql.com/common/logos/logo-mysql-170x115.png",
         license: "GPL-3.0",

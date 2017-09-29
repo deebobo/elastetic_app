@@ -28,15 +28,15 @@
 			</ul>
 			<md-divider></md-divider>
 			
-			<md-menu>
+			<md-menu md-position-mode="target-right target" md-offset="0 40">
 			  
-				<md-button class="md-icon-button" aria-label="account" class="md-icon-button" ng-click="ctrl.openMenu($mdMenu, $event)">
+				<md-button class="md-icon-button" aria-label="account" class="md-icon-button" ng-click="openUserMenu($mdMenu, $event)">
 					<md-icon md-menu-origin md-font-icon="fa fa-user-circle" style="font-size:24px"></md-icon>
 				</md-button>
 			  
 				<md-menu-content width="4">
 					<md-menu-item>
-					    <md-button disabled="disabled" ng-click="showUserDetails()">
+					    <md-button ng-click="showUserDetails()">
 							<md-icon  md-font-icon="fa fa-wrench" style="font-size:24px"></md-icon>
 							my account
 					    </md-button>

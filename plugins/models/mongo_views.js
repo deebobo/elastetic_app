@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 25/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 25/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
  
@@ -20,6 +20,7 @@ class views{
             plugin: {type: mongoose.Schema.Types.ObjectId, ref: 'plugins'},
             controller: String,                                         //name of a controller to be used by this view. Can be defined in the plugin or a globaly available controller.
             partial: Number,                                            //the index nr of the partial from the plugin that is the main entry point.
+			data: Object,                                               //extra data for the view.
 			groups: [{type: mongoose.Schema.Types.ObjectId, ref: 'groups'}],
             createdOn:{type: Date, default: Date.now()}
         });

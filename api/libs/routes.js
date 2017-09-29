@@ -1,29 +1,29 @@
 /**
- * Created by Deebobo.dev on 25/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 25/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 const winston = require('winston');
 
-const appAuth =  require('../routes/app_authentication');
-const users =    require('../routes/users');
-const groups =   require('../routes/groups');
-const auth =     require('../routes/site_authentication');
-const sites =    require('../routes/sites');
-const plugins =    require('../routes/plugins');
-const pages =    require('../routes/pages');
-const views =    require('../routes/views');
-const index =    require('../routes/index');
-const connections =    require('../routes/connections');
-const connectionData = require('../routes/connectionData');
+const appAuth =         require('../routes/app_authentication');
+const users =           require('../routes/users');
+const groups =          require('../routes/groups');
+const auth =            require('../routes/site_authentication');
+const sites =           require('../routes/sites');
+const plugins =         require('../routes/plugins');
+const pages =           require('../routes/pages');
+const views =           require('../routes/views');
+const index =           require('../routes/index');
+const connections =     require('../routes/connections');
+const connectionData =  require('../routes/connectionData');
 const emailTemplates =  require('../routes/email_templates');
-const verifiedsite = require('../routes/verifiedsite');
-const siteData  = require('../routes/siteData');
+const verifiedsite =    require('../routes/verifiedsite');
+const siteData  =       require('../routes/siteData');
 //const devices =  require('../routes/devices');
-const functions =  require('../routes/functions');
-const express =  require('express');
-const install = require('../routes/install');
+const functions =       require('../routes/functions');
+const express =         require('express');
+const install =         require('../routes/install');
 
 let router = express.Router({mergeParams: true});
 
@@ -36,7 +36,10 @@ function initPaths(app, passport) {
 
     app.use(router.use('/api/site/:site', passport.authenticate('jwt', { session: false }), verifiedsite));
     app.use(router.use('/api/site/:site/data', passport.authenticate('jwt', { session: false }), siteData));
+
+    app.use(router.use('/api/user', passport.authenticate('jwt', { session: false }), users));
     app.use(router.use('/api/site/:site/user', passport.authenticate('jwt', { session: false }), users));
+
     app.use(router.use('/api/site/:site/group', passport.authenticate('jwt', { session: false }), groups));
 	app.use(router.use('/api/site/:site/plugin', passport.authenticate('jwt', { session: false }), plugins));
     app.use(router.use('/api/site/:site/page', passport.authenticate('jwt', { session: false }), pages));
@@ -55,7 +58,7 @@ function initPaths(app, passport) {
 
     // catch 404 and forward to main app
     app.use(function(req, res) {
-        res.render('index', { title: 'Deebobo' });
+        res.render('index', { title: 'elastetic' });
     });
 
     // error handler

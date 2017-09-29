@@ -14,8 +14,8 @@ example: this can be used by an emailer plugin to store configurations that rela
 
 <dl>
 <dt><a href="#mongoose">mongoose</a></dt>
-<dd><p>Created by Deebobo.dev on 25/05/2017.
-copyright 2017 Deebobo.dev
+<dd><p>Created by elastetic.dev on 25/05/2017.
+copyright 2017 elastetic.dev
 See the COPYRIGHT file at the top-level directory of this distribution</p>
 </dd>
 </dl>
@@ -79,8 +79,8 @@ example: this can be used by an emailer plugin to store configurations that rela
 <a name="mongoose"></a>
 
 ## mongoose
-Created by Deebobo.dev on 25/05/2017.
-copyright 2017 Deebobo.dev
+Created by elastetic.dev on 25/05/2017.
+copyright 2017 elastetic.dev
 See the COPYRIGHT file at the top-level directory of this distribution
 
 **Kind**: global constant  

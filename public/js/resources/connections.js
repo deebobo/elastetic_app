@@ -7,15 +7,15 @@
 'use strict';
 
 elastetic
-    .factory('Group', ["$resource", 'messages',
+    .factory('Connection', ["$resource", 'messages',
 	function ($resource, messages) {
 		
 		function resourceErrorHandler(response){
 			messages.error(response.data);
 		}
-		
-        return $resource('/api/site/:site/group/:id', 
-		                 { id: '@_id',
+
+        return $resource('/api/site/:site/connection/:id', 
+		                 { id: '@name', 
 						   site: '@site'
 						 }, 
 						 {

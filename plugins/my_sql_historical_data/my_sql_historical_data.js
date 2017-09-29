@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 4/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 4/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -107,7 +107,12 @@ class MySqlHistoricalData extends MySqlConnection {
 
 		if(res.length > 0)
             res = " WHERE " + res;
-		
+
+        return res;
+    }
+
+    _buildLimit(filter){
+        let res = "";
         if('page' in filter && filter.page){
             let pagesize = 50;
             if('pagesize' in filter && filter.pagesize)
@@ -115,13 +120,13 @@ class MySqlHistoricalData extends MySqlConnection {
 
             res += ' LIMIT ' + (parseInt(filter.page) * pagesize).toString() + ', ' + pagesize.toString();
         }
-			
+
         return res;
     }
 
 
     /**
-     * called when a connection is created (after connect is called, so the db is already connected).
+     * called when a connection is created .
      * Makes certain that the db and table exist (if need be)
      *
      * table fields
@@ -284,20 +289,17 @@ class MySqlHistoricalData extends MySqlConnection {
                 reject("connection not opened");
             let sql = "INSERT INTO " + connectionInfo.content.tableName + " SET time = ?, site = ?, source = ?, device = ?, field = ?, data = ?";
             let params = null;
-            if(typeof data.data === "string")
-                params = [data.timestamp, connectionInfo.site, connectionInfo.name, data.device, data.field, data.data];
-            else
-				params = [data.timestamp, connectionInfo.site, connectionInfo.name, data.device, data.field, JSON.stringify(data.data)];
+            params = [data.timestamp, connectionInfo.site, connectionInfo.name, data.device, data.field, JSON.stringify(data.data)];        //data needs to be json.stringified always, even if input is string, cause the field is json and otherwise it dont work
             self.con.query(sql, params, function (err, result) {
                 if (err) {
                     reject(err);
                     winston.log("error", 'store historical data failed', err);
                 }
                 else {
-                    if('insertId' in result && result.inserId != 0)
+                    if('insertId' in result && result.insertId != 0)
                         data.id = result.insertId;
                     resolve(data);
-                    winston.log("info", 'poi data saved', data, result);
+                    winston.log("info", 'historical data saved', data, result);
                 }
             });
         });
@@ -376,8 +378,8 @@ class MySqlHistoricalData extends MySqlConnection {
         return new Promise((resolve, reject) => {
             if(this.con){
 				let params = [];
-                let sql = "SELECT time, device, source, field, data from " + connectionInfo.tableName + self._buildWhere(filter, params);
-                self.con.query(sql, function (err, result, fields) {
+                let sql = "SELECT time, device, source, field, data from " + connectionInfo.tableName + self._buildWhere(filter, params) + " ORDER BY time DESC " + self._buildLimit(filter);
+                self.con.query(sql, params, function (err, result, fields) {
                     if (err) {
                         reject(err);
                         winston.log("error", 'table query failed', sql);
@@ -398,7 +400,7 @@ class MySqlHistoricalData extends MySqlConnection {
             if(this.con){
 				let params = [];
                 let sql = "SELECT MIN(time) as min, MAX(time) as max from " + connectionInfo.tableName + self._buildWhere(filter, params);
-                self.con.query(sql, function (err, result, fields) {
+                self.con.query(sql, params, function (err, result, fields) {
                     if (err) {
                         reject(err);
                         winston.log("error", 'table query failed', sql);
@@ -422,7 +424,7 @@ let getPluginConfig = function (){
         category: "connection",
         title: "My sql historical data",
         description: "a connection to your mysql database for the historical data of your devices from other connections",
-        author: "DeeBobo",
+        author: "elastetic",
         version: "0.0.1",
         icon: "https://www.mysql.com/common/logos/logo-mysql-170x115.png",
         license: "GPL-3.0",

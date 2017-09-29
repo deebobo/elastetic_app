@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 26/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 26/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -20,7 +20,7 @@ router.use(function timeLog (req, res, next) {
 
 /* GET home page. */
 router.get(function(req, res, next) {
-    res.render('index', { title: 'Deebobo' });
+    res.render('index', { title: 'elastetic' });
 });
 
 // authentication

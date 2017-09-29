@@ -1,13 +1,13 @@
 /**
- * Created by Deebobo.dev on 5/06/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 5/06/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 "use strict";
 
 
-angular.module("deebobo").controller('googleMapViewController', [
+angular.module("elastetic").controller('googleMapViewController', [
     '$scope', 'connectionDataService', 'messages','$http', '$stateParams', '$mdSidenav', 'dbbMapService', 'toolbar','$timeout', 'colorsList', '$mdDialog', 'UserService',
     function ($scope, connectionDataService, messages, $http, $stateParams, $mdSidenav, dbbMapService, toolbar, $timeout, colorsList, $mdDialog, UserService) {
 
@@ -33,6 +33,7 @@ angular.module("deebobo").controller('googleMapViewController', [
 		var connections = [];										//store ref to all the connections, so we can load the data again.
 		var dataPoints = [];										//the data points that we found in db, so we can re-render when options change.
         var poiConnection = null;                                   //stores a ref to the last poi connection that is found, so we can add items to it.
+        var initializing = true;                                    //used to block the watches: only store settings after loaded
 
 
         if (navigator.geolocation)
@@ -55,10 +56,12 @@ angular.module("deebobo").controller('googleMapViewController', [
         $scope.curFilter = { from: new Date(), to: new Date() };
 		$scope.showPoints = false;				
 		$scope.showRoutes = true;
+		$scope.showCurrent = true;
 		$scope.showPoi = false;
 		$scope.colors = colorsList.colors;
 		$scope.canEditMap = false;
 
+		loadSettings();													//load any previously saved view and filter settings
 
         $scope.$watch('newFilter.from.hours', function(newVal) {
             var temp = new Date($scope.newFilter.from.date);
@@ -86,6 +89,26 @@ angular.module("deebobo").controller('googleMapViewController', [
             $scope.newFilter.to.date = temp;
         });
 		
+		$scope.$watch('showPoints', function(newVal) {
+            if(!initializing)
+                storeSettings();
+        });
+
+		$scope.$watch('showRoutes', function(newVal) {
+		    if(!initializing)
+                storeSettings();
+        });
+
+		$scope.$watch('showCurrent', function(newVal) {
+            if(!initializing)
+                storeSettings();
+        });
+
+		$scope.$watch('showPoi', function(newVal) {
+            if(!initializing)
+                storeSettings();
+        });
+
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////
         //data
@@ -128,12 +151,12 @@ angular.module("deebobo").controller('googleMapViewController', [
 					for(var i = 0; i < response.data.length; i++){
 						var con = response.data[i];
 						if(UserService.isAuthorizedFor(con)){
-							if(connection.plugin.name === 'my_sql_poi_data'){
-								loadPois(connection, {});
+							if(con.plugin.name === 'my_sql_poi_data'){
+								loadPois(con, {});
 								connections.push(con);
 							}
-							else if(connection.plugin.name === 'my_sql_historical_data'){
-								loadHistData(connection);
+							else if(con.plugin.name === 'my_sql_historical_data'){
+								loadHistData(con);
 								connections.push(con);
 							}
 						}
@@ -247,6 +270,7 @@ angular.module("deebobo").controller('googleMapViewController', [
             });
 
             $scope.curFilter = {from: $scope.newFilter.from.date, to: $scope.newFilter.to.date};
+            storeSettings();
         };
 
 
@@ -263,10 +287,37 @@ angular.module("deebobo").controller('googleMapViewController', [
 		function tryStoreInLocalStorage(data, id)
 		{
             if(typeof(Storage) !== "undefined"){           //need to check if there is a local storage
-                var data = { values: data, filter: $scope.curFilter };
                 localStorage.setItem("Track&Trace-"+ id, JSON.stringify(data));
             }
 		}
+		
+		//stores all the filter and view settings
+        function storeSettings()
+		{
+			if(typeof(Storage) !== "undefined"){           //need to check if there is a local storage
+                var data = { filter: $scope.curFilter, 
+							 showPoints: $scope.showPoints, 
+							 showRoutes: $scope.showRoutes, 
+							 showCurrent: $scope.showCurrent,
+							 showPoi: $scope.showPoi };
+                localStorage.setItem("Track&TraceSettings", JSON.stringify(data));
+            }
+		}
+		
+		//loads any previously stored filter and view settings.
+		function loadSettings(){
+            if(typeof(Storage) !== "undefined"){           //need to check if there is a local storage
+                var res = localStorage.getItem("Track&TraceSettings");
+                if(res){
+                    res =  JSON.parse(res);
+                    $scope.curFilter = res.filter;
+					$scope.showPoints = res.showPoints;
+					$scope.showRoutes = res.showRoutes;
+					$scope.showCurrent = res.showCurrent;
+					$scope.showPoi = res.showPoi;
+                }
+            }
+        }
 
         /**
          * see if there is data stored in the local storage
@@ -277,8 +328,7 @@ angular.module("deebobo").controller('googleMapViewController', [
                 var res = localStorage.getItem("Track&Trace-"+ id);
                 if(res){
                     res =  JSON.parse(res);
-                    $scope.curFilter = res.filter;
-                    return res.data;
+                    return res;
                 }
             }
             return null;
@@ -307,31 +357,50 @@ angular.module("deebobo").controller('googleMapViewController', [
             }
             return res;
         }
-		
+
+        /**
+         * converts the data into a google coordinate.
+         * @param point
+         */
+        function getCoordinates(point){
+            var coordinates = JSON.parse(point.data).split(',');
+            if(coordinates && coordinates.length >= 2) {
+                var lat = parseFloat(coordinates[0]);
+                var lng = parseFloat(coordinates[1]);
+                if(lat && lng){
+                    var data = new google.maps.LatLng(lat, lng);
+                    return data;
+                }
+            }
+            return null;
+        }
 
         function renderPoint(point){
-            var coordinates = JSON.parse(point.data).split(',');
-            var data = new google.maps.LatLng(parseFloat(coordinates[0]), parseFloat(coordinates[1]));
-			data.time = point.time;								//attach time info to the point, so we can render the info later on.
-            if($scope.devices.hasOwnProperty(point.device)){            //existing device
-				var device = $scope.devices[point.device];
-                device.path.push(data);
-                if(device.addPointToRoute)                  //if it's been rendered before, render emmideatly, otherwise defer until it has been added to the map
-                    device.addPointToRoute(device, data);     //draw on map
-            }
-            else{
-                var newList = {path:[ data], color: "red", isActive: true, device: point.device };		//add device name to the info, so we can display it when clicking on points
-                $scope.devices[point.device] = newList;
-                $scope.routes.push(newList);
-				//don't need to return the newList, it doesn't have to be reloaded, it has just been added.
+            var data = getCoordinates(point);
+            if(data) {
+                data.time = point.time;											//attach time info to the point, so we can render the info later on and calculate the latest pos
+                if ($scope.devices.hasOwnProperty(point.device)) {            	//existing device
+                    var device = $scope.devices[point.device];
+                    device.path.push(data);
+                    if (device.current.time < data.time)							//if the new point is later in time (newer), then this becomes the new current position.
+                        device.current = data;
+                    if (device.addPointToRoute)                  				//if it's been rendered before, render emmideatly, otherwise defer until it has been added to the map
+                        device.addPointToRoute(device, data);     				//draw on map
+                }
+                else {
+                    var newList = {path: [data], color: "red", isActive: true, device: point.device, current: data};		//add device name to the info, so we can display it when clicking on points, current = the current location of the device.
+                    $scope.devices[point.device] = newList;
+                    $scope.routes.push(newList);
+                    //don't need to return the newList, it doesn't have to be reloaded, it has just been added.
+                }
             }
         }
 		
-		function renderPois(data){
+		/*function renderPois(data){
 			data.location = new google.maps.LatLng(data.lat, data.lng);
 			//data.isActive = true;
 
-		}
+		}*/
 
 
         function fit_map_to_devices() {
@@ -497,7 +566,10 @@ angular.module("deebobo").controller('googleMapViewController', [
 					);
 				}
 			}
-		}
+		};
+
+
+        $timeout(function() { initializing = false; });     //make certain that the flag is turned of after all is done, if we don't do this, storeSettings is called while loading.
 
     }]);
 

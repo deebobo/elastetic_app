@@ -3,7 +3,7 @@
   "name": "sendgrid mail",
   "description": "Send email using SendGrid",
   "version": "0.0.1",
-  "author": "Deebobo",
+  "author": "elastetic",
   "type": "mail",
   "help": "This is a plugin for sending out emails to your users through sendgrid. You need an api key from Sendgrid in order to activate the service. You also have to specify the email address that should be used in the 'from' part for all your outgoing emails.",
   "image": "sendgrid_logo.png",

@@ -3,7 +3,7 @@
   "name": "google_map_view",
   "description": "A view containing a google map used to display information related to coordinates.",
   "version": "0.0.1",
-  "author": "Deebobo",
+  "author": "elastetic",
   "type": "view",
   "client": {
       "scripts": [

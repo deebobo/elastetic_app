@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 27/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 27/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -8,16 +8,16 @@
 
 
 angular.module('common.services', []);
-angular.module('deebobo.controllers', ['common.directives']);
+angular.module('elastetic.controllers', ['common.directives']);
 angular.module('common.directives', ['common.services']);
 
-var deebobo = angular.module('deebobo', ['ui.router', 'ngMaterial',
+var elastetic = angular.module('elastetic', ['ui.router', 'ngMaterial',
                                          'ngSanitize',                  // required for ng-bindhtml
                                          'ui.bootstrap','ui.grid',
 										 'ngResource'
 										 ]);  //, 'ui-grid-move-columns', 'ui.grid.resizeColumns'
 
-deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider', '$filterProvider', '$urlRouterProvider', '$mdThemingProvider',
+elastetic.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$provide', '$compileProvider', '$filterProvider', '$urlRouterProvider', '$mdThemingProvider',
     function ($stateProvider, $locationProvider, $controllerProvider, $provide, $compileProvider, $filterProvider, $urlRouterProvider, $mdThemingProvider) {
         $locationProvider.hashPrefix('');
         $locationProvider.html5Mode(true);                  //don't use the # in the path
@@ -357,23 +357,27 @@ deebobo.config(['$stateProvider', '$locationProvider', '$controllerProvider', '$
 		$provide.decorator("$exceptionHandler", function($delegate, $injector){				//error handling from rootscope, see: http://odetocode.com/blogs/scott/archive/2014/04/21/better-error-handling-in-angularjs.aspx
 			return function(exception, cause){
 				var $rootScope = $injector.get("$rootScope");
-				if($rootScope && typeof $rootScope.addError === "function")
-				    $rootScope.addError({message:exception.message, cause: cause});
+				if($rootScope && typeof $rootScope.addError === "function"){
+				    if(typeof exception === "string")
+                        $rootScope.addError(exception);
+				    else
+                        $rootScope.addError({message:exception.message, cause: cause});
+                }
 				$delegate(exception, cause);
 			};
     });
 
-        deebobo.controller = $controllerProvider.register;   //needed to dynamically load items
-        deebobo.directive = $compileProvider.directive;
-        deebobo.filter = $filterProvider.register;
-        deebobo.factory = $provide.factory;
-        deebobo.service = $provide.service;
+        elastetic.controller = $controllerProvider.register;   //needed to dynamically load items
+        elastetic.directive = $compileProvider.directive;
+        elastetic.filter = $filterProvider.register;
+        elastetic.factory = $provide.factory;
+        elastetic.service = $provide.service;
 
-        deebobo.requires.push()
+        elastetic.requires.push()
 
     }]);
 
-deebobo.run(function ($rootScope, $location, $state, AuthService, $mdToast, $transitions) {
+elastetic.run(function ($rootScope, $location, $state, AuthService, $mdToast, $transitions) {
 
         var match = {
             to: function(state){
@@ -383,14 +387,15 @@ deebobo.run(function ($rootScope, $location, $state, AuthService, $mdToast, $tra
         $transitions.onStart(match, function(trans) {
             if (!AuthService.isLoggedIn()) {
                 // User isn't authenticated. Redirect to a new Target State
-                return trans.router.stateService.target('/login');
+                return $state.target('login');
             }
         });
 
-        $rootScope.$on('$stateChangeError',
-            function(event, toState, toParams, fromState, fromParams, error){
-                $rootScope.addError(error);
-            });
+        $transitions.onError({}, function(trans) {
+            $rootScope.addError(trans.error());
+        });
+
+
 
         $rootScope.addError = function(message){
             console.log(message);
@@ -402,13 +407,16 @@ deebobo.run(function ($rootScope, $location, $state, AuthService, $mdToast, $tra
                 .position('top right')
                 //.hideDelay(5000)
              );
+        };
 
+        var id = null;
+        $rootScope.getId = function(){
+            if (!id) id = sessionStorage.getItem('id');
+            return id;
+        };
 
-            /*.then(function(response) {
-		  if ( response == 'ok' ) {
-			//alert('You clicked the \'UNDO\' action.');
-		  }
-		});*/
-		
-    }
+        $rootScope.setId = function(userId) {
+            id = userId;
+            sessionStorage.setItem('id', userId);
+        };
 });

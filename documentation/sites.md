@@ -1,7 +1,9 @@
 <a name="Sites"></a>
 
 ## Sites
-Created by Deebobo.dev on 25/05/2017.copyright 2017 Deebobo.devSee the COPYRIGHT file at the top-level directory of this distribution
+Created by elastetic.dev on 25/05/2017.
+copyright 2017 elastetic.dev
+See the COPYRIGHT file at the top-level directory of this distribution
 
 **Kind**: global class  
 <a name="new_Sites_new"></a>

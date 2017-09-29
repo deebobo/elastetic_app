@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 10/06/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 10/06/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
  'use strict';
@@ -8,11 +8,14 @@
 //const auth = require.main.require('../api/libs/auth');
 const winston = require('winston');
 const email = require.main.require('../api/libs/email');
+const auth = require.main.require('../api/libs/auth');
 
 /* GET users listing. */
 module.exports.list = async function(req, res)
 {
     try{
+        if(!req.params.site)
+            return status(404).json({message: "invalid parameters"});
         let db = await req.app.get('plugins');
         db = db.db;
         let result = await db.users.list(req.params.site);
@@ -33,7 +36,10 @@ module.exports.getUser = async function(req, res) {
         let db = await req.app.get('plugins');
         db = db.db;
         let result = await db.users.find(req.params.user);
-		res.status(200).json(result);
+        if(result)
+		    res.status(200).json(result);
+        else
+            res.status(404).json({message: "not found"});
     }
     catch(err){
         winston.log("error", err);
@@ -47,6 +53,8 @@ module.exports.create = async function(req, res) {
         let db = await req.app.get('plugins');
 		db = db.db;
 		let rec = req.body;
+        if(req.params.site)                         //parameter, if exists, takes presedence
+            rec.site = req.params.site;
 		let found = await db.users.add(rec);
 		res.status(200).json(found);
     }

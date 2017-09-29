@@ -6,7 +6,7 @@
   "icon": "https://www.mysql.com/common/logos/logo-mysql-170x115.png",
   "image": "hist_data.png",
   "version": "0.0.1",
-  "author": "Deebobo",
+  "author": "elastetic",
   "type": "connection",
   "config": {
       "scripts": [

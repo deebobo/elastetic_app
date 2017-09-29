@@ -1,12 +1,12 @@
 /**
- * Created by Deebobo.dev on 5/06/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 5/06/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 
 
-angular.module("deebobo").controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', 'siteDetails', 'page', 'toolbar', 'AuthService',
+angular.module("elastetic").controller('siteHomeController', ['$scope', '$location', 'menu', '$stateParams', '$state', '$mdSidenav', 'siteDetails', 'page', 'toolbar', 'AuthService',
     function ($scope, $location, menu, $stateParams, $state,  $mdSidenav, siteDetails, page, toolbar, AuthService) {
 
 
@@ -34,14 +34,14 @@ angular.module("deebobo").controller('siteHomeController', ['$scope', '$location
             $mdSidenav(navid).toggle();
         }
 
-		function logout(){
+        $scope.logout = function(){
 			AuthService.logout();
 			$location.path('/login');		//go to the login page
 		}
 		
-		function showUserDetails(){
-			menu.select({type: "link", view: "userdetails"});
-		}
+		$scope.showUserDetails = function(){
+			menu.select({type: "link", view: "user details"});
+		};
 
         //functions for menu-link and menu-toggle
         $scope.isOpen = isOpen;
@@ -58,6 +58,10 @@ angular.module("deebobo").controller('siteHomeController', ['$scope', '$location
         menu.onselect = function(){$mdSidenav('left').close();};
 
         menu.sections = page.data.menu;
+
+        $scope.openUserMenu = function($mdMenu, ev) {
+            $mdMenu.open(ev);
+        };
 
     }]);
 

@@ -1,11 +1,11 @@
 /**
- * Created by Deebobo.dev on 1/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 1/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 
-angular.module("deebobo").controller('extAdminFunctionsController',
+angular.module("elastetic").controller('extAdminFunctionsController',
     ['$scope', '$controller', 'messages', '$mdDialog', '$http', '$stateParams',
         function($scope, $controller, messages, $mdDialog, $http, $stateParams) {
             //angular.extend(this, $controller('adminFunctionsController', {$scope: $scope}));

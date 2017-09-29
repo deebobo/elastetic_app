@@ -3,7 +3,7 @@
   "name": "particle_io",
   "description": "connection to the particle.io cloud.",
   "version": "0.0.1",
-  "author": "Deebobo",
+  "author": "elastetic",
   "type": "connection",
   "help": "This plugin provides a connection to your particle.io account. It can be used as the source for various functions and for viewing all the available devices on your account. In order for the plugin to work properly, an authentication token from particle.io is required. You can get this by logging into your account (by using the 'get token' button).  Some functions (like the transporter) will activate the webhook/callback on particle.io in order to receive live information from your devices. When this is the case, an extra field is displayed that shows you the currently valid authentication token (for your site). You can refresh/recreate this token in case that this is no longer secured. To create webhook, the list of fields that should be monitored is required. This can be supplied in the function, usually in the 'extra' field. The list of fields should be defined as a json structure, like so: {'fields' : ['G']}",
   "image": "particle.png",

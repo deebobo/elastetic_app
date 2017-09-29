@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 20/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 20/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -41,7 +41,7 @@ let getPluginConfig = function (){
         category: "mail",
         title: "Sendgrid",
         description: "Send email using SendGrid",
-        author: "DeeBobo",
+        author: "elastetic",
         version: "0.0.1",
         icon: "http://10477-presscdn-0-4.pagely.netdna-cdn.com/wp-content/uploads/2013/09/logo_full_color_stk-6636d251dca5eb705062b63399914ebb.png",
         license: "GPL-3.0",

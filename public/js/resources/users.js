@@ -1,12 +1,12 @@
 /**
- * Created by Deebobo.dev on 21/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 21/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 'use strict';
 
-deebobo
+elastetic
     .factory('User', ["$resource", 'messages',
 	function ($resource, messages) {
 		
@@ -23,7 +23,8 @@ deebobo
 							  interceptor : {responseError : resourceErrorHandler}
 							},
 							get: {
-								method:'GET', 
+								method:'GET',
+                                url:'/api/user/:id',
 								interceptor : {responseError : resourceErrorHandler}
 							},
 							save:{

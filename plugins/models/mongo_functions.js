@@ -1,11 +1,12 @@
 /**
- * Created by Deebobo.dev on 25/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 25/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 /**@ignore */ 
 const mongoose = require('mongoose');
+const winston = require('winston');
 
 /**
  * @class represents the collection of function
@@ -25,7 +26,8 @@ class Functions{
             warning: String,                                                     //stores errors/warnings that were generated while creating the function. These didn't cause a failure in the creation (function can be stored), but the setup went wrong, user should correct and retry
             createdOn:{type: Date, default: Date.now()}
         });
-        functionSchema.index({ source: 1, site: 1});        //fast access at name & site level
+        functionSchema.index({ name: 1, site: 1}, {unique: true});        //names must be unique per site
+        functionSchema.index({ source: 1, site: 1});
         this._functions = mongoose.model('functions', functionSchema);
     }
 
@@ -47,13 +49,13 @@ class Functions{
             let record = new this._functions(rec);
             record.save(function (err) {
                 if (err) {
-                    winston.log("error", 'create function failed', connectionInfo);
+                    winston.log("error", 'create function failed', rec);
                     reject(err);
                 }
                 else {
                     record.populate("source", function(err, res){
                         if(err){
-                            winston.log("error", 'create-populate function failed', connectionInfo);
+                            winston.log("error", 'create-populate function failed', rec);
                             reject(err);
                         }else
                             resolve(res); }
@@ -72,11 +74,14 @@ class Functions{
      * 	- site: the site on which the email template was created
      *	- function: id of the plugin
      * 	- content: object for the config of the function.
+     * 	@param {bool} "returnOld" default = false. When true, will return the old version of the record.
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
      * was added
      */
-    update(id, value){
-        return this._functions.findOneAndUpdate({"_id": id}, value, {new: true}).populate('source').exec();
+    update(id, value, returnOld){
+        if(!returnOld)                          //in case that it's not defined
+            returnOld = false;
+        return this._functions.findOneAndUpdate({"_id": id}, value, {new: !returnOld}).populate('source').exec();
     }
 
     /** Get a list of all the available functions for a site.
@@ -105,6 +110,19 @@ class Functions{
      */
     findById(id){
         return this._functions.findOne( { _id: id } ).populate('source').exec();
+    }
+
+    /**
+     * finds a function for a specific site by name.
+     *
+     * @name .find()
+     * @param value {string}  - nameof the function.
+     * @param site {string}  - name of the site.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was found
+     */
+    find(name, site){
+        return this._functions.findOne( { name: name, site: site } ).populate('source').exec();
     }
 
     /**

@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 4/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 4/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -33,7 +33,7 @@ class ParticleIoConnection extends Connection {
     async registerCallback(plugins, connection, definition, host){
         if(!("content" in connection))
             connection.content = {callbacks: {}};
-        else
+        else if(!("callbacks" in connection.content))
             connection.content.callbacks = {};
 
 
@@ -52,10 +52,10 @@ class ParticleIoConnection extends Connection {
                     headers: {jwt: connection.content.authToken},
                     auth: connection.content.token
                 });
-                connection.content.callbacks[field] = {webhook: id.body.id, functions:[definition._id]} ;                                                //store the id so we can delete it later on again.
+                connection.content.callbacks[field] = {webhook: id.body.id, functions:[definition.name]} ;                                                //store the id so we can delete it later on again.
             }
             else
-                connection.content.callbacks[field].functions.push(definition._id.toString());
+                connection.content.callbacks[field].functions.push(definition.name);
         }
         await plugins.db.connections.update(connection);                    //need to save the connection. It
     }
@@ -72,7 +72,7 @@ class ParticleIoConnection extends Connection {
             let field = definition.data.extra.fields[i];
             if(connection.content && connection.content.callbacks){
                 let list = connection.content.callbacks[field].functions;
-                let index = list.indexOf(definition._id.toString());
+                let index = list.indexOf(definition.name);
                 if(index > -1){                                                                     //dont need to do anthing if not in list
                     list.splice(index, 1);
                     if(list.length === 0){                //no more registered observers for field, so delete the callback at particle and remove the field ref from the internal data.
@@ -168,12 +168,12 @@ class ParticleIoConnection extends Connection {
 		
 		let field = rec.event;
 		let functions = connection.content.callbacks[field].functions;
+        let data = {device: rec.coreid, field: field, data: rec.data, timestamp: rec.published_at};
 		for(let i = 0; i < functions.length; i++){
-			let func = await plugins.db.functions.findById(functions[i]);
+			let func = await plugins.db.functions.find(functions[i], connection.site);
 			if(func){
 				let plugin = plugins.plugins[func.source.name].create();
-				let data = {devive: rec.coreid, field: field, data: rec.data, timestamp: rec.published_at};
-				await plugin.call(plugins, func, connection, data);
+				let rdata = await plugin.call(plugins, func, connection, data);
 			}
 			else
 				throw Error("unknown function reference from connection, id: " + functions[i]);
@@ -189,7 +189,7 @@ let getPluginConfig = function (){
         category: "connection",
         title: "Particle.io",
         description: "a connection to your particle.io account",
-        author: "DeeBobo",
+        author: "elastetic",
         version: "0.0.1",
         icon: "https://www.mysql.com/common/logos/logo-mysql-170x115.png",
         license: "GPL-3.0",

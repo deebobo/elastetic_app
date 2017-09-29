@@ -32,8 +32,8 @@ function getPluginConfig(){
         name: "mongodb",
         category: "db",
         title: "store the data in a mongo database",
-        description: "this is the default database used by deebobo",
-        author: "DeeBobo",
+        description: "this is the default database used by elastetic",
+        author: "elastetic",
         version: "0.0.1",
         config:{
 			partial: "partial template.html",

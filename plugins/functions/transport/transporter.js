@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 4/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 4/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -41,7 +41,7 @@ let getPluginConfig = function (){
         category: "function",
         title: "transporter",
         description: "transport streaming data from one connection to the historical data of another",
-        author: "DeeBobo",
+        author: "elastetic",
         version: "0.0.1",
         icon: "https://www.mysql.com/common/logos/logo-mysql-170x115.png",
         license: "GPL-3.0",

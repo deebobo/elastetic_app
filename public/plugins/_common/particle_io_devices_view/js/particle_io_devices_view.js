@@ -1,14 +1,14 @@
 /**
- * Created by Deebobo.dev on 5/06/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 5/06/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 
 
-angular.module("deebobo").controller('particlIODevicesViewController',
-    ['$scope', 'messages', '$http', '$stateParams', 'viewData', 'toolbar',
-    function ($scope, messages, $http, $stateParams, viewData, toolbar) {
+angular.module("elastetic").controller('particlIODevicesViewController',
+    ['$scope', 'messages', '$http', '$stateParams', 'viewData', 'toolbar', 'UserService',
+    function ($scope, messages, $http, $stateParams, viewData, toolbar, UserService) {
 
         toolbar.title = "particle.io devices";
         toolbar.buttons = [];
@@ -20,12 +20,14 @@ angular.module("deebobo").controller('particlIODevicesViewController',
 
         var particle = new Particle();
 
-        $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection?' + viewData.plugin._id})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+		console.log("something fishy going on here");
+        $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection'})
             .then(function (response) {
                     for(i=0; i < response.data.length; i++){
-                        if(response.data[i].plugin.name === "particle_io"){
-                            if( "content" in response.data[i] && "token" in response.data[i].content){
-                                particle.listDevices({ auth: response.data[i].content.token }).then(
+						var connection = response.data[i];
+                        if(connection.plugin.name === "particle_io" && UserService.isAuthorizedFor(connection)){	//only list particle.io resources and only when current user is allowed, when not allowed, we get errors, taht we don't want.
+                            if( "content" in connection && "token" in connection.content){
+                                particle.listDevices({ auth: connection.content.token }).then(
                                     function(result){
                                         if(result.statusCode == 200){
                                             $scope.gridDef.data = result.body;

@@ -1,19 +1,25 @@
 /**
- * Created by Deebobo.dev on 10/06/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 10/06/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
+ 'use strict';
+ 
 //const auth = require.main.require('../api/libs/auth');
 const winston = require('winston');
+const email = require.main.require('../api/libs/email');
+const auth = require.main.require('../api/libs/auth');
 
 /* GET users listing. */
 module.exports.list = async function(req, res)
 {
     try{
+        if(!req.params.site)
+            return status(404).json({message: "invalid parameters"});
         let db = await req.app.get('plugins');
         db = db.db;
-        let grps = await db.users.list(req.params.site);
-        res.status(200).json(grps);
+        let result = await db.users.list(req.params.site);
+        res.status(200).json(result);
 		winston.log("warning", "add check to see if user has admin rights");
     }
     catch(err){
@@ -29,8 +35,11 @@ module.exports.getUser = async function(req, res) {
     try{
         let db = await req.app.get('plugins');
         db = db.db;
-        grp = await db.users.find(req.params.user);
-		res.status(200).json(grp);
+        let result = await db.users.find(req.params.user);
+        if(result)
+		    res.status(200).json(result);
+        else
+            res.status(404).json({message: "not found"});
     }
     catch(err){
         winston.log("error", err);
@@ -44,6 +53,8 @@ module.exports.create = async function(req, res) {
         let db = await req.app.get('plugins');
 		db = db.db;
 		let rec = req.body;
+        if(req.params.site)                         //parameter, if exists, takes presedence
+            rec.site = req.params.site;
 		let found = await db.users.add(rec);
 		res.status(200).json(found);
     }
@@ -68,7 +79,7 @@ module.exports.addToGrp = async function(req, res) {
 
 module.exports.updateUser = async function(req, res) {
     try{
-        if(auth.canWrite(req.user.groups, res)){                //auth will set the error message in res if there is a problem.
+        if(auth.canWrite(req.user.groups, res) || req.user._id == req.body._id){    //auth will set the error message in res if there is a problem. The user can change his own record.
             let db = await req.app.get('plugins');
             db = db.db;
             let rec = req.body;
@@ -104,18 +115,9 @@ module.exports.invite = async function(req, res){
             res.send(errors, 400);
             return;
         }
-        let plugins = await req.app.get('plugins');
-		let db = plugins.db;
-		let mailer = await plugins.getMailHandlerFor(req.params.site);
-		if(mailer){
-			let template = await db.emailTemplates.find("invite", req.params.site);
-			if(template)
-				await mailer.send(db, req.params.site, req.body.email, template.subject, template.body);
-			else
-                await mailer.send(db, req.params.site, req.body.email, "invitation", "you have been invited to join the deebobo community.");
-		}
-		else
-		    res.status(400).json({message: "email handler plugin not set up correctly"});
+        let pluginMan = await req.app.get('plugins');
+		await email.sendMail(site, req.user, pluginMan,  "invite");
+		res.status(200).json({message:"ok"});
     }
     catch(err){
         winston.log("error", err);
@@ -123,5 +125,22 @@ module.exports.invite = async function(req, res){
     }
 };
 
-module.exports.resetPwd = async function(req, res){
+/** the body shoudl contain the new password.
+*/
+module.exports.changePwd = async function(req, res){
+	try{
+		if( req.params.user._id == req.user._id){
+			let plugins = await req.app.get('plugins');
+			let db = plugins.db;
+			req.user.password = req.body;
+			await db.users.update(req.user);
+			res.status(200).json({message: "success"});
+		}
+		else
+			res.status(403).json({message: "invalid request"});
+    }
+    catch(err){
+        winston.log("error", err);
+        res.status(500).json({message:err.message});
+    }
 };

@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 25/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 25/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -47,6 +47,8 @@ async function initPassport(app, passport){
                 if(db != null) {
                     if(payload.isUserToken){
                         let user = await db.users.find(payload.id);
+                        if(req.params.site === undefined && req.originalUrl.startsWith("/api/user/"))    //this type of url is allowed to be called without 'site' param
+                            req.params.site = payload.site;
                         if (!user || req.params.site != payload.site)  		//the user must also be allowed to go to the requested site.
                             return done(null, false);
                         done(null, user);

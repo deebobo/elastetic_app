@@ -1,11 +1,11 @@
 /**
- * Created by Deebobo.dev on 5/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 5/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 
-deebobo
+elastetic
     .directive('jsonText', function() {
     return {
         restrict: 'A',

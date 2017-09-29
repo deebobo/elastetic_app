@@ -1,5 +1,5 @@
 # application structure
-A deebobo application uses a layered structure that is reflected in the URL's.
+A elastetic application uses a layered structure that is reflected in the URL's.
 
 ## sites
 At the top level, the application is divided into sites. Each user is always registered to a single site. To gain access to a site, you need to register or be invited to the site.

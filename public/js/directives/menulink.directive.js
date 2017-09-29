@@ -1,6 +1,6 @@
 'use strict';
 
-  deebobo
+  elastetic
     .directive('menuLink', ["menu", function (menu) {
       return {
         scope: {

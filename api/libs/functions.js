@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 22/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 22/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -42,7 +42,8 @@ module.exports.create = async function(plugins, pluginName, rec, host){
 
 module.exports.update = async function (plugins, pluginName, rec, host){
     rec.warning = "";                                                       //reset any warnings before saving
-    let oldRec = await plugins.db.functions.update(rec._id, rec);
+    let oldRec = await plugins.db.functions.update(rec._id, rec, true);
+    rec.source = oldRec.source;                                             //need to have a ref to the object for returning it to the caller.
     if(pluginName in plugins.plugins) {
         let db = plugins.db;
         let plugin = plugins.plugins[pluginName].create();

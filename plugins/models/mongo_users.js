@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 25/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 25/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -10,7 +10,8 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const config = require.main.require('../api/libs/config');
-
+const winston = require('winston');
+const mongooseHidden = require('mongoose-hidden')({ defaultHidden: { password: true } }); //hide content fields if requested. defaultHidden is required to override it, cause by default  _id is removed, which we don't want
 /**
  * @class represents the users collection
  */
@@ -37,12 +38,15 @@ class Users{
         let usersSchema = new mongoose.Schema({
             name: {type: String, required: true},
             email: {type: String, required: true},
-            hashedPassword: {type: String, required: true},
-            salt: {type: String, required: true},
+            hashedPassword: {type: String, required: true, hide: true},
+            salt: {type: String, required: true, hide: true},
             site: {type: String, required: true},
             createdOn: {type: Date, default: Date.now()},
-            accountState: {type: String, enum: ['created', 'verified', 'pwdReset'], default: 'created'},	//current state of the account, so we know if verification is needed or pwd has been reset
-            verificationToken: String,																		//if verification or pwd reset is needed, this field is filled in.
+            accountState: { type: String,
+                            enum: ['created', 'verified', 'pwdReset'],
+                            hide: true,
+                            default: 'created'},	//current state of the account, so we know if verification is needed or pwd has been reset
+            verificationToken: {type: String, hide: true},																		//if verification or pwd reset is needed, this field is filled in.
             groups: [{type: mongoose.Schema.Types.ObjectId, ref: 'groups'}]
         });
         usersSchema.methods.encryptPassword = function(password) {
@@ -86,6 +90,7 @@ class Users{
 
         usersSchema.index({ email: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
         usersSchema.index({ name: 1, site: 1}, {unique: true});        //make certain that name + site is unique in the system.
+        usersSchema.plugin(mongooseHidden);
         this._users = mongoose.model('users', usersSchema);
     }
 
@@ -116,7 +121,7 @@ class Users{
      * was added
      */
     update(user){
-        return this._users.findOneAndUpdate({"_id": user._id}, user).exec();
+        return this._users.findOneAndUpdate({"_id": user._id}, user, {new: true}).populate('groups').exec();
     }
 	
 	/**
@@ -129,7 +134,7 @@ class Users{
      * was added
      */
 	updateAccountState(id, value){
-		return this._users.findOneAndUpdate({"_id": id}, {accountState: value}).exec();
+		return this._users.findOneAndUpdate({"_id": id}, {accountState: value}).populate('groups').exec();
 	}
 
 

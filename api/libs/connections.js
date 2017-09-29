@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 22/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 22/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -34,14 +34,14 @@ module.exports.create = async function(plugins, rec, pluginName) {
 module.exports.update = async function(plugins, rec, pluginName){
     let db = plugins.db;
     rec.warning = "";                                                       //reset any warnings before saving
-    let newRec = await db.connections.update(rec);
+    let newRec = await db.connections.update(rec, false);
     try {
         await preparePlugin(pluginName, rec, plugins);                    //do after add, so that a failure will only cause a warning.
     }
     catch (err){
         winston.log("warning", err);
         rec.warning = err.toString();
-        newRec = await db.connections.update(rec);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
+        newRec = await db.connections.update(rec, false);                               //store the warning in the db, so it is persisted: user can see the warning also the next time it is opened.
     }
     return newRec;
 };

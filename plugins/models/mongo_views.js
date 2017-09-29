@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 25/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 25/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
  
@@ -20,6 +20,7 @@ class views{
             plugin: {type: mongoose.Schema.Types.ObjectId, ref: 'plugins'},
             controller: String,                                         //name of a controller to be used by this view. Can be defined in the plugin or a globaly available controller.
             partial: Number,                                            //the index nr of the partial from the plugin that is the main entry point.
+			data: Object,                                               //extra data for the view.
 			groups: [{type: mongoose.Schema.Types.ObjectId, ref: 'groups'}],
             createdOn:{type: Date, default: Date.now()}
         });
@@ -54,7 +55,11 @@ class views{
      * was added
      */
     update(view){
-        return this._connections.findOneAndUpdate({"_id": view._id}, view).exec();
+        if('_id' in view)
+            return this._connections.findOneAndUpdate({"_id": view._id}, view).exec();
+        else
+            return this._connections.findOneAndUpdate({"name": view.name, 'site': view.site}, view).exec();
+
     }
 
 	/** Returns all the views for a particular site, without the actual content.
@@ -72,6 +77,17 @@ class views{
     }
 	
 	/**
+     * finds a view by it's  id.
+     *
+     * @param id {string}  - id of the view.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was found
+     */
+    find(id){
+        return this._views.findOne( { _id: id } ).populate('plugin').populate('groups').exec();
+    }
+	
+	/**
      * finds a view by name for a specific site.
      *
      * @name .find()
@@ -80,7 +96,7 @@ class views{
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
      * was found
      */
-    find(name, site){
+    findByName(name, site){
         return this._views.findOne( { name: name, site: site } ).populate('plugin').populate('groups').exec();
     }
 	
@@ -94,6 +110,19 @@ class views{
      */
     delete(id){
         return this._views.findOneAndRemove( { _id: id } ).exec();
+    }
+
+    /**
+     * removes a view.
+     *
+     * @name .delete()
+     * @param value {string}  - name of the view.
+     * @param site {string}  - name of the site.
+     * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
+     * was found
+     */
+    delete(name, site){
+        return this._views.findOneAndRemove( { name: name, site: site } ).exec();
     }
 }
 

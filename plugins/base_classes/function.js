@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 19/08/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 19/08/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 

@@ -1,36 +1,54 @@
 
 
-<div layout="column" layout-fill ng-cloak class="dbb_admin_page">
+<div layout="column" layout-fill ng-cloak  ng-controller="adminFunctionsController">
 
 
-	<md-content>
+	<md-content class="dbb_admin_page" layout-fill>
 		<div ng-repeat="func in functions">
 			<form ng-submit="save(func)"
 				  layout="column">
 				<md-card>
 					<md-card-title>
+
+						<md-card-title-media ng-if="func.source.image">
+							<div class="md-media-md card-media">
+								<img ng-src="{{func.source.image}}"  >
+							</div>
+						</md-card-title-media>
+
+
 						<md-card-title-text>
-							<md-input-container flex layout-fill>
-								<label for="name-{{func.name}}" >name </label>
-								<input id="name-{{func.name}}" type="text" ng-model="func.name" class="form-control" ng-change="func.needsSave = true" ng-click="$event.stopPropagation()" />
+
+							<md-input-container  >
+								<!--<label for="plugin-{{data.to}}" >plugin</label>-->
+								<md-select   ng-model="func.source"
+											 required
+											 ng-change="func.needsSave = true">
+									<md-option ng-value="x" ng-repeat="x in functionPlugins">{{ x.name }} ({{x.description}}) </md-option>
+								</md-select>
+								<md-tooltip >Select the function plugin.</md-tooltip>
+							</md-input-container>
+
+							<md-input-container >
+								<!--<label for="name-{{func.name}}" >name </label>-->
+								<input id="name-{{func.name}}" type="text" ng-model="func.name" class="md-headline" ng-change="func.needsSave = true" ng-click="$event.stopPropagation()" />
 								<md-tooltip >The name of the function</md-tooltip>
 							</md-input-container>
 						</md-card-title-text>
 					</md-card-title>
 					<md-card-content>
-						<md-input-container  class="md-block">
-							<label for="plugin-{{data.to}}" >plugin</label>
-							<md-select   ng-model="func.source" required ng-change="func.needsSave = true">
-								<md-option ng-value="x" ng-repeat="x in functionPlugins">{{ x.name }} ({{x.description}}) </md-option>
-							</md-select>
-							<md-tooltip >Select the function plugin.</md-tooltip>
-							<div class="md-errors-spacer"></div>
-						</md-input-container>
 
 
-						<pluginconfigurator plugin="func.source" value="func"/>
-
-						<label ng-if="func.warning" class="md-warn">{{func.warning}}</label>
+						<div layout-gt-xs="row" layout="column" >
+							<div flex-gt-sm="66" flex layout="column">
+								<pluginconfigurator plugin="func.source" value="func"/>
+								<label ng-if="func.warning" class="md-warn">{{func.warning}}</label>
+							</div>
+							<md-divider style="margin-right: 10px; margin-left: 10px"/>
+							<div flex-gt-sm="33" flex layout="column">
+								<div ng-bind-html="func.source.help"></div>
+							</div>
+						</div>
 
 					</md-card-content>
 					<md-card-actions layout="row" layout-align="end center">

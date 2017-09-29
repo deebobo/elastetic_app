@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 20/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 20/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -53,7 +53,12 @@ class MongoDb{
 	* @return {Promise} a promise to perform async operations with.
 	*/
     connect(){
-        return mongoose.connect(config.config.db_connection_string);
+        return mongoose.connect(config.config.db_connection_string, function(error) {
+            if(error){
+                winston.log("error", error);
+                process.exit(1);
+            }
+        });
     }
 
 	/**
@@ -126,8 +131,8 @@ let getPluginConfig = function (){
         name: "mongodb",
         category: "db",
         title: "store the data in a mongo database",
-        description: "this is the default database used by deebobo",
-        author: "DeeBobo",
+        description: "this is the default database used by elastetic",
+        author: "elastetic",
         version: "0.0.1",
         icon: "/images/plugin_images/MongoDB_Gray_Logo_FullColor_RGB-01.jpg",
         license: "GPL-3.0",

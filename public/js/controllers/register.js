@@ -1,6 +1,6 @@
 'use strict'
-deebobo.controller('registerController', ['$scope', '$location', '$stateParams', 'AuthService', '$http',
-    function ($scope, $location, $stateParams, AuthService, $http) {
+elastetic.controller('registerController', ['$scope', '$location', '$stateParams', 'AuthService', '$http', 'UserService',
+    function ($scope, $location, $stateParams, AuthService, $http, UserService) {
 
         $http({method: 'GET', url: '/api/site'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
@@ -40,7 +40,8 @@ deebobo.controller('registerController', ['$scope', '$location', '$stateParams',
             let site = $scope.registerForm.selectedSite;
             AuthService.register(site, $scope.registerForm.username, $scope.registerForm.email, $scope.registerForm.password)
             // handle success
-                .then(function () {
+                .then(function (data) {
+                    UserService.user = data;
                     $location.path('/' + site);
                     $scope.disabled = false;
                     $scope.registerForm = {};

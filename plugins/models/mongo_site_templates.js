@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 25/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 25/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -22,7 +22,8 @@ class SiteTemplates{
             description: String,
             author: String,
             version: String,
-            icon: String,
+            icon: String,											//uri to small icon 
+			image: String,											//uri to bigger image 
             definition: Object,
             createdOn:{type: Date, default: Date.now()}
         });

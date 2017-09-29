@@ -1,10 +1,10 @@
 /**
- * Created by Deebobo.dev on 3/06/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 3/06/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 'use strict'
-deebobo.controller('sitesController', ['$scope', '$location', 'siteService', '$http','messages', '$q',
+elastetic.controller('sitesController', ['$scope', '$location', 'siteService', '$http','messages', '$q',
     function ($scope, $location, siteService, $http, messages, $q) {
 
         $scope.toConfigure = [];                          //a list of plugins that needs to be configured for the selected site templae

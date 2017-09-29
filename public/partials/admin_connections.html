@@ -1,40 +1,75 @@
 
 
-<div layout="column" layout-fill ng-cloak class="dbb_admin_page">
+<div layout="column" layout-fill ng-cloak >
 
-	<md-content>
+	<md-content class="dbb_admin_page" layout-fill>
 		<div ng-repeat="connection in connections">
 			<form ng-submit="save(connection)"
 				  layout="column">
 				<md-card>
-					<md-card-title>
-						<md-card-title-text>
-							<md-input-container flex layout-fill>
-							<label for="name-{{connection.name}}" >name</label>
-							<input id="name-{{connection.name}}" type="text" ng-model="connection.name" class="form-control" ng-change="connection.needsSave = true" ng-click="$event.stopPropagation()" />
+					<md-card-title >
+						<md-card-title-media ng-if="connection.plugin.image">
+                            <div class="md-media-md card-media">
+                                <img ng-src="{{connection.plugin.image}}"  >
+                            </div>
+						</md-card-title-media>
+						<md-card-title-text >
+                            <md-input-container   >
+                                <!--<label  >plugin</label>-->
+                                <md-select  ng-model="connection.plugin"
+                                            ng-change="connection.needsSave = true"
+                                            ng-model-options="{trackBy: '$value._id'}"
+                                            required>
+                                    <md-option ng-value="x" ng-repeat="x in connectionPlugins">{{ x.name }} ( {{x.description}} ) </md-option>
+                                </md-select>
+                                <md-tooltip >The connection plugin.</md-tooltip>
+
+                            </md-input-container>
+
+							<md-input-container >
+							    <!--<label for="name-{{connection.name}}" >name</label>-->
+							    <input id="name-{{connection.name}}" type="text" ng-model="connection.name" class="md-headline" ng-change="connection.needsSave = true" ng-click="$event.stopPropagation()" />
 							<md-tooltip md-delays="5">The name of the connection, must be unique.</md-tooltip>
 						</md-input-container>
 						</md-card-title-text>
 					</md-card-title>
 					<md-card-content>
 
+						<div layout-gt-xs="row" layout="column" >
 
-						<md-input-container  class="md-block" >
-							<label  >plugin</label>
-							<md-select  ng-model="connection.plugin"
-										ng-change="connection.needsSave = true"
-										ng-model-options="{trackBy: '$value._id'}"
-										required>
-								<md-option ng-value="x" ng-repeat="x in connectionPlugins">{{ x.name }} ( {{x.description}} ) </md-option>
-							</md-select>
-							<md-tooltip >The connection plugin.</md-tooltip>
-							<div class="md-errors-spacer"></div>
-						</md-input-container>
+							<div flex-gt-sm="65" flex layout="column">
+								<pluginconfigurator plugin="connection.plugin" value="connection"/>
+								<label ng-if="connection.warning" class="md-warn">{{connection.warning}}</label>
+							</div>
+                            <md-divider style="margin-right: 10px; margin-left: 10px"/>
+                            <div flex-gt-sm="35" flex layout="column">
+                                <div ng-bind-html="connection.plugin.help"></div>
+                            </div>
+						</div>
+						
+						<md-chips ng-if="connection.plugin"
+								  ng-model="connection.groups"
+								  md-transform-chip="checkGroupChip(connection, $chip)"
+								  md-on-add="groupAddedTo(connection, $chip)"
+								  md-on-remove="groupRemovedFrom(connection, $chip)"
+								  delete-button-label="Remove group"
+								  delete-hint="Press delete to remove group"
+								  placeholder="add groups authorized to work with this resource">
+							<md-chip-template>
+									<span>
+									  <strong>{{$chip.name}}</strong>
+									</span>
+							</md-chip-template>
 
-
-						<pluginconfigurator plugin="connection.plugin" value="connection"/>
-
-                        <label ng-if="connection.warning" class="md-warn">{{connection.warning}}</label>
+							<md-autocomplete
+									md-selected-item="connection.selectedItem"
+									md-search-text="connection.searchText"
+									md-items="item in groups"
+									md-item-text="item.name"
+									placeholder="Search for a group">
+								<span md-highlight-text="connection.searchText">{{item.name}}</span>
+							</md-autocomplete>
+						</md-chips>
 
 					</md-card-content>
 					<md-card-actions layout="row" layout-align="end center">

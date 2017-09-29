@@ -1,6 +1,6 @@
 'use strict'
 
-deebobo.controller('loginController', ['$scope', '$location', '$stateParams', 'AuthService', '$http', '$mdDialog',
+elastetic.controller('loginController', ['$scope', '$location', '$stateParams', 'AuthService', '$http', '$mdDialog',
   function ($scope, $location, $stateParams,  AuthService, $http, $mdDialog) {
 
 	//helper function to show errors
@@ -90,7 +90,7 @@ deebobo.controller('loginController', ['$scope', '$location', '$stateParams', 'A
 	}
 }]);
 
-deebobo.controller('logoutController',
+elastetic.controller('logoutController',
   ['$scope', '$location',
   function ($scope, $location) {
 

@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 4/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 4/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -37,8 +37,8 @@ class MySqlHistoricalData extends MySqlConnection {
             if(self.con){
 
                 try{
-                    if(connectionInfo.createTable){
-                        var sql = "CREATE TABLE " + connectionInfo.tableName + " (time datetime, site VARCHAR(255), source VARCHAR(255), device VARCHAR(255), field VARCHAR(255), data JSON   )";
+                    if(connectionInfo.content.createTable){
+                        var sql = "CREATE TABLE " + connectionInfo.content.tableName + " (id int NOT NULL PRIMARY KEY, time datetime, site VARCHAR(255), source VARCHAR(255), device VARCHAR(255), field VARCHAR(255), data JSON   )";
                         self.con.query(sql, function (err, result, fields) {
                             if (err) {
                                 winston.log("error", 'table creation failed', connectionInfo);
@@ -68,24 +68,51 @@ class MySqlHistoricalData extends MySqlConnection {
      * @param filter
      * @private
      */
-    _buildWhere(filter){
+    _buildWhere(filter, params){
         let res = '';
-        if('to' in filter  && filter.to)
-            res += 'time <= "' + filter.to + '"';
-        if('from' in filter && filter.from)
-            res += (res.length > 0 ? ' and ' : '') + 'time >= "' + filter.from  + '"';
-        if('source' in filter && filter.source)
-            res += (res.length > 0 ? ' and ' : '') + 'source = "' + filter.source + '"';
-        if('device' in filter && filter.device)
-            res += (res.length > 0 ? ' and ' : '') + 'device = "' + filter.device + '"';
-        if('field' in filter && filter.field)
-            res += (res.length > 0 ? ' and ' : '') + 'field = "' + filter.field + '"';
-        if('site' in filter && filter.site)
-            res += (res.length > 0 ? ' and ' : '') + 'site = "' + filter.site + '"';
+        if('to' in filter  && filter.to){
+            res += 'time <= ?';
+			params.push(filter.to);
+		}
+        if('from' in filter && filter.from){
+			if (params.length >  0) res += " AND ";
+            res += 'time >= ?';
+			params.push(filter.from);
+		}
+        if('source' in filter && filter.source){
+			if (params.length >  0) res += " AND ";
+            res += 'source = ?';
+			params.push(filter.source);
+		}
+        if('device' in filter && filter.device){
+			if (params.length >  0) res += " AND ";
+            res += 'device = ?';
+			params.push(filter.device);
+		}
+        if('field' in filter && filter.field){
+			if (params.length >  0) res += " AND ";
+            res += 'field = ?';
+			params.push(filter.field);
+		}
+        if('site' in filter && filter.site){
+			if (params.length >  0) res += " AND ";
+            res += 'site = ?';
+			params.push(filter.site);
+		}
+        if('id' in filter && filter.id){
+			if (params.length >  0) res += " AND ";
+            res += 'id = ?';
+			params.push(filter.id);
+		}
 
-        if(res.length > 0)
+		if(res.length > 0)
             res = " WHERE " + res;
 
+        return res;
+    }
+
+    _buildLimit(filter){
+        let res = "";
         if('page' in filter && filter.page){
             let pagesize = 50;
             if('pagesize' in filter && filter.pagesize)
@@ -93,12 +120,13 @@ class MySqlHistoricalData extends MySqlConnection {
 
             res += ' LIMIT ' + (parseInt(filter.page) * pagesize).toString() + ', ' + pagesize.toString();
         }
+
         return res;
     }
 
 
     /**
-     * called when a connection is created (after connect is called, so the db is already connected).
+     * called when a connection is created .
      * Makes certain that the db and table exist (if need be)
      *
      * table fields
@@ -151,14 +179,15 @@ class MySqlHistoricalData extends MySqlConnection {
     async postData(plugins, connectionInfo, data){
 
         let self = this;
-
+        let result = null;
         await self.connect(plugins, connectionInfo);                                       //make certain that we have an open connection
         try{
-            await self.add(connectionInfo, data);
+            result = await self.add(connectionInfo, data);
         }
         finally {
             await self.close();                                           //make certain that the connection is closed again.
         }
+        return result;
     }
 
     /** store data in the connection (can be different then executing it?)
@@ -186,17 +215,18 @@ class MySqlHistoricalData extends MySqlConnection {
      * @param plugins {Object} ref to the plugin manager
      * @param connectionInfo: {Object} connection record
      */
-    async updateData(plugins, connectionInfo, data){
+    async updateData(plugins, connectionInfo, record, data){
 
         let self = this;
-
+        let result = null;
         await self.connect(plugins, connectionInfo);                                       //make certain that we have an open connection
         try{
-            await self.update(connectionInfo, data);
+            result = await self.update(connectionInfo, record, data);
         }
         finally {
             await self.close();                                           //make certain that the connection is closed again.
         }
+        return result;
     }
 
     /** store data in the connection (can be different then executing it?)
@@ -257,22 +287,19 @@ class MySqlHistoricalData extends MySqlConnection {
         return new Promise((resolve, reject) => {
             if(!this.con)
                 reject("connection not opened");
-            if(typeof data.data === "string")
-                var sql = "INSERT INTO " + connectionInfo.content.tableName + " (time, site, source, device, field, data) VALUES ('"
-                    + data.timestamp + "', '"
-                    + connectionInfo.site + "', '"
-                    + connectionInfo.name + "', '"
-                    + data.coreid + "', '"
-                    + data.event + "', '"
-                    + JSON.stringify(data.data) + "')";
-            self.con.query(sql, function (err, result, fields) {
+            let sql = "INSERT INTO " + connectionInfo.content.tableName + " SET time = ?, site = ?, source = ?, device = ?, field = ?, data = ?";
+            let params = null;
+            params = [data.timestamp, connectionInfo.site, connectionInfo.name, data.device, data.field, JSON.stringify(data.data)];        //data needs to be json.stringified always, even if input is string, cause the field is json and otherwise it dont work
+            self.con.query(sql, params, function (err, result) {
                 if (err) {
                     reject(err);
                     winston.log("error", 'store historical data failed', err);
                 }
                 else {
-                    resolve(result);
-                    winston.log("info", 'historical data saved', result);
+                    if('insertId' in result && result.insertId != 0)
+                        data.id = result.insertId;
+                    resolve(data);
+                    winston.log("info", 'historical data saved', data, result);
                 }
             });
         });
@@ -282,45 +309,49 @@ class MySqlHistoricalData extends MySqlConnection {
      * updates the record in the db.
      * @param connectionInfo {object} the connection definition reocord.
      * @param data: the data to store in the db.
+     * @param record {string} id of the record to update.
      * @returns {Promise}
      */
-    async update(connectionInfo, data){
+    async update(connectionInfo, record, data){
 		
 		let self = this;
         return new Promise((resolve, reject) => {
             if(!this.con)
                 reject("connection not opened");
-			let sql = null;
-			sql = "UPDATE " + connectionInfo.content.tableName + " (set ";
-			let needsComma = false;
+			let sql = "UPDATE " + connectionInfo.content.tableName + " set ";
+			let params = [];
 			if( 'time' in data){
-				sql += "time = '" + + data.published_at + "'";
-				needsComma = true;
+				sql += "time = ?";
+				params.push(data.published_at);
 			}
 			if( 'device' in data){
-				if (needsComma == true) sql += ", ";
-				sql += "device = '" + data.coreid + "'";
-				needsComma = true;
+				if (params.length >  0) sql += ", ";
+				sql += "device = ?";
+				params.push(data.coreid);
 			}
 			if( 'field' in data){
-				if (needsComma == true) sql += ", ";
-				sql += "field = '" + data.event + "'";
-				needsComma = true;
+				if (params.length >  0) sql += ", ";
+				sql += "field = ?";
+				params.push(data.event);
 			}
 			if( 'data' in data){
-				if (needsComma == true) sql += ", ";
-				sql += "data = " + JSON.stringify(data.data);
-				needsComma = true;
+				if (params.length >  0) sql += ", ";
+				sql += "data = ?";
+				params.push(JSON.stringify(data.data));
 			}
+			sql += " WHERE id = ?";
+			params.push(record);
 			if(sql){
-				self.con.query(sql, function (err, result, fields) {
+				self.con.query(sql, params, function (err, result) {
 					if (err) {
 						winston.log("error", 'store historical data failed', err);
 						reject(err);
 					}
 					else {
-						winston.log("info", 'historical data saved', result);
-						resolve(result);
+						if('insertId' in result && result.inserId != 0)
+                        data.id = result.insertId;
+						resolve(data);
+						winston.log("info", 'historical data saved', data, result);
 					}
 				});
 			}
@@ -346,8 +377,9 @@ class MySqlHistoricalData extends MySqlConnection {
         let self = this;
         return new Promise((resolve, reject) => {
             if(this.con){
-                var sql = "SELECT time, device, source, field, data from " + connectionInfo.tableName + self._buildWhere(filter);
-                self.con.query(sql, function (err, result, fields) {
+				let params = [];
+                let sql = "SELECT time, device, source, field, data from " + connectionInfo.tableName + self._buildWhere(filter, params) + " ORDER BY time DESC " + self._buildLimit(filter);
+                self.con.query(sql, params, function (err, result, fields) {
                     if (err) {
                         reject(err);
                         winston.log("error", 'table query failed', sql);
@@ -366,8 +398,9 @@ class MySqlHistoricalData extends MySqlConnection {
         let self = this;
         return new Promise((resolve, reject) => {
             if(this.con){
-                var sql = "SELECT MIN(time) as min, MAX(time) as max from " + connectionInfo.tableName + self._buildWhere(filter);
-                self.con.query(sql, function (err, result, fields) {
+				let params = [];
+                let sql = "SELECT MIN(time) as min, MAX(time) as max from " + connectionInfo.tableName + self._buildWhere(filter, params);
+                self.con.query(sql, params, function (err, result, fields) {
                     if (err) {
                         reject(err);
                         winston.log("error", 'table query failed', sql);
@@ -391,7 +424,7 @@ let getPluginConfig = function (){
         category: "connection",
         title: "My sql historical data",
         description: "a connection to your mysql database for the historical data of your devices from other connections",
-        author: "DeeBobo",
+        author: "elastetic",
         version: "0.0.1",
         icon: "https://www.mysql.com/common/logos/logo-mysql-170x115.png",
         license: "GPL-3.0",

@@ -1,8 +1,8 @@
 <div layout="column" layout-fill ng-cloak class="dbb_admin_page" >
 
-    <md-tabs md-dynamic-height md-border-bottom class="md-primary">
+    <md-tabs md-dynamic-height md-border-bottom class="md-primary" layout-fill>
         <md-tab label="site" >
-            <md-content class="md-padding">
+            <md-content class="dbb_admin_page" layout-fill>
                 <form ng-submit="submitSiteDetails(site)">
 
                     <div layout-gt-sm="row" layout="column" >
@@ -85,7 +85,7 @@
         </md-tab>
 
         <md-tab label="appearance">
-            <md-content class="md-padding">
+            <md-content class="dbb_admin_page" layout-fill>
 
                 <form ng-submit="submitSiteDetails(site)" layout-align="center stretch" layout-fill layout="column" layout-padding="10%">
 

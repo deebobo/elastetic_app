@@ -3,7 +3,7 @@
   "name": "particle_io_devices_view",
   "description": "view all the devices on the particle.io cloud.",
   "version": "0.0.1",
-  "author": "Deebobo",
+  "author": "elastetic",
   "type": "view",
   "client": {
       "scripts": [

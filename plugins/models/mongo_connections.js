@@ -1,11 +1,13 @@
 /**
- * Created by Deebobo.dev on 25/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 25/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 /**@ignore */
 const mongoose = require('mongoose');
+const winston = require('winston');
+const mongooseHidden = require('mongoose-hidden')({ defaultHidden: { password: true } }); //hide content fields if requested. defaultHidden is required to override it, cause by default  _id is removed, which we don't want
 
 
 /**
@@ -23,11 +25,23 @@ class Connections{
             site: String,
             plugin: {type: mongoose.Schema.Types.ObjectId, ref: 'plugins'},
             content: Object,
+			hidden: {type: Boolean, default: false},							//when true, content will be hidden for the users. Used by application templates that fill in connection info (like db string), which is shared accross all template users and should not be accessible to those users.
             warning: String,                                                    //any warning that was rendered while creating the connection.
+			features: [{ type: String }],										//supported features of this connection. Ex: get/post/put/history/poi/devices/...  Allows interfaces to decide if the connection is used or not.
+			groups: [{type: mongoose.Schema.Types.ObjectId, ref: 'groups'}],
             createdOn:{type: Date, default: Date.now()}
         });
-        connectionSchema.index({ name: 1, site: 1}, {unique: true});        //fast access at name & site level
-        connectionSchema.index({ plugin: 1, site: 1});        //fast access at name & site level
+        connectionSchema.index({ name: 1, site: 1}, {unique: true});            //names must be unique per site
+        connectionSchema.index({ plugin: 1, site: 1});                          //fast access at plugin & site level
+		
+		connectionSchema.set('toJSON', { transform: function (doc, ret, opt) {	//filter out 'content' when requested. No user should ever see this.
+			if(ret['hidden'] === true){
+				delete ret['content'];
+			}
+			return ret
+		}});
+		connectionSchema.plugin(mongooseHidden);
+		
         this._connections = mongoose.model('connections', connectionSchema);
     }
 
@@ -57,8 +71,32 @@ class Connections{
      */
     add(connection){
         this._preparePlugin(connection);
-        let record = new this._connections(connection);
-        return record.save();
+		return new Promise((resolve, reject) => {
+            let record = new this._connections(connection);
+            record.save(function (err) {
+                if (err) {
+                    winston.log("error", 'create connection failed', connection);
+                    reject(err);
+                }
+                else {
+                    record.populate("plugin", function(err, res) {
+                            if (err) {
+                                winston.log("error", 'create-populate connection failed', connection);
+                                reject(err);
+                            } else {
+                                record.populate("groups", function(err, res){
+                                    if (err) {
+                                        winston.log("error", 'create-populate connection failed', connection);
+                                        reject(err);
+                                    } else
+                                        resolve(res);
+                                });
+                            }
+                        }
+                    );
+                }
+            });
+        });
     }
 
     /**
@@ -70,12 +108,15 @@ class Connections{
      * 	- site: the site on which the email template was created
      *	- connection: id of the plugin
      * 	- content: object for the config of the connection.
+     * @param returnOld {boolean}, default = false. Set to true if the old record needs to be returned.
      * @return {Promise}] a promise to perform async operations with. The result of the promise is the record that
      * was added
      */
-    update(connection){
+    update(connection, returnOld){
+        if(!returnOld)                          //in case that it's not defined
+            returnOld = false;
         this._preparePlugin(connection);
-        return this._connections.findOneAndUpdate({"_id": connection._id}, connection).populate('plugin').exec();
+        return this._connections.findOneAndUpdate({"_id": connection._id}, connection, {new: !returnOld}).populate('plugin').populate('groups').exec();
     }
 
     /** Get a list of all the available connections for a site.
@@ -86,9 +127,9 @@ class Connections{
     list(site, plugin){
         let query = null;
         if(plugin){
-            query = this._connections.find({site: site, plugin: plugin}).populate('plugin');
+            query = this._connections.find({site: site, plugin: plugin}).populate('plugin').populate('groups');
         }else{
-            query = this._connections.find({site: site}).populate('plugin');
+            query = this._connections.find({site: site}).populate('plugin').populate('groups');
         }
         return query.exec();
     }
@@ -103,7 +144,7 @@ class Connections{
      * was found
      */
     find(name, site){
-        return this._connections.findOne( { name: name, site: site } ).populate('plugin').exec();
+        return this._connections.findOne( { name: name, site: site } ).populate('plugin').populate('groups').exec();
     }
 
     /**
@@ -115,7 +156,7 @@ class Connections{
      * was found
      */
     findById(id){
-        return this._connections.findOne( { _id: id } ).populate('plugin').exec();
+        return this._connections.findOne( { _id: id } ).populate('plugin').populate('groups').exec();
     }
 
     /**
@@ -127,7 +168,7 @@ class Connections{
      * was found
      */
     delete(id){
-        return this._connections.findOneAndRemove( { _id: id } ).populate('plugin').exec();
+        return this._connections.findOneAndRemove( { _id: id } ).populate('plugin').populate('groups').exec();
     }
 }
 

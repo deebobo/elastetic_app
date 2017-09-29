@@ -3,7 +3,7 @@
   "name": "google_map_view",
   "description": "A view containing a google map used to display information related to coordinates.",
   "version": "0.0.1",
-  "author": "Deebobo",
+  "author": "elastetic",
   "type": "view",
   "client": {
       "scripts": [
@@ -12,6 +12,7 @@
       ],
       "external": [
         "//cdn.jsdelivr.net/particle-api-js/5/particle.min.js",
+        "https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js",
         "https://maps.googleapis.com/maps/api/js?key=AIzaSyADMiCiu6lavxB6vf5PbVRfOy3UXCC5yJ4"
       ],
       "partials": [

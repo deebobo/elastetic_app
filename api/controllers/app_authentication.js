@@ -1,6 +1,6 @@
 /**
- * Created by Deebobo.dev on 26/05/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 26/05/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
@@ -68,4 +68,9 @@ module.exports.login = async function(req, res){
 	}
 	else
 		res.status(400).json({message:"missing username or password"});
+};
+
+module.exports.resetPwd = async function(req, res){
+	//todo: implement me
+	res.status(500).json({message:"to be implemented"});
 };

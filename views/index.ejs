@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="deebobo">
+<html ng-app="elastetic">
     <head>
         <title><%= title %></title>
         <base href="/"> <!-- this is for switching to html5 app, so angular's ui-router doesn't need # in it's paths-->
@@ -43,6 +43,9 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular-aria.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular-messages.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-route-segment/1.5.1/angular-route-segment.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.6.6/angular-sanitize.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.16/angular-resource.min.js"></script>
+		
         <!-- Angular Material Library -->
         <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.4/angular-material.min.js"></script>
 
@@ -61,10 +64,16 @@
 
 
 
+		
+		<script type='text/javascript' src="./js/resources/groups.js"></script>
+        <script type='text/javascript' src="./js/resources/users.js"></script>
+        <script type='text/javascript' src="./js/resources/pages.js"></script>
+        <script type='text/javascript' src="./js/resources/views.js"></script>
 
         <script type='text/javascript' src="./js/services/plugin_service.js"></script>
         <script type='text/javascript' src="./js/services/auth_service.js"></script>
         <script type='text/javascript' src="./js/services/site_service.js"></script>
+		<script type='text/javascript' src="./js/services/user_service.js"></script>
         <script type='text/javascript' src="./js/services/menu_service.js"></script>        <!--menu service must be loaded before site_home-->
         <script type='text/javascript' src="./js/services/page_service.js"></script>
         <script type='text/javascript' src="./js/services/view_service.js"></script>
@@ -76,7 +85,7 @@
         <script type='text/javascript' src="./js/directives/menulink.directive.js"></script>
         <script type='text/javascript' src="./js/directives/json_text.directive.js"></script>
         <script type='text/javascript' src="./js/directives/plugin_configurator.directive.js"></script>
-
+		
         <script type='text/javascript' src="./js/controllers/login.js"></script>
         <script type='text/javascript' src="./js/controllers/register.js"></script>
         <script type='text/javascript' src="./js/controllers/sites.js"></script>

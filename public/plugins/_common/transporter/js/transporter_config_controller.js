@@ -1,14 +1,14 @@
 /**
- * Created by Deebobo.dev on 1/07/2017.
- * copyright 2017 Deebobo.dev
+ * Created by elastetic.dev on 1/07/2017.
+ * copyright 2017 elastetic.dev
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
 
-angular.module("deebobo").controller('extAdminFunctionsController',
+angular.module("elastetic").controller('extAdminFunctionsController',
     ['$scope', '$controller', 'messages', '$mdDialog', '$http', '$stateParams',
         function($scope, $controller, messages, $mdDialog, $http, $stateParams) {
-            angular.extend(this, $controller('adminFunctionsController', {$scope: $scope}));
+            //angular.extend(this, $controller('adminFunctionsController', {$scope: $scope}));
 
             $scope.connections = [];
 
@@ -23,7 +23,7 @@ angular.module("deebobo").controller('extAdminFunctionsController',
                     }
                 );
 
-            if($scope.value.data && $scope.value.data.token){                    //if there is a token id, get the actual token value.
+            /*if($scope.value.data && $scope.value.data.token){                    //if there is a token id, get the actual token value.
                 $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/token/' + $scope.value.data.token})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                     .then(function (response) {
                             $scope.token = response.data.token;
@@ -32,6 +32,6 @@ angular.module("deebobo").controller('extAdminFunctionsController',
                             messages.error(response.data);
                         }
                     );
-            }
+            }*/
 
         }]);

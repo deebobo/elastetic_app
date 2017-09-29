@@ -23,8 +23,8 @@
 
 <dl>
 <dt><a href="#mongoose">mongoose</a></dt>
-<dd><p>Created by Deebobo.dev on 25/05/2017.
-copyright 2017 Deebobo.dev
+<dd><p>Created by elastetic.dev on 25/05/2017.
+copyright 2017 elastetic.dev
 See the COPYRIGHT file at the top-level directory of this distribution</p>
 </dd>
 </dl>
@@ -53,7 +53,8 @@ See the COPYRIGHT file at the top-level directory of this distribution</p>
 adds a view to the db
 
 **Kind**: instance method of [<code>views</code>](#views)  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas added  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
+was added  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -82,7 +83,8 @@ Returns all the views for a particular site, without the actual content.
 updates a view definition
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas added  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
+was added  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -94,7 +96,8 @@ updates a view definition
 finds a view by name for a specific site.
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas found  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
+was found  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -107,7 +110,8 @@ finds a view by name for a specific site.
 removes a view.
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas found  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
+was found  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -116,6 +120,8 @@ removes a view.
 <a name="mongoose"></a>
 
 ## mongoose
-Created by Deebobo.dev on 25/05/2017.copyright 2017 Deebobo.devSee the COPYRIGHT file at the top-level directory of this distribution
+Created by elastetic.dev on 25/05/2017.
+copyright 2017 elastetic.dev
+See the COPYRIGHT file at the top-level directory of this distribution
 
 **Kind**: global constant  

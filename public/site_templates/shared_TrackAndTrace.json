@@ -1,7 +1,7 @@
 {
   "name": "track and trace",
   "description": "track your stuff",
-  "help": "<p>With this template, you can create a website that allows you to monitor the movements of devices/people you are interested in.<br>Besides managing all your devices from a list, you also have a map at your disposal that displays:<br><ul><li>the current location of your devices</li><li>the routes that your devices followed</li><li>any points of interest that were encountered.</li></ul>It is also possible to edit and manually create or delete any points of interest.<br></p><p>This version of the template stores all the data in a common/shared database. This makes it easy for you as there are less setup steps required to get you going.If you prefer to have more control over your data, you can always use the 'stand-alone' track & trace template which allows you to define the location wherethe data will be stored.</p>Note: Currently, only particle.io devices are supported."
+  "help": "<p>With this template, you can create a website that allows you to monitor the movements of devices/people you are interested in.<br>Besides managing all your devices from a list, you also have a map at your disposal that displays:<br><ul><li>the current location of your devices</li><li>the routes that your devices followed</li><li>any points of interest that were encountered.</li></ul>It is also possible to edit and manually create or delete any points of interest.<br></p><p>This version of the template stores all the data in a common/shared database. This makes it easy for you as there are less setup steps required to get you going.If you prefer to have more control over your data, you can always use the 'stand-alone' track & trace template which allows you to define the location wherethe data will be stored.</p>Note: Currently, only particle.io devices are supported.",
   "author": "elastetic",
   "version": "1.0.0",
   "icon": "trackandtrace.jpg",
@@ -194,7 +194,7 @@
         "name" : "data store", 
         "plugin" : {
           "comment": "a connection that allows the user to select the plugin and configure it",
-		  "name": :"my_sql_db",
+		  "name":"my_sql_db",
 		  "global": true
         },
 		"content":{

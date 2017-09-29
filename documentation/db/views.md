@@ -53,8 +53,7 @@ See the COPYRIGHT file at the top-level directory of this distribution</p>
 adds a view to the db
 
 **Kind**: instance method of [<code>views</code>](#views)  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
-was added  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas added  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -83,8 +82,7 @@ Returns all the views for a particular site, without the actual content.
 updates a view definition
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
-was added  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas added  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -96,8 +94,7 @@ was added
 finds a view by name for a specific site.
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
-was found  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas found  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -110,8 +107,7 @@ was found
 removes a view.
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
-was found  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas found  
 
 | Param | Type | Description |
 | --- | --- | --- |

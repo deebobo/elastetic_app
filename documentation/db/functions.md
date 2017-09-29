@@ -71,8 +71,7 @@ Get a list of all the available functions for a site.
 adds a function definition to the db
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
-was added  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas added  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -84,8 +83,7 @@ was added
 updates a function definition to the db
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
-was added  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas added  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -97,8 +95,7 @@ was added
 finds a function for a specific site.
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
-was found  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas found  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -111,8 +108,7 @@ was found
 removes a function for a specific site.
 
 **Kind**: global variable  
-**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record that
-was found  
+**Returns**: <code>Promise</code> - ] a promise to perform async operations with. The result of the promise is the record thatwas found  
 
 | Param | Type | Description |
 | --- | --- | --- |

@@ -1,0 +1,264 @@
+{
+  "name": "track and trace",
+  "description": "track your stuff",
+  "help": "<p>With this template, you can create a website that allows you to monitor the movements of devices/people you are interested in.<br>Besides managing all your devices from a list, you also have a map at your disposal that displays:<br><ul><li>the current location of your devices</li><li>the routes that your devices followed</li><li>any points of interest that were encountered.</li></ul>It is also possible to edit and manually create or delete any points of interest.<br></p><p>This version of the template allows you to store all the critical data on your own servers so that you have full control of your own data.This requires you to set up and manage a my-sql database yourself. If you do not yet have one, you can always use a hosted my-sql server.If you do not want to go through the hassle of managing your own database, you can also opt for the 'shared-track & trace template' which alreadyhas a connection set up to a shared my-sql database.</p>Note: Currently, only particle.io devices are supported.",
+  "author": "elastetic",
+  "version": "1.0.0",
+  "icon": "trackandtrace.jpg",
+  "image": "trackandtrace.jpg",
+  "definition": [
+    {
+      "type": "group",
+      "value": {
+        "name": "admins",
+        "level": "admin"
+      }
+    },
+    {
+      "type": "group",
+      "value": {
+        "name": "editors",
+        "level": "edit"
+      }
+    },
+    {
+      "type": "group",
+      "value": {
+        "name": "viewers",
+        "level": "view"
+      }
+    },
+    {
+      "type": "site",
+      "value": {
+        "viewGroup": "viewers",
+        "homepage": "home",
+        "defaultView": "map",
+        "sendHelloEmail": true,
+        "requestEmailConfirmation": true,
+        "allowRegistration": true
+      }
+    },
+    {
+      "type": "user",
+      "value": {
+        "name": "admin",
+        "level": "view",
+        "groups": [
+          "admins"
+        ],
+        "accountState": "verified"
+      }
+    },
+    {
+      "type": "page",
+      "value": {
+        "name": "home",
+        "plugin": {
+          "name": "left-menu-bar homepage",
+          "global": true
+        },
+        "groups": [
+          "admins",
+          "editors",
+          "viewers"
+        ],
+        "partial": 0,
+        "controller": "siteHomeController",
+        "data": {
+          "menu": [
+            {
+              "name": "Administration",
+              "type": "toggle",
+              "pages": [
+                {
+                  "name": "General",
+                  "type": "link",
+                  "state": "site.page.general",
+                  "icon": "fa fa-wrench"
+                },
+                {
+                  "name": "Email",
+                  "type": "link",
+                  "state": "site.page.email",
+                  "icon": "fa fa-envelope"
+                },
+                {
+                  "name": "Authorization",
+                  "type": "link",
+                  "state": "site.page.authorization",
+                  "icon": "fa fa-user-circle"
+                },
+                {
+                  "name": "connections",
+                  "state": "site.page.connections",
+                  "type": "link",
+                  "icon": "fa fa-cloud"
+                },
+                {
+                  "name": "functions",
+                  "state": "site.page.functions",
+                  "type": "link",
+                  "icon": "fa fa-connectdevelop"
+                }
+              ]
+            },
+            {
+              "name": "particle io devices",
+              "type": "link",
+              "view": "particle io devices",
+              "icon": "fa fa-list"
+            },
+            {
+              "name": "map",
+              "type": "link",
+              "view": "map",
+              "icon": "fa fa-globe"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "view",
+      "value": {
+        "name": "particle io devices",
+        "plugin": {
+          "name": "particle_io_devices_view",
+          "global": true
+        },
+        "groups": [
+          "admins",
+          "editors",
+          "viewers"
+        ],
+        "partial": 0,
+        "controller": "particlIODevicesViewController"
+      }
+    },
+    {
+      "type": "view",
+      "value": {
+        "name": "map",
+        "plugin": {
+          "name": "google_map_view",
+          "global": true
+        },
+        "groups": [
+          "admins",
+          "editors",
+          "viewers"
+        ],
+        "partial": 0,
+        "controller": "googleMapViewController"
+      }
+    },
+    {
+      "type": "view",
+      "value": {
+        "name": "userdetails",
+        "plugin": {
+          "name": "userdetails",
+          "global": true
+        },
+        "groups": [
+          "admins",
+          "editors",
+          "viewers"
+        ],
+        "partial": 0,
+        "controller": "userdetailsViewController"
+      }
+    },
+    {
+      "type": "emailtemplate",
+      "value": {
+        "name": "welcome",
+        "subject": "welcome to {{site}}",
+        "body": "Hi there,\n\nWelcome to {{site}}.  Hope you have lots of fun.\n\nThe  {{site}} team."
+      }
+    },
+    {
+      "type": "emailtemplate",
+      "value": {
+        "name": "registration confirmation",
+        "subject": "please validate your account",
+        "body": "Hi there,\n\nWelcome to {{site}}. Before you can get started, you still need to validate your email address. You can do this by clicking on this link:\n\n{{activationlink}}\n\nThanks, from the {{site}} team."
+      }
+    },
+	
+    {"type": "connection",
+     "description": "the database that will store your data",
+     "value": { 
+        "name" : "data store", 
+        "plugin" : {
+          "comment": "a connection that allows the user to select the plugin and configure it",
+          "showConfig": true
+        }
+      }
+    },
+	
+    {"type": "connection",
+       "description": "the connection to your particle.io account",
+     "value": { 
+        "name" : "particle.io", 
+        "plugin" : {
+          "comment": "a connection that specifies the plugin to use, but allows the plugin to be configured",
+          "name": "particle_io",
+          "global": true,
+          "showConfig": true
+        }
+      }
+    },
+	
+    {"type": "connection",
+     "description": "stores your historical data",
+     "value": { 
+        "name" : "history", 
+        "plugin" : {
+          "comment": "a connection that specifies where to store the historical data",
+          "name": "my_sql_historical_data",
+          "global": true
+        },
+        "content":{
+          "tableName": "history",
+          "dbConnection": "data store"
+        }
+      }
+    },
+	
+    {"type": "connection",
+     "description": "stores your historical data",
+     "value": { 
+        "name" : "history", 
+        "plugin" : {
+          "comment": "a connection that specifies the plugin to use, but allows the plugin to be configured",
+          "name": "my_sql_poi_data",
+          "global": true
+        },
+        "content":{
+          "tableName": "poi",
+          "dbConnection": "data store"
+        }
+      }
+    },
+	
+    {"type": "function",
+     "value": {
+      "name" : "transport", 
+      "data" : {
+        "extra" : {
+          "fields" : ["G"]
+        }, 
+        "to" : "data store", 
+        "from" : "particle.io"
+      }, 
+      "plugin" : {
+          "name": "transporter",
+          "global": true
+        }
+     }
+    }
+	
+  ]
+}

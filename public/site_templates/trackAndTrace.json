@@ -158,7 +158,7 @@
       "value": {
         "name": "userdetails",
         "plugin": {
-          "name": "userdetails",
+          "name": "userdetails_view",
           "global": true
         },
         "groups": [
@@ -193,8 +193,14 @@
         "name" : "data store", 
         "plugin" : {
           "comment": "a connection that allows the user to select the plugin and configure it",
+          "name": "my_sql_db",
           "showConfig": true
-        }
+        },
+       "groups": [
+         "admins",
+         "editors",
+         "viewers"
+       ]
       }
     },
 	
@@ -207,7 +213,12 @@
           "name": "particle_io",
           "global": true,
           "showConfig": true
-        }
+        },
+       "groups": [
+         "admins",
+         "editors",
+         "viewers"
+       ]
       }
     },
 	
@@ -223,23 +234,12 @@
         "content":{
           "tableName": "history",
           "dbConnection": "data store"
-        }
-      }
-    },
-	
-    {"type": "connection",
-     "description": "stores your historical data",
-     "value": { 
-        "name" : "history", 
-        "plugin" : {
-          "comment": "a connection that specifies the plugin to use, but allows the plugin to be configured",
-          "name": "my_sql_poi_data",
-          "global": true
         },
-        "content":{
-          "tableName": "poi",
-          "dbConnection": "data store"
-        }
+       "groups": [
+         "admins",
+         "editors",
+         "viewers"
+       ]
       }
     },
 	

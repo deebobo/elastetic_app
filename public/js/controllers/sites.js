@@ -103,6 +103,12 @@ elastetic.controller('sitesController', ['$scope', '$location', 'siteService', '
                             toConfig.plugins = plugins.filter((value) => {return value.name === plugin.name && value.type === item.type});
                         else
                             toConfig.plugins = plugins.filter((value) => {return value.type === item.type});
+                        if(toConfig.plugins.length == 1) {
+                            toConfig.plugin = toConfig.plugins[0];
+                            toConfig.pluginPredefined = true;
+                        }
+                        else
+                            toConfig.pluginPredefined = false;
                         $scope.toConfigure.push(toConfig);
 
                     }

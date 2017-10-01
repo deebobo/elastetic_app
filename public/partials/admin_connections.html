@@ -1,5 +1,3 @@
-
-
 <div layout="column" layout-fill ng-cloak >
 
 	<md-content class="dbb_admin_page" layout-fill>
@@ -35,7 +33,9 @@
 					</md-card-title>
 					<md-card-content>
 
-						<div layout-gt-xs="row" layout="column" >
+						<div layout-gt-xs="row"
+							 layout="column"
+							 ng-if="!hidden">
 
 							<div flex-gt-sm="65" flex layout="column">
 								<pluginconfigurator plugin="connection.plugin" value="connection"/>
@@ -46,6 +46,16 @@
                                 <div ng-bind-html="connection.plugin.help"></div>
                             </div>
 						</div>
+                        <div ng-if="hidden">
+                            <p >
+                                The configuration data for this connection is hidden, you can not change them.
+                            </p>
+                            <p>
+                                If  you delete this connection, you will permanently loose the configuration. Please
+                                be careful with this.
+                            </p>
+                        </div>
+
 						
 						<md-chips ng-if="connection.plugin"
 								  ng-model="connection.groups"

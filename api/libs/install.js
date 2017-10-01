@@ -40,7 +40,7 @@ async function installPlugins(db)
 async function installTemplates(db)
 {
     await sitesLib.installTemplate(db, "track and trace", '../public/site_templates/trackAndTrace.json');
-	await sitesLib.installTemplate(db, "track and trace", '../public/site_templates/shared_TrackAndTrace.json');
+	await sitesLib.installTemplate(db, "track and trace - shared db", '../public/site_templates/shared_TrackAndTrace.json');
 }
 
 /**

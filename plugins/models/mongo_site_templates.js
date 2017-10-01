@@ -20,6 +20,7 @@ class SiteTemplates{
         let siteTemplatesSchema = new mongoose.Schema({
             name: String,															//name of the template
             description: String,
+            help: String,
             author: String,
             version: String,
             icon: String,											//uri to small icon 

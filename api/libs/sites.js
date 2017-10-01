@@ -113,13 +113,18 @@ async function getPlugin(db, sitename, definition, requestorName){
  */
 async function getGroups(db, sitename, definition, requestorName){
     let grps = [];
-    for(let i=0; i<definition.groups.length; i++){
-        let grp = await db.groups.find(sitename, definition.groups[i]);
-        if(!grp)
-            throw Error("unknwon group for " + requestorName + ": " + definition.name + ", plugin: " + definition.groups[i]);
-        grps.push(grp._id);
+    if('groups' in definition) {
+        for (let i = 0; i < definition.groups.length; i++) {
+            let grp = await db.groups.find(sitename, definition.groups[i]);
+            if (!grp)
+                throw Error("unknwon group for " + requestorName + ": " + definition.name + ", plugin: " + definition.groups[i]);
+            grps.push(grp._id);
+        }
+        return grps;
     }
-    return grps;
+    else
+        throw Error("groups not defined for " + requestorName + ": " + definition.name)
+
 }
 
 /**
@@ -179,17 +184,17 @@ async function createGroup(db, sitename, definition) {
 
 async function createConnection(plugins, db, sitename, definition, parameters) {
     definition.site = sitename;
-    if(parameters && parameters.data != undefined && parameters.plugin != undefined){
-        definition.content = parameters.data;
-        definition.plugin.name = parameters.plugin.name;
-        definition.plugin.global = parameters.plugin.site === "_common";
-    }
     let pluginName = "";
-    if(parameters.plugin != undefined){
-        let plugin = await getPlugin(db, sitename, definition, "connection");
-        pluginName = plugin.name;
-        definition.plugin = plugin._id.toString();
+    if(parameters){
+        if(parameters.data != undefined && parameters.plugin != undefined){
+            definition.content = parameters.data;
+            definition.plugin.name = parameters.plugin.name;
+            definition.plugin.global = parameters.plugin.site === "_common";
+        }
     }
+    let plugin = await getPlugin(db, sitename, definition, "connection");
+    pluginName = plugin.name;
+    definition.plugin = plugin._id.toString();
     definition.groups = await getGroups(db, sitename, definition, "connection");
     return connectionsLib.create(plugins, definition, pluginName);              //some connections need to be initialized (db's that need to be created)...
 }
@@ -202,12 +207,10 @@ async function createFunction(plugins, db, sitename, definition, parameters, hos
         definition.plugin.global = parameters.plugin.site === "_common";
     }
     let pluginName = "";
-    if(parameters && parameters.plugin != undefined){
-        let plugin = await getPlugin(db, sitename, definition, "function");
-        pluginName = plugin.name;
-        delete definition.plugin;                                               //stupid name change, need to change source to plugin, make it more generic.
-        definition.source = plugin._id;
-    }
+    let plugin = await getPlugin(db, sitename, definition, "function");
+    pluginName = plugin.name;
+    delete definition.plugin;                                               //stupid name change, need to change source to plugin, make it more generic.
+    definition.source = plugin._id;
 
     return funcLib.create(plugins, pluginName, definition, host);                 //creates the function, also calls the plugin if there is a callback function
 }
@@ -378,6 +381,7 @@ module.exports.installTemplate = async function (db, name, filename)
             def.icon = prepareTemplatePath(def.icon);
         if("image" in def)
             def.image = prepareTemplatePath(def.image);
+        def.name = name;                                             //overwrite the name from the json def.
         await db.siteTemplates.add(def);
         winston.log("info", "succesfully installed template", filename);
     }

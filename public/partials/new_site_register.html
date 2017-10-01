@@ -1,125 +1,165 @@
-<div ng-cloak class="home" layout="column"  layout-align="start center" flex="none" layout-fill style="overflow-y: auto;"><!--class="col-md-4"-->
-    <div ng-show="error" class="alert alert-danger">{{errorMessage}}</div>
-    <form  ng-submit="createsite()"  layout="column" layout-align="center stretch" flex="none">
+<div layout="column" layout-fill ng-cloak  ><!--class="col-md-4"-->
 
-        <md-card flex="none">
-            <md-card-header flex>
-                <md-card-header-text>
-                    <span class="md-title">Create your site</span>
-                </md-card-header-text>
-            </md-card-header>
-            <md-card-title flex>
-			
-				<md-card-title-media ng-if="createForm.template.image">
-					<img ng-src="{{createForm.template.image}}" class="md-card-image" alt="plugin image">
-				</md-card-title-media>
-				
-                <md-card-title-text flex>
-                    <span class="md-headline">General information</span>
-                </md-card-title-text>
-            </md-card-title>
-			
-            <md-card-content flex layout="column">
-				<div layout-gt-xs="row" layout="column" >
-					<div flex-gt-sm="65" flex layout="column">
-						<md-input-container flex >
-							<label for="name" >Admin name</label>
-							<input id="name" type="text" ng-model="createForm.username" class="form-control" required />
-						</md-input-container>
+    <section name="tt_body" >
 
+        <md-content class="dbb_admin_page" layout-fill style="padding-top: 50px">
+            <div ng-show="error" class="alert alert-danger">{{errorMessage}}</div>
+            <form  ng-submit="createsite()"
+                   layout="column"
+            >
 
-						<md-input-container flex >
-							<label for="email" >Admin email</label>
-							<input id="email" type="text" ng-model="createForm.email" class="form-control" required/>
-						</md-input-container>
+                <md-card flex="none">
+                    <md-card-header flex>
+                        <md-card-header-text>
+                            <span class="md-title">Create your site</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-title flex>
 
-						<md-input-container flex>
-							<label for="pwd" >Admin password</label>
-							<input id="pwd" type="password" ng-model="createForm.password" class="form-control" required/>
-						</md-input-container>
+                        <md-card-title-media ng-if="createForm.template.image">
+                            <img ng-src="{{createForm.template.image}}" class="md-media-sm card-media" alt="plugin image">
+                        </md-card-title-media>
 
-						<md-input-container flex>
-							<label for="pwd2" >re-enter password</label>
-							<input id="pwd2" type="password" ng-model="createForm.password2" class="form-control" required/>
-						</md-input-container>
+                        <md-card-title-text flex layout-gt-xs="row" layout="column">
 
+                            <div flex-gt-sm="50" flex layout="column" layout-align="start end" style="margin-right: 20px">
+                                <span style="text-align: center" class="md-headline">General information</span>
+                                <i class="md-subhead" ng-if="createForm.template">for: {{createForm.template.name}}</i>
+                            </div>
 
-						<md-input-container flex >
-							<label for="sitename" >Site name</label>
-							<input id="sitename" type="text" ng-model="createForm.sitename" class="form-control" required/>
-						</md-input-container>
-					</div>
-					<div flex-gt-xs="35" flex layout="column">
-						<md-input-container flex >
-							<label for="siteTemplate" >template</label>
-							<md-select id="siteTemplate"
-									   ng-model="createForm.template"
-									   ng-change="templateChanged()"
-									   flex>
-								<md-option ng-value="x" ng-repeat="x in templates">{{ x.name }} </md-option>
-							</md-select>
-							<div class="md-errors-spacer"></div>
-						</md-input-container>
-						<div>
-							<p>
-								On this page you are able to create your own personal site. We just need your credentials
-								and the site you would like to have.
-								Depending on the template that you select, some additional information might be required, see further.
-							</p>
-						</div>
-						<div ng-bind-html="createForm.template.help"></div>
-					</div>
-				</div>
-                
+                            <div flex-gt-xs="50" flex layout="column" layout-align="start start" style="margin-left: 20px">
+                                <div>
+                                    <small class="md-caption" md-colors="{color: 'grey'}">
+                                        On this page you are able to create your own personal site. We just need the administrator's credentials
+                                        and how you would like to call your site.
+                                        Depending on the template that you select, some additional information might be required, see further.
+                                    </small>
+                                </div>
+                            </div>
 
-            </md-card-content>
-        </md-card>
+                        </md-card-title-text>
+                    </md-card-title>
+
+                    <md-card-content flex layout="column">
+                        <div layout-gt-xs="row" layout="column" >
+                            <div flex-gt-sm="50" flex layout="column"  style="margin-right: 20px" layout-align="start stretch">
+                                <md-input-container  >
+                                    <label for="name" >Admin name</label>
+                                    <input id="name" type="text" ng-model="createForm.username" class="form-control" required />
+                                </md-input-container>
 
 
+                                <md-input-container  >
+                                    <label for="email" >Admin email</label>
+                                    <input id="email" type="text" ng-model="createForm.email" class="form-control" required/>
+                                </md-input-container>
+
+                                <md-input-container >
+                                    <label for="pwd" >Admin password</label>
+                                    <input id="pwd" type="password" ng-model="createForm.password" class="form-control" required/>
+                                </md-input-container>
+
+                                <md-input-container >
+                                    <label for="pwd2" >re-enter password</label>
+                                    <input id="pwd2" type="password" ng-model="createForm.password2" class="form-control" required/>
+                                </md-input-container>
 
 
-        <div layout="column" flex="none">
-
-            <md-card ng-repeat="x in toConfigure">
-                <md-card-header flex>
-                    <md-card-header-text>
-                        <span class="md-title">{{x.item.type}}</span>
-                    </md-card-header-text>
-                </md-card-header>
-                <md-card-title flex>
-					<md-card-title-media>
-						<img ng-src="{{x.image}}" class="md-card-image" alt="plugin image">
-					</md-card-title-media>				
-                    <md-card-title-text flex>
-                        <span class="md-headline">{{x.item.value.name}}</span>
-                    </md-card-title-text>
-                </md-card-title>
-                <md-card-content flex>
-                    <p>{{x.item.description}}</p>
-
-                    <select class="form-control"  ng-model="x.plugin" ng-options="y.name + '(' + y.description + ')' for y in x.plugins" required ></select>
-
-					<div layout-gt-sm="row" layout="column" >
-						<div flex-gt-sm="65" flex layout="column">
-							<pluginconfigurator plugin="x.plugin" value="x"/>
-						</div>
-						<div flex-gt-sm="35" flex layout="column">
-							<div ng-if="x.plugin" 
-								 ng-bind-html="x.plugin.help"></div>
-							 <div ng-if="x.source" 
-								 ng-bind-html="x.source.help"></div>
-						</div>
-					</div>
-
-                </md-card-content>
-            </md-card>
+                            </div>
+                            <div flex-gt-xs="50" flex layout="column" style="margin-left: 20px">
 
 
-        </div>
+                                <div layout="column">
+                                    <md-input-container flex >
+                                        <label>template</label>
+                                        <md-select id="siteTemplate"
+                                                   ng-model="createForm.template"
+                                                   ng-change="templateChanged()"
+                                                   flex
+                                                   style="background: white">
+                                            <md-option ng-value="x" ng-repeat="x in templates" style="background: white">{{ x.name }} </md-option>
+                                        </md-select>
+                                        <div class="md-errors-spacer"></div>
+                                    </md-input-container>
+                                    <md-input-container flex >
+                                        <label for="sitename" >Site name</label>
+                                        <input id="sitename" type="text" ng-model="createForm.sitename" class="form-control" required/>
+                                    </md-input-container>
+
+                                    <md-divider style="margin-top: 20px; margin-bottom: 20px"/>
+
+                                    <small ng-bind-html="createForm.template.help"
+                                           class="md-caption"
+                                           md-colors="{color: 'grey'}"
+                                           style="margin-left: 20px"
+                                    ></small>
+
+                                </div>
+                            </div>
+                        </div>
 
 
-        <div>
-            <button type="submit" class="btn btn-default" ng-disabled="disabled">Create</button>
-        </div>
-    </form>
+                    </md-card-content>
+                </md-card>
+
+
+
+
+                <md-card ng-repeat="item in toConfigure" flex="none">
+                    <md-card-header flex>
+                        <md-card-header-text>
+                            <span class="md-title">{{item.item.type}}</span>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card-title flex>
+
+                        <md-card-title-text flex>
+                            <span class="md-headline">{{item.item.value.name}}</span>
+                            <i class="md-subhead">{{item.item.description}}</i>
+                        </md-card-title-text>
+                        <md-card-title-media>
+                            <img ng-src="{{item.plugin.image}}" class="md-media-sm card-media" >
+                        </md-card-title-media>
+                    </md-card-title>
+                    <md-card-content flex layout="column">
+                        <select class="form-control"
+                                ng-model="item.plugin"
+                                ng-options="y.name + '(' + y.description + ')' for y in item.plugins"
+                                ng-if="!item.pluginPredefined"
+                                required ></select>
+
+                        <div layout-gt-xs="row" layout="column" >
+                            <div flex-gt-sm="35" flex layout="column" style="margin-right: 20px">
+                                <small ng-if="item.plugin"
+                                       class="md-caption"
+                                       md-colors="{color: 'grey'}"
+                                       ng-bind-html="item.plugin.help"></small>
+                                <small ng-if="item.source"
+                                       class="md-caption"
+                                       md-colors="{color: 'grey'}"
+                                       ng-bind-html="item.source.help"></small>
+                            </div>
+                            <div flex-gt-sm="65" flex layout="column" style="margin-left: 20px">
+                                <pluginconfigurator plugin="item.plugin"
+                                                    value="item"
+                                                    ng-if="item.plugin"/>
+                                <pluginconfigurator plugin="item.source"
+                                                    value="item"
+                                                    ng-if="item.source"/>
+                            </div>
+                        </div>
+
+                    </md-card-content>
+                </md-card>
+
+
+                <div>
+                    <button type="submit" class="btn btn-default" ng-disabled="disabled">Create</button>
+                </div>
+            </form>
+        </md-content>
+
+    </section>
+
+
 </div>

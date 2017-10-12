@@ -17,6 +17,7 @@ async function installPlugins(db)
 	
     await sitesLib.installPlugin(db, 'left_menu_bar_page', '_common', '../public/plugins/_common/left_menu_bar_page/pluginconfig.json');
     await sitesLib.installPlugin(db, 'particle_io_devices_view', '_common', '../public/plugins/_common/particle_io_devices_view/pluginconfig.json');
+    await sitesLib.installPlugin(db, 'particle_io_device_details_view', '_common', '../public/plugins/_common/particle_io_device_details_view/pluginconfig.json');
     await sitesLib.installPlugin(db, 'google_map_view', '_common', '../public/plugins/_common/google_map_view/pluginconfig.json');
     await sitesLib.installPlugin(db, 'userdetails_view', '_common', '../public/plugins/_common/userdetails_view/pluginconfig.json');
 	await sitesLib.installPlugin(db, 'report_view', '_common', '../public/plugins/_common/report_view/pluginconfig.json');

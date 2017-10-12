@@ -84,6 +84,12 @@ async function createParticleIODevicesView(db, sitename, grps) {
     await db.views.add(view);
 }
 
+async function createParticleIODeviceDetailsView(db, sitename, grps) {
+    let particlePluginId = await db.plugins.find("particle_io_device_details_view", "_common");
+    let view = { name: "particle io device details", site: sitename, plugin:particlePluginId._id, groups: grps, partial: 0, controller: "particlIODeviceDetailsViewController" };
+    await db.views.add(view);
+}
+
 async function createGoogleMapView(db, sitename, grps) {
     let googleMapPluginId = await db.plugins.find("google_map_view", "_common");
     let view = { name: "map", site: sitename, plugin:googleMapPluginId._id, groups: grps, partial: 0, controller: "googleMapViewController" };
@@ -437,6 +443,7 @@ module.exports.create = async function(plugins, definition, host, asAdmin = true
 		await createUserDetails(db, definition.site, allgroups);
 
         await createParticleIODevicesView(db, definition.site, allgroups);
+        await createParticleIODeviceDetailsView(db, definition.site, allgroups);
         await createGoogleMapView(db, definition.site, allgroups);
     }
 };

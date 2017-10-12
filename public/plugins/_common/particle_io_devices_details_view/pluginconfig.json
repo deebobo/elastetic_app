@@ -1,0 +1,19 @@
+{
+  "comment": "description for the particle.io device details view plugin",
+  "name": "particle_io_device_details_view",
+  "description": "view the details of a single particle.io device.",
+  "version": "0.0.1",
+  "author": "elastetic",
+  "type": "view",
+  "client": {
+      "scripts": [
+        "js/particle_io_device_details_view.js"
+      ],
+      "external": [
+        "//cdn.jsdelivr.net/particle-api-js/5/particle.min.js"
+      ],
+      "partials": [
+        "partials/particle_io_device_details_view.html"
+      ]
+    }
+}

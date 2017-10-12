@@ -342,6 +342,50 @@ elastetic.config(['$stateProvider', '$locationProvider', '$controllerProvider', 
             restricted: true
         });
 
+        $stateProvider.state('site.page.view.details', {
+            url: '/{details}',
+            views:{
+                content:{
+                    templateProvider: ['viewData', '$q', '$http', function (viewData, $q, $http) {
+                        var deferred = $q.defer();
+                        $http.get("plugins/" + viewData.plugin.client.partials[viewData.partial]).then(function(data) {
+                            deferred.resolve(data.data);
+                        });
+                        return deferred.promise;
+                    }],
+                    controllerProvider: ['viewData','$q', 'pluginService',  function (viewData, $q, pluginService) {
+                        var deferred = $q.defer();
+                        pluginService.load(viewData.plugin.client)
+                            .then(function(){ deferred.resolve(viewData.controller); });
+                        return deferred.promise;
+                    }]
+                }
+            },
+            restricted: true
+        });
+
+        $stateProvider.state('site.page.view.connection_and_details', {     //state can be used for details of a view that are specific to a connection. connection = id .
+            url: '/{connection}/{details}',
+            views:{
+                content:{
+                    templateProvider: ['viewData', '$q', '$http', function (viewData, $q, $http) {
+                        var deferred = $q.defer();
+                        $http.get("plugins/" + viewData.plugin.client.partials[viewData.partial]).then(function(data) {
+                            deferred.resolve(data.data);
+                        });
+                        return deferred.promise;
+                    }],
+                    controllerProvider: ['viewData','$q', 'pluginService',  function (viewData, $q, pluginService) {
+                        var deferred = $q.defer();
+                        pluginService.load(viewData.plugin.client)
+                            .then(function(){ deferred.resolve(viewData.controller); });
+                        return deferred.promise;
+                    }]
+                }
+            },
+            restricted: true
+        });
+
         $stateProvider.state('logout', {
             url: '/logout',
             controller: 'logoutController',

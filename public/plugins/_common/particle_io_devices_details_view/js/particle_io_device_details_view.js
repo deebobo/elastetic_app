@@ -6,17 +6,12 @@
 
 
 
-angular.module("elastetic").controller('particlIODevicesViewController',
-    ['$scope', 'messages', '$http', '$stateParams', 'viewData', 'toolbar', 'UserService', '$state',
-    function ($scope, messages, $http, $stateParams, viewData, toolbar, UserService, $state) {
+angular.module("elastetic").controller('particlIODeviceDetailsViewController',
+    ['$scope', 'messages', '$http', '$stateParams', 'viewData', 'toolbar', 'UserService',
+    function ($scope, messages, $http, $stateParams, viewData, toolbar, UserService) {
 
-        toolbar.title = "particle.io devices";
+        toolbar.title = "particle.io device details";
         toolbar.buttons = [];
-
-        $scope.devices = [];
-
-        $scope.selected = [];                       //the selected devices.
-
 
         var particle = new Particle();
 
@@ -29,9 +24,8 @@ angular.module("elastetic").controller('particlIODevicesViewController',
                             if( "content" in connection && "token" in connection.content){
                                 particle.listDevices({ auth: connection.content.token }).then(
                                     function(result){
-                                        if(result.statusCode === 200){
-                                            result.body.forEach(element => element.connection = connection);
-                                            $scope.devices.push.apply($scope.devices, result.body);
+                                        if(result.statusCode == 200){
+                                            $scope.gridDef.data = result.body;
                                         }
                                     },
                                     function(err){
@@ -44,7 +38,6 @@ angular.module("elastetic").controller('particlIODevicesViewController',
                             }
                         }
                     }
-                    $scope.gridDef.data = $scope.devices;
                 },
                 function (response) {
                     messages.error(response.data);
@@ -76,12 +69,8 @@ angular.module("elastetic").controller('particlIODevicesViewController',
 
 
         $scope.gridRowClick = row => {
-            $state.go( 'site.page.view.connection_and_details',
-                        {   site: $stateParams.site,
-                            page: $stateParams.page || self.homepage,
-                            view: "particle_io_device_details_view",
-                            connection: row.entity.connection._id,
-                            details: row.entity.id });
+            $state.go( 'site.page.view.details', { site: $stateParams.site, page: $stateParams.page || self.homepage, view: view.view, details: row.entity.id });
+            console.log(row);
             // or maybe $location.path(row.url)?
         };
 

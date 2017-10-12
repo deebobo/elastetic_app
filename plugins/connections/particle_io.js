@@ -170,13 +170,18 @@ class ParticleIoConnection extends Connection {
 		let functions = connection.content.callbacks[field].functions;
         let data = {device: rec.coreid, field: field, data: rec.data, timestamp: rec.published_at};
 		for(let i = 0; i < functions.length; i++){
-			let func = await plugins.db.functions.find(functions[i], connection.site);
-			if(func){
-				let plugin = plugins.plugins[func.source.name].create();
-				let rdata = await plugin.call(plugins, func, connection, data);
-			}
-			else
-				throw Error("unknown function reference from connection, id: " + functions[i]);
+		    try {
+                let func = await plugins.db.functions.find(functions[i], connection.site);
+                if (func) {
+                    let plugin = plugins.plugins[func.source.name].create();
+                    let rdata = await plugin.call(plugins, func, connection, data);
+                }
+                else
+                    winston.log("error", "unknown function reference from connection, id: " + functions[i]);
+            }
+            catch(e){
+                winston.log("error", "unexpected error while trying to call function callback from connection, function: " + functions[i] + ", connection: particle.io");
+            }
 		}
     }
 }

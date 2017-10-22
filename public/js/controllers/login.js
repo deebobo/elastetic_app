@@ -1,7 +1,7 @@
 'use strict'
 
-elastetic.controller('loginController', ['$scope', '$location', '$stateParams', 'AuthService', '$http', '$mdDialog',
-  function ($scope, $location, $stateParams,  AuthService, $http, $mdDialog) {
+elastetic.controller('loginController', ['$scope', '$location', '$stateParams', 'AuthService', '$http', '$mdDialog', 'themeProvider', '$mdTheming',
+  function ($scope, $location, $stateParams,  AuthService, $http, $mdDialog, themeProvider, $mdTheming) {
 
 	//helper function to show errors
 	function showError(msg){
@@ -9,6 +9,13 @@ elastetic.controller('loginController', ['$scope', '$location', '$stateParams', 
 		$scope.errorMessage = msg;
 		$scope.disabled = false;
 	}
+
+	//need to set the correct theming, cause the app does dynamic theming, which at this point is not yet set (no site selected), so pick one hardcoded.
+	themeProvider.theme('default').primaryPalette("blue");
+  	themeProvider.theme('default').accentPalette("pink");
+  	themeProvider.theme('default').backgroundPalette("grey");
+  	themeProvider.theme('default').warnPalette("deep-orange");
+  	$mdTheming.generateTheme('default');                //reload the themes
   
   
 	$http({method: 'GET',  url: '/api/site'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only

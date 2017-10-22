@@ -4,8 +4,15 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 'use strict'
-elastetic.controller('sitesController', ['$scope', '$location', 'siteService', '$http','messages', '$q',
-    function ($scope, $location, siteService, $http, messages, $q) {
+elastetic.controller('sitesController', ['$scope', '$location', 'siteService', '$http','messages', '$q','themeProvider', '$mdTheming',
+    function ($scope, $location, siteService, $http, messages, $q, themeProvider, $mdTheming) {
+
+        //need to set the correct theming, cause the app does dynamic theming, which at this point is not yet set (no site selected), so pick one hardcoded.
+        themeProvider.theme('default').primaryPalette("blue");
+        themeProvider.theme('default').accentPalette("pink");
+        themeProvider.theme('default').backgroundPalette("grey");
+        themeProvider.theme('default').warnPalette("deep-orange");
+        $mdTheming.generateTheme('default');                //reload the themes
 
         $scope.toConfigure = [];                          //a list of plugins that needs to be configured for the selected site templae
         $scope.plugins = null;                            //all the globally known plugins

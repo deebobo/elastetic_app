@@ -35,7 +35,7 @@
 
 						<div layout-gt-xs="row"
 							 layout="column"
-							 ng-if="!hidden">
+							 ng-if="!connection.hidden">
 
 							<div flex-gt-sm="65" flex layout="column">
 								<pluginconfigurator plugin="connection.plugin" value="connection"/>
@@ -43,10 +43,13 @@
 							</div>
                             <md-divider style="margin-right: 10px; margin-left: 10px"/>
                             <div flex-gt-sm="35" flex layout="column">
-                                <div ng-bind-html="connection.plugin.help"></div>
+                                <small ng-bind-html="connection.plugin.help"
+								       class="md-caption"
+                                       md-colors="{color: 'grey'}">
+								</small>
                             </div>
 						</div>
-                        <div ng-if="hidden">
+                        <small class="md-caption" md-colors="{color: 'grey'}" ng-if="connection.hidden">
                             <p >
                                 The configuration data for this connection is hidden, you can not change them.
                             </p>
@@ -54,7 +57,7 @@
                                 If  you delete this connection, you will permanently loose the configuration. Please
                                 be careful with this.
                             </p>
-                        </div>
+                        </small>
 
 						
 						<md-chips ng-if="connection.plugin"

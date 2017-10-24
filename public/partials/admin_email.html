@@ -47,17 +47,28 @@
 
 
 
-                            <div layout-gt-xs="row" layout="column" >
+                            <div layout-gt-xs="row" layout="column" 
+								ng-if="!mailConfig.hidden">
 
                                 <div flex-gt-sm="65" flex layout="column">
                                     <pluginconfigurator plugin="plugin" value="mailConfig"/>
+									<md-input-container class="md-block"
+                                                        ng-if="plugin.name">
+										<label for="from" >from</label>
+										<input type="text" id="from"
+											   ng-model="mailConfig.from"
+											   ng-change="mailConfig.needsSave = true">
+										</input>
+										<md-tooltip >from address in email</md-tooltip>
+									</md-input-container>
                                 </div>
                                 <md-divider style="margin-right: 10px; margin-left: 10px"/>
                                 <div flex-gt-sm="35" flex layout="column">
-                                    <div ng-bind-html="plugin.help"></div>
+                                    <small 	ng-bind-html="plugin.help"
+											class="md-caption"
+											md-colors="{color: 'grey'}"></small>
                                 </div>
                             </div>
-
 
 
                         </md-card-content>
@@ -89,7 +100,7 @@
                                     <md-input-container flex layout-fill>
                                         <label for="name-{{template.name}}">name </label>
                                         <input id="name-{{template.name}}" type="text" ng-model="template.name"
-                                               class="form-control" ng-change="template.needsSave = true"
+                                               class="md-headline" ng-change="template.needsSave = true"
                                                ng-click="$event.stopPropagation()"/>
                                         <md-tooltip>The name of the email template</md-tooltip>
                                     </md-input-container>

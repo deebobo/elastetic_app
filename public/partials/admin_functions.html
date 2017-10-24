@@ -17,23 +17,31 @@
 						</md-card-title-media>
 
 
-						<md-card-title-text>
+						<md-card-title-text style="overflow: hidden">
+
+							<md-input-container >
+								<!--<label for="name-{{func.name}}" >name </label>-->
+								<input id="name-{{func.name}}"
+									   type="text"
+									   ng-model="func.name"
+									   class="md-headline"
+									   ng-change="func.needsSave = true"
+									   ng-click="$event.stopPropagation()"
+									   required/>
+								<md-tooltip >The name of the function</md-tooltip>
+							</md-input-container>
 
 							<md-input-container  >
 								<!--<label for="plugin-{{data.to}}" >plugin</label>-->
 								<md-select   ng-model="func.source"
 											 required
-											 ng-change="func.needsSave = true">
-									<md-option ng-value="x" ng-repeat="x in functionPlugins">{{ x.name }} ({{x.description}}) </md-option>
+											 ng-change="func.needsSave = true"
+											>
+									<md-option  ng-value="x" ng-repeat="x in functionPlugins" > <md-truncate flex>{{ x.name }} ({{x.description}})</md-truncate> </md-option>
 								</md-select>
 								<md-tooltip >Select the function plugin.</md-tooltip>
 							</md-input-container>
 
-							<md-input-container >
-								<!--<label for="name-{{func.name}}" >name </label>-->
-								<input id="name-{{func.name}}" type="text" ng-model="func.name" class="md-headline" ng-change="func.needsSave = true" ng-click="$event.stopPropagation()" />
-								<md-tooltip >The name of the function</md-tooltip>
-							</md-input-container>
 						</md-card-title-text>
 					</md-card-title>
 					<md-card-content>

@@ -170,12 +170,39 @@
         "controller": "userdetailsViewController"
       }
     },
+	{
+      "type": "emailhandler",
+      "value": {
+        "name": "emailhandler",
+        "plugin": {
+		  "comment": "the plugin responsible for handling emails",
+          "name": "sendgrid_mail",
+          "global": true
+        }
+      }
+    },
     {
       "type": "emailtemplate",
       "value": {
         "name": "welcome",
         "subject": "welcome to {{site}}",
         "body": "Hi there,\n\nWelcome to {{site}}.  Hope you have lots of fun.\n\nThe  {{site}} team."
+      }
+    },
+	{
+      "type": "emailtemplate",
+      "value": {
+        "name": "passwordreset",
+        "subject": "request for password reset on {{site}}",
+        "body": "Hi there,\n\nWe have received a request to reset your password on {{site}}.  Please follow this link to specify your new password: {{activationlink}}\n\nThe {{site}} team."
+      }
+    },
+	{
+      "type": "emailtemplate",
+      "value": {
+        "name": "invite",
+        "subject": "Invitation to join {{site}}",
+        "body": "Hi there,\n\nYou have been invited to join the {{site}} community.  Please follow this link to activate your account: {{activationlink}}\n\nThe {{site}} team."
       }
     },
     {

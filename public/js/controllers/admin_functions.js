@@ -94,7 +94,7 @@ elastetic.controller('adminFunctionsController',
             //html callbacks.
             //--------------------------------------------------------------------------------------
             scope.addFunction = function(){
-                scope.functions.push({name: "new function", plugin: null, isOpen: true, needsSave: true, isNew: true});
+                scope.functions.push({name: "", plugin: null, isOpen: true, needsSave: true, isNew: true});
             };
 
 

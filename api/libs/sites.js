@@ -221,6 +221,20 @@ async function createFunction(plugins, db, sitename, definition, parameters, hos
     return funcLib.create(plugins, pluginName, definition, host);                 //creates the function, also calls the plugin if there is a callback function
 }
 
+async function setupEmailHandler(plugins, db, sitename, definition, parameters){
+	definition.site = sitename;
+	if(parameters && parameters.data != undefined && parameters.plugin != undefined){
+        definition.data = parameters.data;
+        definition.plugin.name = parameters.plugin.name;
+        definition.plugin.global = parameters.plugin.site === "_common";
+    }
+    let plugin = await getPlugin(db, sitename, definition, "email handler");
+    pluginName = plugin.name;
+    definition.plugin = plugin._id.toString();
+	await db.sites.updatemailHandler(sitename, pluginName);							//store ref to the plugin
+    return newRec = await db.pluginSiteData.add(definition); 
+}
+
 async function createSite(db, siteDetails, definition) {
     definition._id = siteDetails.site;
     definition.title = siteDetails.site;
@@ -278,6 +292,8 @@ async function applyTemplate(plugins, definition, template, host){
                 record = await createConnection(plugins, db, definition.site, item.value, templateParam);
             else if(item.type === "function")
                 record = await createFunction(plugins, db, definition.site, item.value, templateParam, host);
+			else if(item.type === "emailhandler")
+                record = await setupEmailHandler(plugins, db, definition.site, item.value, templateParam);
             else if(item.type === "site")             //details like title, email plugin,..
                 record = await createSite(db, definition, item.value);
             else if(item.type === "emailtemplate"){          //like email templates and such.

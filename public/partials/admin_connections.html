@@ -7,11 +7,22 @@
 				<md-card>
 					<md-card-title >
 						<md-card-title-media ng-if="connection.plugin.image">
-                            <div class="md-media-md card-media">
+                            <div class="md-media-md card-media" layout>
                                 <img ng-src="{{connection.plugin.image}}"  >
                             </div>
 						</md-card-title-media>
 						<md-card-title-text >
+							<md-input-container >
+							    <!--<label for="name-{{connection.name}}" >name</label>-->
+							    <input id="name-{{connection.name}}" 
+									   type="text" 
+									   ng-model="connection.name" 
+									   class="md-headline" 
+									   ng-change="connection.needsSave = true" 
+									   ng-click="$event.stopPropagation()" 
+									   required/>
+								<md-tooltip md-delays="5">The name of the connection, must be unique.</md-tooltip>
+							</md-input-container>
                             <md-input-container   >
                                 <!--<label  >plugin</label>-->
                                 <md-select  ng-model="connection.plugin"
@@ -23,12 +34,6 @@
                                 <md-tooltip >The connection plugin.</md-tooltip>
 
                             </md-input-container>
-
-							<md-input-container >
-							    <!--<label for="name-{{connection.name}}" >name</label>-->
-							    <input id="name-{{connection.name}}" type="text" ng-model="connection.name" class="md-headline" ng-change="connection.needsSave = true" ng-click="$event.stopPropagation()" />
-							<md-tooltip md-delays="5">The name of the connection, must be unique.</md-tooltip>
-						</md-input-container>
 						</md-card-title-text>
 					</md-card-title>
 					<md-card-content>

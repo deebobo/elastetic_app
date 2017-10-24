@@ -97,7 +97,7 @@ elastetic.controller('adminConnectionsController',
             //html callbacks.
             //--------------------------------------------------------------------------------------
             scope.addConnection = function(){
-                scope.connections.push({name: "new connection", plugin: null, isOpen: true, needsSave: true, isNew: true, groups: scope.groups.slice()});   //copy the grups list to give default access to everyone.
+                scope.connections.push({name: "", plugin: null, isOpen: true, needsSave: true, isNew: true, groups: scope.groups.slice()});   //copy the grups list to give default access to everyone.
             };
 
             /* now done by pluginConfigurator directive

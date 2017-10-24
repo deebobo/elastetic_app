@@ -13,7 +13,14 @@ elastetic
         link: function(scope, element, attr, ngModel) {
             function into(input) {
                 //console.log(JSON.parse(input));
-                return JSON.parse(input);
+				var res = "";
+				try{
+					res = JSON.parse(input)
+				}
+				catch(error){
+					return;												//failed to parse it
+				}
+                return res;
             }
             function out(data) {
                 return JSON.stringify(data);

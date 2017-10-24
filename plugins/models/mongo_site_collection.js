@@ -23,7 +23,7 @@ class SiteDataCollection{
             data: Object,											//the data for the site.
             createdOn:{type: Date, default: Date.now()}
         });
-        pluginSiteDataSchema.index({ name: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
+        pluginSiteDataSchema.index({ plugin: 1, site: 1}, {unique: true});        //make certain that email + site is unique in the system.
         this._collection = mongoose.model('pluginSiteData', pluginSiteDataSchema);
     }
 

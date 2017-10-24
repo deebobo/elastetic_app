@@ -4,7 +4,6 @@
  * See the COPYRIGHT file at the top-level directory of this distribution
  */
 
-/*
 const winston = require('winston');
 const helper = require('sendgrid').mail;
  
@@ -58,4 +57,4 @@ let getPluginConfig = function (){
     };
 };
 
-module.exports = {getPluginConfig: getPluginConfig};*/
+module.exports = {getPluginConfig: getPluginConfig};

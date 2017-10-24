@@ -170,6 +170,21 @@
         "controller": "userdetailsViewController"
       }
     },
+	{
+      "type": "emailhandler",
+      "value": {
+        "name": "emailhandler",
+		"hidden": true,
+        "plugin": {
+		  "comment": "the plugin responsible for handling emails",
+          "name": "sendgrid_mail",
+          "global": true
+        },
+		"data"{
+			"key": "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"
+		}
+      }
+    },
     {
       "type": "emailtemplate",
       "value": {
@@ -186,7 +201,22 @@
         "body": "Hi there,\n\nWelcome to {{site}}. Before you can get started, you still need to validate your email address. You can do this by clicking on this link:\n\n{{activationlink}}\n\nThanks, from the {{site}} team."
       }
     },
-	
+	{
+      "type": "emailtemplate",
+      "value": {
+        "name": "passwordreset",
+        "subject": "request for password reset on {{site}}",
+        "body": "Hi there,\n\nWe have received a request to reset your password on {{site}}.  Please follow this link to specify your new password: {{activationlink}}\n\nThe {{site}} team."
+      }
+    },
+	{
+      "type": "emailtemplate",
+      "value": {
+        "name": "invite",
+        "subject": "Invitation to join {{site}}",
+        "body": "Hi there,\n\nYou have been invited to join the {{site}} community.  Please follow this link to activate your account: {{activationlink}}\n\nThe {{site}} team."
+      }
+    },
     {"type": "connection",
      "description": "the database that will store your data",
      "value": { 

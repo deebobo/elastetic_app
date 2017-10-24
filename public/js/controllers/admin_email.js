@@ -32,7 +32,7 @@ elastetic.controller('AdminEmailController',
 			
             //get data from site for scope
 			//--------------------------------------------------------------------------------------
-            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/plugin/mail'})      //get the list of plugins for this site
+            $http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/plugin/mail')})      //get the list of plugins for this site
             .then(function (response) {
 					$scope.emailPlugins = response.data;
                 },
@@ -44,7 +44,7 @@ elastetic.controller('AdminEmailController',
             //loads the data for the email plugin from the server.
             function loadPluginData(plugin){
                 if(plugin) {
-                    $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/data/' + plugin.name})      //get the list of plugins for this site
+                    $http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/data/' + plugin.name)})      //get the list of plugins for this site
                         .then(function (response) {
                                 if (response.data) {
                                     $scope.mailConfig = response.data;
@@ -64,7 +64,7 @@ elastetic.controller('AdminEmailController',
                     $scope.mailConfig = {isNew: true, needsSave: true};
             }
 
-            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/plugin/mail/default' })
+            $http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/plugin/mail/default') })
             .then(
                 function (response) {
                     if(response.data) {
@@ -95,8 +95,12 @@ elastetic.controller('AdminEmailController',
 
 
             $scope.saveEmailConfig = function(toSave){
+				var toSend = {};
+				angular.copy(toSave, toSend);
+				delete toSend.needsSave;						//don't need these parameters to be saved in db
+				delete toSend.isNew;
                 if(toSave.isNew === true){
-                    $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/data/' + $scope.plugin.name, data: toSave})      //get the list of groups that can view
+                    $http({method: 'POST', url: encodeURI('/api/site/' + $stateParams.site + '/data/' + $scope.plugin.name), data: toSend})      //get the list of groups that can view
                         .then(function (response) {
                                 toSave.needsSave = false;
                                 toSave.isNew = false;
@@ -107,7 +111,7 @@ elastetic.controller('AdminEmailController',
                         );
                 }
                 else {
-                    $http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/data/' + $scope.plugin.name, data: toSave})      //get the list of groups that can view
+                    $http({method: 'PUT', url: encodeURI('/api/site/' + $stateParams.site + '/data/' + $scope.plugin.name), data: toSend})      //get the list of groups that can view
                         .then(function (response) {
                                 toSave.needsSave = false;
                             },

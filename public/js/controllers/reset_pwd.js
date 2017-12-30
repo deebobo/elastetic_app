@@ -32,7 +32,7 @@ elastetic.controller('resetPwdController',
                 var data = {token: $stateParams.token,
                             pwd: $scope.password};
 
-                $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/changepwd', data: data})      //get the list of groups that can view
+                $http({method: 'POST', url: encodeURI('/api/site/' + $stateParams.site + '/changepwd'), data: data})      //get the list of groups that can view
                     .then(function (response) {
 
                             var confirm = $mdDialog.confirm()

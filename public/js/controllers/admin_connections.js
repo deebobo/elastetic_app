@@ -71,7 +71,7 @@ elastetic.controller('adminConnectionsController',
 
             //get data from site for scope
             //--------------------------------------------------------------------------------------
-            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/connection'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+            $http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/connection')})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                 .then(function (response) {
                         tryConvertPluginRefs(response.data, scope.connectionPlugins).then(function(){
                             scope.connections.push.apply(scope.connections, response.data);
@@ -82,7 +82,7 @@ elastetic.controller('adminConnectionsController',
                     }
                 );
 
-            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/plugin/connection'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+            $http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/plugin/connection')})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                 .then(function (response) {
                         tryConvertPluginRefs(scope.connections, response.data).then(function(){
                             scope.connectionPlugins = response.data;
@@ -114,7 +114,7 @@ elastetic.controller('adminConnectionsController',
 
             scope.save = function(connection){
                 if(connection.isNew === true){
-                    $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/connection', data: connection})      //get the list of groups that can view
+                    $http({method: 'POST', url: encodeURI('/api/site/' + $stateParams.site + '/connection'), data: connection})      //get the list of groups that can view
                         .then(function (response) {
                                 angular.copy(response.data, connection);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
                                 tryConvertPluginRef(connection, scope.connectionPlugins);
@@ -127,7 +127,7 @@ elastetic.controller('adminConnectionsController',
                         );
                 }
                 else {
-                    $http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/connection/' + connection._id, data: connection})      //get the list of groups that can view
+                    $http({method: 'PUT', url: encodeURI('/api/site/' + $stateParams.site + '/connection/' + connection._id), data: connection})      //get the list of groups that can view
                         .then(function (response) {
                                 angular.copy(response.data, connection);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
                                 tryConvertPluginRef(connection, scope.connectionPlugins);
@@ -153,7 +153,7 @@ elastetic.controller('adminConnectionsController',
 
                 $mdDialog.show(confirm).then(function() {
                     if( !connection.isNew ){                                                  //its a real record, needs to be deleted from the server.
-                        $http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/connection/' + connection._id})      //get the list of groups that can view
+                        $http({method: 'DELETE', url: encodeURI('/api/site/' + $stateParams.site + '/connection/' + connection._id)})      //get the list of groups that can view
                             .then(function (response) {
                                     $scope.connections.splice($scope.connections.indexOf(connection), 1);
                                 },
@@ -189,7 +189,7 @@ elastetic.controller('adminConnectionsController',
 
                 $mdDialog.show(confirm).then(function() {
                     if( !connection.isNew ){                                                  //its a real record, needs to be deleted from the server.
-                        $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/connection/' + connection._id + "/refreshtoken"})      //get the list of groups that can view
+                        $http({method: 'POST', url: encodeURI('/api/site/' + $stateParams.site + '/connection/' + connection._id + "/refreshtoken")})      //get the list of groups that can view
                             .then(function (response) {
                                     connection.content.authToken = response.data.content.authToken;
                                     connection.warning = response.data.warning;

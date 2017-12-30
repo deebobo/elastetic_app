@@ -18,7 +18,7 @@ elastetic.controller('adminGeneralController',
             toolbar.buttons = [];
 
 			
-			$http({method: 'GET', url: '/api/site/' + $stateParams.site + '/page'})      //get the list of pages
+			$http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/page')})      //get the list of pages
             .then(function (response) {
                     $scope.pages = response.data;
                 },
@@ -27,7 +27,7 @@ elastetic.controller('adminGeneralController',
                 }
             );
 
-            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/view'})      //get the list of views
+            $http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/view')})      //get the list of views
                 .then(function (response) {
                         $scope.views = response.data;
                     },
@@ -36,7 +36,7 @@ elastetic.controller('adminGeneralController',
                     }
                 );
 			
-			$http({method: 'GET', url: '/api/site/' + $stateParams.site + '/group/view'})      //get the list of groups that can view
+			$http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/group/view')})      //get the list of groups that can view
             .then(function (response) {
                     $scope.viewGroups = response.data;
                 },
@@ -45,7 +45,7 @@ elastetic.controller('adminGeneralController',
                 }
             );
 			
-		/*	$http({method: 'GET', url: '/api/site/' + $stateParams.site + '/skin'})      //get the list of available/known skins
+		/*	$http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/skin')})      //get the list of available/known skins
             .then(function (response) {
                     //$scope.skins = response.data;
                 },
@@ -58,7 +58,7 @@ elastetic.controller('adminGeneralController',
 			//html callbacks.
 			//--------------------------------------------------------------------------------------
 			$scope.submitSiteDetails = function(site){
-				$http({method: 'PUT', url: '/api/site/' + $stateParams.site, data: site})      //get the list of groups that can view
+				$http({method: 'PUT', url: encodeURI('/api/site/' + $stateParams.site), data: site})      //get the list of groups that can view
 				.then(function (response) {
 						$scope.siteNeedsSave = false;
                         $window.location.reload();

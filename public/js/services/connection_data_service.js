@@ -36,7 +36,7 @@ elastetic.factory('connectionDataService',
          */
         function get(connectionId, options){
             var deferred = $q.defer();
-            $http(  {url: '/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data',
+            $http(  {url: encodeURI('/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data'),
                      method: "GET",
                      params: options
                     })     // send a post request to the server
@@ -59,7 +59,7 @@ elastetic.factory('connectionDataService',
 		*/
 		function update(connectionId, data){
             var deferred = $q.defer();
-            $http(  {url: '/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data/' + data.id,
+            $http(  {url: encodeURI('/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data/' + data.id),
                 data: data,
                 method: "PUT"
             })     // send a post request to the server
@@ -80,7 +80,7 @@ elastetic.factory('connectionDataService',
 
         function create(connectionId, data){
             var deferred = $q.defer();
-            $http(  {url: '/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data',
+            $http(  {url: encodeURI('/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data'),
                 data: data,
                 method: "POST"
             })     // send a post request to the server
@@ -100,7 +100,7 @@ elastetic.factory('connectionDataService',
 
         function getTimeRange(connectionId, options){
             var deferred = $q.defer();
-            $http(  {url: '/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data/timerange',
+            $http(  {url: encodeURI('/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data/timerange'),
                 method: "GET",
                 params: options
             })     // send a post request to the server
@@ -120,7 +120,7 @@ elastetic.factory('connectionDataService',
 		
 		function getReportData(connectionId, queryDef){
             var deferred = $q.defer();
-            $http(  {url: '/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data/report',
+            $http(  {url: encodeURI('/api/site/' + $stateParams.site + '/connection/' +  connectionId + '/data/report'),
                 method: "GET",
                 data: queryDef
             })     // send a post request to the server

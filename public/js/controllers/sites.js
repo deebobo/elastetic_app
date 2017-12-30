@@ -44,7 +44,7 @@ elastetic.controller('sitesController', ['$scope', '$location', 'siteService', '
             if( $scope.plugins)
                 deferred.resolve($scope.plugins);
             else{
-                $http({method: 'GET', url: '/api/site/templates/' + template })      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+                $http({method: 'GET', url: encodeURI('/api/site/templates/' + template) })      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                     .then(function (response) {
                             deferred.resolve(response.data);
                         },

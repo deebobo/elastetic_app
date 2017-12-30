@@ -21,6 +21,10 @@ async function installPlugins(db)
     await sitesLib.installPlugin(db, 'google_map_view', '_common', '../public/plugins/_common/google_map_view/pluginconfig.json');
     await sitesLib.installPlugin(db, 'userdetails_view', '_common', '../public/plugins/_common/userdetails_view/pluginconfig.json');
 	await sitesLib.installPlugin(db, 'report_view', '_common', '../public/plugins/_common/report_view/pluginconfig.json');
+	await sitesLib.installPlugin(db, 'page_manager_view', '_common', '../public/plugins/_common/page_manager_view/pluginconfig.json');
+	await sitesLib.installPlugin(db, 'page_details_view', '_common', '../public/plugins/_common/page_details_view/pluginconfig.json');
+	await sitesLib.installPlugin(db, 'view_manager_view', '_common', '../public/plugins/_common/view_manager_view/pluginconfig.json');
+	await sitesLib.installPlugin(db, 'view_details_view', '_common', '../public/plugins/_common/view_details_view/pluginconfig.json');
 
     await sitesLib.installPlugin(db, 'transporter', '_common', '../public/plugins/_common/transporter/pluginconfig.json');
 	await sitesLib.installPlugin(db, 'poi_calculator', '_common', '../public/plugins/_common/poi_calculator/pluginconfig.json');

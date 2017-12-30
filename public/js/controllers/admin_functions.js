@@ -68,7 +68,7 @@ elastetic.controller('adminFunctionsController',
 
             //get data from site for scope
             //--------------------------------------------------------------------------------------
-            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/function'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+            $http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/function')})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                 .then(function (response) {
                         tryConvertPluginRefs(response.data, scope.functionPlugins).then(function(){
                             scope.functions.push.apply(scope.functions, response.data);
@@ -79,7 +79,7 @@ elastetic.controller('adminFunctionsController',
                     }
                 );
 
-            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/plugin/function'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+            $http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/plugin/function')})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
                 .then(function (response) {
                         tryConvertPluginRefs(scope.functions, response.data).then(function(){
                             scope.functionPlugins = response.data;
@@ -100,7 +100,7 @@ elastetic.controller('adminFunctionsController',
 
             scope.save = function(func){
                 if(func.isNew === true){
-                    $http({method: 'POST', url: '/api/site/' + $stateParams.site + '/function', data: func})      //get the list of groups that can view
+                    $http({method: 'POST', url: encodeURI('/api/site/' + $stateParams.site + '/function'), data: func})      //get the list of groups that can view
                         .then(function (response) {
                                 angular.copy(response.data, func);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
                                 tryConvertPluginRef(func, scope.functionPlugins);
@@ -113,7 +113,7 @@ elastetic.controller('adminFunctionsController',
                         );
                 }
                 else {
-                    $http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/function/' + func._id, data: func})      //get the list of groups that can view
+                    $http({method: 'PUT', url: encodeURI('/api/site/' + $stateParams.site + '/function/' + func._id), data: func})      //get the list of groups that can view
                         .then(function (response) {
                                 angular.copy(response.data, func);      //make a copy so we have the id and possibly other values that were generated (ex: token for particle)
                                 tryConvertPluginRef(func, scope.functionPlugins);
@@ -139,7 +139,7 @@ elastetic.controller('adminFunctionsController',
 
                 $mdDialog.show(confirm).then(function() {
                     if( !func.isNew ){                                                  //its a real record, needs to be deleted from the server.
-                        $http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/function/' + func._id})      //get the list of groups that can view
+                        $http({method: 'DELETE', url: encodeURI('/api/site/' + $stateParams.site + '/function/' + func._id)})      //get the list of groups that can view
                             .then(function (response) {
                                     list.splice(index, 1);
                                 },

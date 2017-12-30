@@ -27,7 +27,7 @@ elastetic.controller('AdminAuthorizationController',
 		
             //get data from site for scope
 			//--------------------------------------------------------------------------------------
-            $http({method: 'GET', url: '/api/site/' + $stateParams.site + '/user'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+            $http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/user')})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
 					$scope.users.push.apply($scope.users, response.data);
                 },
@@ -36,7 +36,7 @@ elastetic.controller('AdminAuthorizationController',
                 }
             );
 			
-			$http({method: 'GET', url: '/api/site/' + $stateParams.site + '/group'})      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
+			$http({method: 'GET', url: encodeURI('/api/site/' + $stateParams.site + '/group'}))      //get the list of projects for this user, for the dlgopen (not ideal location, for proto only
             .then(function (response) {
 					$scope.groups.push.apply($scope.groups, response.data);
                 },
@@ -58,7 +58,7 @@ elastetic.controller('AdminAuthorizationController',
 					  .cancel('no');
 
 				$mdDialog.show(confirm).then(function() {
-					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/user/' + user._id +  '/resetpwd'})      //get the list of groups that can view
+					$http({method: 'POST', url: encodeURI('/api/site/' + $stateParams.site + '/user/' + user._id +  '/resetpwd')})      //get the list of groups that can view
 					.then(function (response) {
 						},
 						function (response) {
@@ -83,7 +83,7 @@ elastetic.controller('AdminAuthorizationController',
 				
 				$mdDialog.show(confirm).then(function(result) {
 					var newUser = {email: result};
-					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/user/invite', data: newUser} )      //get the list of groups that can view
+					$http({method: 'POST', url: encodeURI('/api/site/' + $stateParams.site + '/user/invite'), data: newUser} )      //get the list of groups that can view
 					.then(function (response) {
 							$scope.users.push(newUser);
 						},
@@ -97,7 +97,7 @@ elastetic.controller('AdminAuthorizationController',
 			}
 			
 			$scope.saveUser = function(user){
-				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/user/' + user._id, data: user})      //get the list of groups that can view
+				$http({method: 'PUT', url: encodeURI('/api/site/' + $stateParams.site + '/user/' + user._idencodeURI(, data: user})      //get the list of groups that can view
                         .then(function (response) {
                                 user.needsSave = false;
                             },
@@ -120,7 +120,7 @@ elastetic.controller('AdminAuthorizationController',
 
 				$mdDialog.show(confirm).then(function(result) {
 					var newGroup = {name: result};
-					$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/group', data: newGroup})      //get the list of groups that can view
+					$http({method: 'POST', url: encodeURI('/api/site/' + $stateParams.site + '/group'), data: newGroup})      //get the list of groups that can view
 					.then(function (response) {
 							$scope.groups.push(response.data);
 						},
@@ -143,7 +143,7 @@ elastetic.controller('AdminAuthorizationController',
                     .cancel('no');
 
                 $mdDialog.show(confirm).then(function() {
-                    $http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/user/' + user._id})      //get the list of groups that can view
+                    $http({method: 'DELETE', url: encodeURI('/api/site/' + $stateParams.site + '/user/' + user._id)})      //get the list of groups that can view
                         .then(function (response) {
                                 $scope.users.splice($scope.users.indexOf(user), 1);
                             },
@@ -158,7 +158,7 @@ elastetic.controller('AdminAuthorizationController',
 			};
 			
 			$scope.deleteGroup = function(group){
-				$http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/group/' + group.name})      //get the list of groups that can view
+				$http({method: 'DELETE', url: encodeURI('/api/site/' + $stateParams.site + '/group/' + group.name)})      //get the list of groups that can view
 				.then(function (response) {
 						$scope.groups.splice($scope.groups.indexOf(user), 1);
 					},
@@ -171,7 +171,7 @@ elastetic.controller('AdminAuthorizationController',
 			/** called when a group is added to a user
 			*/
 			$scope.groupAddedTo = function(user, chip){
-				$http({method: 'POST', url: '/api/site/' + $stateParams.site + '/user/' + user._id + '/group/' + chip._id})      //get the list of groups that can view
+				$http({method: 'POST', url: encodeURI('/api/site/' + $stateParams.site + '/user/' + user._id + '/group/' + chip._id)})      //get the list of groups that can view
 				.then(function (response) {
 						user.groups.push(chip);
 					},
@@ -184,7 +184,7 @@ elastetic.controller('AdminAuthorizationController',
 			/** called when a group is added to a user
 			*/
 			$scope.groupRemovedFrom = function(user, chip){
-				$http({method: 'DELETE', url: '/api/site/' + $stateParams.site + '/user/' + user._id + '/group/' + chip._id})      //get the list of groups that can view
+				$http({method: 'DELETE', url: encodeURI('/api/site/' + $stateParams.site + '/user/' + user._id + '/group/' + chip._id)})      //get the list of groups that can view
 				.then(function (response) {
 					},
 					function (response) {
@@ -194,7 +194,7 @@ elastetic.controller('AdminAuthorizationController',
 			}
 			
 			$scope.saveGroup = function(group){
-				$http({method: 'PUT', url: '/api/site/' + $stateParams.site + '/group/' + group.name, data: group})      //get the list of groups that can view
+				$http({method: 'PUT', url: encodeURI('/api/site/' + $stateParams.site + '/group/' + group.name), data: group})      //get the list of groups that can view
                         .then(function (response) {
                                 group.needsSave = false;
                             },
